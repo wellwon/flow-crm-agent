@@ -16,6 +16,7 @@ import { JarvisCommandBar } from './JarvisCommandBar';
 import { MorningBriefing } from './MorningBriefing';
 import { ListView } from './ListView';
 import { KanbanView } from './KanbanView';
+import { DashboardView } from './DashboardView';
 import { TimelineView } from './TimelineView';
 import { CanvasContextMenu, type ContextMenuPosition } from './CanvasContextMenu';
 import { EdgeContextMenu } from './EdgeContextMenu';
