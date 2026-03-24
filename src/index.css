@@ -2,95 +2,49 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
-
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 222.2 47.4% 11.2%;
+    --background: 222 15% 6%;
+    --foreground: 210 40% 96%;
+    --card: 222 20% 8%;
+    --card-foreground: 210 40% 96%;
+    --popover: 222 20% 8%;
+    --popover-foreground: 210 40% 96%;
+    --primary: 174 55% 40%;
     --primary-foreground: 210 40% 98%;
-
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-
-    --radius: 0.5rem;
-
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
+    --secondary: 220 15% 14%;
+    --secondary-foreground: 210 40% 96%;
+    --muted: 220 15% 14%;
+    --muted-foreground: 215 20% 55%;
+    --accent: 174 55% 40%;
     --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 72% 51%;
     --destructive-foreground: 210 40% 98%;
+    --border: 220 15% 16%;
+    --input: 220 15% 16%;
+    --ring: 174 55% 40%;
+    --radius: 0.75rem;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Pipeline specific */
+    --node-pending: 240 4% 46%;
+    --node-active: 38 92% 50%;
+    --node-completed: 160 84% 39%;
+    --node-error: 350 89% 60%;
+    --glow-active: 38 92% 50%;
+    --glow-completed: 160 84% 39%;
+    --glow-error: 350 89% 60%;
+
+    --glass-bg: 222 20% 6%;
+    --glass-border: 0 0% 100%;
+
+    --sidebar-background: 222 20% 8%;
+    --sidebar-foreground: 210 40% 96%;
+    --sidebar-primary: 174 55% 40%;
+    --sidebar-primary-foreground: 210 40% 98%;
+    --sidebar-accent: 220 15% 14%;
+    --sidebar-accent-foreground: 210 40% 96%;
+    --sidebar-border: 220 15% 16%;
+    --sidebar-ring: 174 55% 40%;
   }
 }
 
@@ -98,8 +52,109 @@ All colors MUST be HSL.
   * {
     @apply border-border;
   }
-
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
   }
 }
+
+/* Glassmorphism utilities */
+@layer components {
+  .glass-panel {
+    @apply backdrop-blur-xl border rounded-2xl;
+    background: hsl(var(--glass-bg) / 0.7);
+    border-color: hsl(var(--glass-border) / 0.08);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  }
+
+  .glass-panel-dense {
+    @apply backdrop-blur-2xl border rounded-2xl;
+    background: hsl(var(--glass-bg) / 0.85);
+    border-color: hsl(var(--glass-border) / 0.06);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* Node glow effects */
+.node-glow-active {
+  box-shadow: 0 0 20px hsl(var(--node-active) / 0.4),
+              0 0 40px hsl(var(--node-active) / 0.15),
+              inset 0 1px 1px hsl(0 0% 100% / 0.06);
+}
+
+.node-glow-completed {
+  box-shadow: 0 0 16px hsl(var(--node-completed) / 0.3),
+              0 0 32px hsl(var(--node-completed) / 0.1),
+              inset 0 1px 1px hsl(0 0% 100% / 0.06);
+}
+
+.node-glow-error {
+  animation: pulse-glow 2s ease-in-out infinite;
+  box-shadow: 0 0 20px hsl(var(--node-error) / 0.5),
+              0 0 40px hsl(var(--node-error) / 0.2);
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px hsl(var(--node-error) / 0.3), 0 0 40px hsl(var(--node-error) / 0.1); }
+  50% { box-shadow: 0 0 30px hsl(var(--node-error) / 0.6), 0 0 60px hsl(var(--node-error) / 0.25); }
+}
+
+/* Edge glow filter */
+.edge-glow-active {
+  filter: drop-shadow(0 0 4px hsl(var(--glow-active) / 0.8))
+          drop-shadow(0 0 8px hsl(var(--glow-active) / 0.4));
+}
+
+.edge-glow-completed {
+  filter: drop-shadow(0 0 3px hsl(var(--glow-completed) / 0.6))
+          drop-shadow(0 0 6px hsl(var(--glow-completed) / 0.3));
+}
+
+/* Animated dash for active edges */
+@keyframes dash-flow {
+  to { stroke-dashoffset: -20; }
+}
+
+.edge-animated-dash {
+  stroke-dasharray: 8 4;
+  animation: dash-flow 0.8s linear infinite;
+}
+
+/* React Flow overrides */
+.react-flow__background {
+  opacity: 0.4;
+}
+
+.react-flow__controls {
+  background: hsl(var(--glass-bg) / 0.8) !important;
+  backdrop-filter: blur(12px);
+  border: 1px solid hsl(var(--glass-border) / 0.1) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+}
+
+.react-flow__controls-button {
+  background: transparent !important;
+  border: none !important;
+  color: hsl(var(--foreground)) !important;
+  fill: hsl(var(--foreground)) !important;
+}
+
+.react-flow__controls-button:hover {
+  background: hsl(var(--glass-border) / 0.1) !important;
+}
+
+/* Port handles */
+.react-flow__handle {
+  width: 10px !important;
+  height: 10px !important;
+  border: 2px solid hsl(var(--primary)) !important;
+  background: hsl(var(--background)) !important;
+  box-shadow: 0 0 6px hsl(var(--primary) / 0.5);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: hsl(var(--muted-foreground) / 0.3); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: hsl(var(--muted-foreground) / 0.5); }
