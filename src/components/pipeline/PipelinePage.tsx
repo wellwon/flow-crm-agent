@@ -277,6 +277,33 @@ function PipelinePageInner() {
             {/* Phase swim lanes */}
             {phasesVisible && <PhaseBackground nodes={nodes} />}
           </ReactFlow>
+
+          {/* Zoom controls — horizontal bar above minimap */}
+          <div className="absolute bottom-4 right-4 z-20 flex flex-col items-end gap-2">
+            <div className="flex items-center gap-1 glass-panel-dense px-2 py-1.5 rounded-xl">
+              <button
+                onClick={() => zoomOut()}
+                className="w-8 h-8 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors text-sm font-bold"
+                title="Отдалить"
+              >
+                −
+              </button>
+              <button
+                onClick={() => fitView({ padding: 0.2 })}
+                className="w-8 h-8 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors"
+                title="Вместить всё"
+              >
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="1" y="1" width="12" height="12" rx="2" /><path d="M4 7h6M7 4v6" /></svg>
+              </button>
+              <button
+                onClick={() => zoomIn()}
+                className="w-8 h-8 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors text-sm font-bold"
+                title="Приблизить"
+              >
+                +
+              </button>
+            </div>
+          </div>
         </>
       )}
 
