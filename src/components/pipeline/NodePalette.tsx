@@ -66,8 +66,6 @@ const categoryLabels: Record<string, string> = {
 export function NodePalette({
   onAddNode, onAddSticky,
   interactionMode = 'select', onInteractionModeChange,
-  onDeleteSelected, onZoomIn, onZoomOut, onFitView,
-  hasSelection = false,
 }: NodePaletteProps) {
   const [collapsed, setCollapsed] = useState(false);
 
