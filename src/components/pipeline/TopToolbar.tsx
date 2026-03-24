@@ -1,4 +1,5 @@
-import { LayoutGrid, List, Columns3, GanttChart, Sun, Plus, Layers, BarChart3 } from 'lucide-react';
+import { LayoutGrid, List, Columns3, GanttChart, Sun, Plus, Layers, BarChart3, ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import type { ViewMode } from '@/types/pipeline';
 
 interface TopToolbarProps {
@@ -19,10 +20,20 @@ const views: { id: ViewMode; label: string; icon: React.ElementType }[] = [
 ];
 
 export function TopToolbar({ activeView = 'graph', onViewChange, onBriefingOpen, onTemplateOpen, phasesVisible = true, onTogglePhases }: TopToolbarProps) {
+  const navigate = useNavigate();
+
   return (
     <div className="absolute top-0 left-0 right-0 z-10 p-4">
       <div className="glass-panel px-5 py-3 flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-3">
+          <button
+            onClick={() => navigate('/')}
+            className="flex items-center justify-center w-8 h-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
+            title="Назад к сделкам"
+          >
+            <ArrowLeft className="w-4 h-4" />
+          </button>
+          <div className="w-px h-5 bg-border/30" />
           <div className="w-2 h-2 rounded-full bg-node-active animate-pulse" />
           <h1 className="text-sm font-semibold text-foreground">
             ОБ Коломна — 3× УЗИ Mindray DC-70
