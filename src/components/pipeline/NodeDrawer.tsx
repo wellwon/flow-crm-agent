@@ -9,6 +9,8 @@ interface NodeDrawerProps {
   onClose: () => void;
   data: PipelineNodeData | null;
   nodeId: string | null;
+  onComplete?: (nodeId: string) => void;
+  onDelete?: (nodeId: string) => void;
 }
 
 type DrawerTab = 'details' | 'activity' | 'ai' | 'compliance';
