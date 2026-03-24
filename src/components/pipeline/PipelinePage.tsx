@@ -3,7 +3,7 @@ import {
   ReactFlow, Background, Controls, MiniMap,
   useNodesState, useEdgesState, BackgroundVariant,
   type NodeMouseHandler, type EdgeMouseHandler,
-  useReactFlow, ReactFlowProvider, Panel,
+  useReactFlow, ReactFlowProvider,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
