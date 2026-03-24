@@ -122,36 +122,6 @@ export function NodePalette({
             interactionMode === 'hand', () => onInteractionModeChange?.('hand'),
             Hand, 'Рука',
           )}
-
-          <div className="flex gap-0.5">
-            <button
-              onClick={onZoomIn}
-              title="Приблизить"
-              className="flex-1 flex items-center justify-center py-1.5 rounded-lg text-muted-foreground hover:bg-muted/30 hover:text-foreground transition-all"
-            >
-              <ZoomIn className="w-3.5 h-3.5" />
-            </button>
-            <button
-              onClick={onZoomOut}
-              title="Отдалить"
-              className="flex-1 flex items-center justify-center py-1.5 rounded-lg text-muted-foreground hover:bg-muted/30 hover:text-foreground transition-all"
-            >
-              <ZoomOut className="w-3.5 h-3.5" />
-            </button>
-            <button
-              onClick={onFitView}
-              title="Вместить всё"
-              className="flex-1 flex items-center justify-center py-1.5 rounded-lg text-muted-foreground hover:bg-muted/30 hover:text-foreground transition-all"
-            >
-              <Maximize2 className="w-3.5 h-3.5" />
-            </button>
-          </div>
-
-          {toolBtn(
-            false, () => hasSelection && onDeleteSelected?.(),
-            Trash2, 'Удалить',
-            true,
-          )}
         </div>
 
         {/* Node palette */}
