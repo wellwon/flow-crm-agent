@@ -3,7 +3,7 @@ import {
   Play, Users, Phone, Mail, FileText, Search, Calculator, Truck,
   CheckCircle, GitFork, Target, Bot, Activity, Link, BarChart3,
   Timer, GitMerge, Bookmark, Flag, StickyNote, ChevronLeft, ChevronRight,
-  MousePointer2, Hand, Trash2, ZoomIn, ZoomOut, Maximize2,
+  MousePointer2, Hand,
 } from 'lucide-react';
 import type { NodeType, NodeCategory } from '@/types/pipeline';
 
