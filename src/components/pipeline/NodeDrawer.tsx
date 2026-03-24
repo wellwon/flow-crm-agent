@@ -9,6 +9,8 @@ interface NodeDrawerProps {
   onClose: () => void;
   data: PipelineNodeData | null;
   nodeId: string | null;
+  onComplete?: (nodeId: string) => void;
+  onDelete?: (nodeId: string) => void;
 }
 
 type DrawerTab = 'details' | 'activity' | 'ai' | 'compliance';
@@ -27,7 +29,7 @@ const categoryLabels: Record<NodeCategory, string> = {
   system: 'Система',
 };
 
-export function NodeDrawer({ isOpen, onClose, data, nodeId }: NodeDrawerProps) {
+export function NodeDrawer({ isOpen, onClose, data, nodeId, onComplete, onDelete }: NodeDrawerProps) {
   const [activeTab, setActiveTab] = useState<DrawerTab>('details');
 
   const tabs: { id: DrawerTab; label: string; show: boolean }[] = [
@@ -99,11 +101,20 @@ export function NodeDrawer({ isOpen, onClose, data, nodeId }: NodeDrawerProps) {
             </div>
 
             {/* Footer */}
-            {data.status === 'active' && (
-              <div className="p-4 border-t border-border/50">
-                <button className="w-full py-2.5 rounded-xl bg-node-completed text-primary-foreground text-xs font-semibold hover:brightness-110 transition-all flex items-center justify-center gap-2">
+            {data.status !== 'completed' && nodeId && (
+              <div className="p-4 border-t border-border/50 flex gap-2">
+                <button
+                  onClick={() => onComplete?.(nodeId)}
+                  className="flex-1 py-2.5 rounded-xl bg-node-completed text-primary-foreground text-xs font-semibold hover:brightness-110 transition-all flex items-center justify-center gap-2"
+                >
                   <CheckCircle className="w-4 h-4" />
                   Завершить шаг
+                </button>
+                <button
+                  onClick={() => onDelete?.(nodeId)}
+                  className="px-4 py-2.5 rounded-xl bg-node-error/15 text-node-error text-xs font-medium hover:bg-node-error/25 transition-all"
+                >
+                  Удалить
                 </button>
               </div>
             )}
