@@ -108,20 +108,27 @@ export function NodePalette({
         </button>
 
         {/* Interaction tools */}
-        <div className="px-1.5 py-2 border-b border-border/30 space-y-0.5">
-          {!collapsed && (
-            <span className="text-[8px] font-mono uppercase tracking-[0.15em] px-1.5 mb-1 block text-muted-foreground">
-              ИНСТРУМЕНТЫ
-            </span>
-          )}
-          {toolBtn(
-            interactionMode === 'select', () => onInteractionModeChange?.('select'),
-            MousePointer2, 'Выделение',
-          )}
-          {toolBtn(
-            interactionMode === 'hand', () => onInteractionModeChange?.('hand'),
-            Hand, 'Рука',
-          )}
+        <div className="px-1.5 py-2 border-b border-border/30">
+          <div className="flex gap-0.5">
+            <button
+              onClick={() => onInteractionModeChange?.('select')}
+              title="Выделение"
+              className={`flex-1 flex items-center justify-center py-2 rounded-lg transition-all ${
+                interactionMode === 'select' ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:bg-muted/30 hover:text-foreground'
+              }`}
+            >
+              <MousePointer2 className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => onInteractionModeChange?.('hand')}
+              title="Рука"
+              className={`flex-1 flex items-center justify-center py-2 rounded-lg transition-all ${
+                interactionMode === 'hand' ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:bg-muted/30 hover:text-foreground'
+              }`}
+            >
+              <Hand className="w-4 h-4" />
+            </button>
+          </div>
         </div>
 
         {/* Node palette */}
