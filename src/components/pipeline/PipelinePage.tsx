@@ -255,10 +255,8 @@ function PipelinePageInner() {
               style={{ background: 'hsl(222 20% 6% / 0.8)' }}
               maskColor="hsl(222 15% 6% / 0.7)"
             />
-            {/* Phase swim lanes rendered inside the flow viewport */}
-            <Panel position="top-left" style={{ margin: 0, padding: 0, pointerEvents: 'none', position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
-              <PhaseBackground nodes={nodes} />
-            </Panel>
+            {/* Phase swim lanes — rendered as a background layer in flow coordinates */}
+            <PhaseBackground nodes={nodes} />
           </ReactFlow>
         </>
       )}
