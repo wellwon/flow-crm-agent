@@ -233,6 +233,7 @@ function PipelinePageInner() {
             onInteractionModeChange={setInteractionMode}
           />
           <ReactFlow
+            className="border border-border/20 rounded-xl"
             nodes={nodes}
             edges={edges}
             onNodesChange={onNodesChange}
