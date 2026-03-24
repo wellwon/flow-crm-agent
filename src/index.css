@@ -132,11 +132,13 @@
 }
 
 .react-flow__controls {
-  background: hsl(var(--glass-bg) / 0.8) !important;
-  backdrop-filter: blur(12px);
-  border: 1px solid hsl(var(--glass-border) / 0.1) !important;
+  background: hsl(var(--glass-bg) / 0.85) !important;
+  backdrop-filter: blur(14px);
+  border: 1px solid hsl(var(--glass-border) / 0.2) !important;
   border-radius: 12px !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4) !important;
+  margin-bottom: 16px !important;
+  margin-right: 16px !important;
 }
 
 .react-flow__controls-button {
@@ -144,10 +146,17 @@
   border: none !important;
   color: hsl(var(--foreground)) !important;
   fill: hsl(var(--foreground)) !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 8px !important;
 }
 
 .react-flow__controls-button:hover {
-  background: hsl(var(--glass-border) / 0.1) !important;
+  background: hsl(var(--muted) / 0.4) !important;
+}
+
+.react-flow__controls-button svg {
+  fill: hsl(var(--foreground) / 0.7) !important;
 }
 
 /* Port handles */
