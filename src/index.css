@@ -131,6 +131,15 @@
   opacity: 0.4;
 }
 
+/* Minimap inside unified panel */
+.react-flow__minimap {
+  position: relative !important;
+  bottom: auto !important;
+  right: auto !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+}
+
 
 /* Port handles */
 .react-flow__handle {
