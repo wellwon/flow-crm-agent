@@ -47,36 +47,43 @@ export function TopToolbar({ activeView = 'graph', onViewChange, onBriefingOpen,
           ))}
         </div>
 
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center gap-1.5 flex-wrap">
           {onTogglePhases && activeView === 'graph' && (
             <button
               onClick={onTogglePhases}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium border transition-colors ${
+              className={`group relative inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all duration-200 overflow-hidden ${
                 phasesVisible
-                  ? 'bg-[hsl(265_80%_65%)/0.15] text-[hsl(265_80%_65%)] border-[hsl(265_80%_65%)/0.2] hover:bg-[hsl(265_80%_65%)/0.25]'
-                  : 'bg-muted/30 text-muted-foreground border-border/30 hover:bg-muted/50'
+                  ? 'text-[hsl(265_80%_75%)]'
+                  : 'text-muted-foreground hover:text-foreground'
               }`}
             >
-              <Layers className="w-3.5 h-3.5" />
-              Фазы
+              <span className={`absolute inset-0 rounded-lg transition-opacity duration-200 ${
+                phasesVisible
+                  ? 'opacity-100 bg-[hsl(265_80%_65%)/0.1] shadow-[inset_0_0_0_1px_hsl(265_80%_65%/0.25),0_0_12px_-4px_hsl(265_80%_65%/0.3)]'
+                  : 'opacity-0 group-hover:opacity-100 bg-muted/20 shadow-[inset_0_0_0_1px_hsl(var(--border)/0.2)]'
+              }`} />
+              <Layers className="w-3.5 h-3.5 relative z-10" />
+              <span className="relative z-10">Фазы</span>
             </button>
           )}
           {onTemplateOpen && (
             <button
               onClick={onTemplateOpen}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium border bg-primary/15 text-primary border-primary/20 hover:bg-primary/25 transition-colors"
+              className="group relative inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium text-primary/80 hover:text-primary transition-all duration-200 overflow-hidden"
             >
-              <Plus className="w-3.5 h-3.5" />
-              Шаблон
+              <span className="absolute inset-0 rounded-lg bg-primary/5 shadow-[inset_0_0_0_1px_hsl(var(--primary)/0.15)] group-hover:bg-primary/10 group-hover:shadow-[inset_0_0_0_1px_hsl(var(--primary)/0.3),0_0_12px_-4px_hsl(var(--primary)/0.25)] transition-all duration-200" />
+              <Plus className="w-3.5 h-3.5 relative z-10" />
+              <span className="relative z-10">Шаблон</span>
             </button>
           )}
           {onBriefingOpen && (
             <button
               onClick={onBriefingOpen}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium border bg-node-active/15 text-node-active border-node-active/20 hover:bg-node-active/25 transition-colors"
+              className="group relative inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium text-node-active/80 hover:text-node-active transition-all duration-200 overflow-hidden"
             >
-              <Sun className="w-3.5 h-3.5" />
-              Брифинг
+              <span className="absolute inset-0 rounded-lg bg-node-active/5 shadow-[inset_0_0_0_1px_hsl(38_92%_50%/0.15)] group-hover:bg-node-active/10 group-hover:shadow-[inset_0_0_0_1px_hsl(38_92%_50%/0.3),0_0_12px_-4px_hsl(38_92%_50%/0.25)] transition-all duration-200" />
+              <Sun className="w-3.5 h-3.5 relative z-10" />
+              <span className="relative z-10">Брифинг</span>
             </button>
           )}
         </div>
