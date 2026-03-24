@@ -47,6 +47,19 @@ export function TopToolbar({ activeView = 'graph', onViewChange, onBriefingOpen,
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
+          {onTogglePhases && activeView === 'graph' && (
+            <button
+              onClick={onTogglePhases}
+              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-mono font-medium border transition-colors ${
+                phasesVisible
+                  ? 'bg-[hsl(265_80%_65%)/0.15] text-[hsl(265_80%_65%)] border-[hsl(265_80%_65%)/0.2] hover:bg-[hsl(265_80%_65%)/0.25]'
+                  : 'bg-muted/30 text-muted-foreground border-border/30 hover:bg-muted/50'
+              }`}
+            >
+              <Layers className="w-3 h-3" />
+              Фазы
+            </button>
+          )}
           {onTemplateOpen && (
             <button
               onClick={onTemplateOpen}
