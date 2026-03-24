@@ -3,7 +3,7 @@ import {
   Play, Users, Phone, Mail, FileText, Search, Calculator, Truck,
   CheckCircle, GitFork, Target, Bot, Activity, Link, BarChart3,
   Timer, GitMerge, Bookmark, Flag, StickyNote, ChevronLeft, ChevronRight,
-  MousePointer2, Hand, Trash2, ZoomIn, ZoomOut, Maximize2,
+  MousePointer2, Hand,
 } from 'lucide-react';
 import type { NodeType, NodeCategory } from '@/types/pipeline';
 
@@ -14,11 +14,6 @@ interface NodePaletteProps {
   onAddSticky: (color: string, position: { x: number; y: number }) => void;
   interactionMode?: InteractionMode;
   onInteractionModeChange?: (mode: InteractionMode) => void;
-  onDeleteSelected?: () => void;
-  onZoomIn?: () => void;
-  onZoomOut?: () => void;
-  onFitView?: () => void;
-  hasSelection?: boolean;
 }
 
 interface PaletteItem {
@@ -71,8 +66,6 @@ const categoryLabels: Record<string, string> = {
 export function NodePalette({
   onAddNode, onAddSticky,
   interactionMode = 'select', onInteractionModeChange,
-  onDeleteSelected, onZoomIn, onZoomOut, onFitView,
-  hasSelection = false,
 }: NodePaletteProps) {
   const [collapsed, setCollapsed] = useState(false);
 
@@ -84,7 +77,7 @@ export function NodePalette({
 
   const groups = ['human_action', 'gate', 'ai_action', 'system', 'note'] as const;
 
-  const toolBtn = (active: boolean, onClick: () => void, icon: React.ElementType, label: string, danger = false) => {
+  const toolBtn = (active: boolean, onClick: () => void, icon: React.ElementType, label: string) => {
     const Icon = icon;
     return (
       <button
@@ -94,9 +87,7 @@ export function NodePalette({
         className={`flex items-center justify-center w-full py-2 rounded-lg transition-all ${
           active
             ? 'bg-primary/20 text-primary'
-            : danger
-              ? 'text-node-error/60 hover:bg-node-error/10 hover:text-node-error'
-              : 'text-muted-foreground hover:bg-muted/30 hover:text-foreground'
+            : 'text-muted-foreground hover:bg-muted/30 hover:text-foreground'
         }`}
       >
         <Icon className="w-4 h-4" />
@@ -130,36 +121,6 @@ export function NodePalette({
           {toolBtn(
             interactionMode === 'hand', () => onInteractionModeChange?.('hand'),
             Hand, 'Рука',
-          )}
-
-          <div className="flex gap-0.5">
-            <button
-              onClick={onZoomIn}
-              title="Приблизить"
-              className="flex-1 flex items-center justify-center py-1.5 rounded-lg text-muted-foreground hover:bg-muted/30 hover:text-foreground transition-all"
-            >
-              <ZoomIn className="w-3.5 h-3.5" />
-            </button>
-            <button
-              onClick={onZoomOut}
-              title="Отдалить"
-              className="flex-1 flex items-center justify-center py-1.5 rounded-lg text-muted-foreground hover:bg-muted/30 hover:text-foreground transition-all"
-            >
-              <ZoomOut className="w-3.5 h-3.5" />
-            </button>
-            <button
-              onClick={onFitView}
-              title="Вместить всё"
-              className="flex-1 flex items-center justify-center py-1.5 rounded-lg text-muted-foreground hover:bg-muted/30 hover:text-foreground transition-all"
-            >
-              <Maximize2 className="w-3.5 h-3.5" />
-            </button>
-          </div>
-
-          {toolBtn(
-            false, () => hasSelection && onDeleteSelected?.(),
-            Trash2, 'Удалить',
-            true,
           )}
         </div>
 
