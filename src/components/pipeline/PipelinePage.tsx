@@ -259,31 +259,44 @@ function PipelinePageInner() {
             deleteKeyCode={['Backspace', 'Delete']}
           >
             <Background variant={BackgroundVariant.Dots} gap={24} size={1} color="hsl(220 15% 20%)" />
-            <MiniMap
-              pannable
-              zoomable
-              nodeColor={(n) => {
-                if (n.type === 'stickyNote') return 'hsl(48 96% 70%)';
-                const d = n.data as unknown as PipelineNodeData;
-                if (d.status === 'completed') return 'hsl(160 84% 39%)';
-                if (d.status === 'active') return 'hsl(38 92% 50%)';
-                if (d.status === 'error') return 'hsl(350 89% 60%)';
-                if (d.status === 'waiting') return 'hsl(174 55% 40%)';
-                return 'hsl(240 4% 46%)';
-              }}
-              style={{ background: 'hsl(222 20% 6% / 0.8)' }}
-              maskColor="hsl(222 15% 6% / 0.7)"
-            />
             {/* Phase swim lanes */}
             {phasesVisible && <PhaseBackground nodes={nodes} />}
           </ReactFlow>
 
-          {/* Zoom controls — horizontal bar above minimap */}
-          <div className="absolute bottom-4 right-4 z-20 flex flex-col items-end gap-2">
-            <div className="flex items-center gap-1 glass-panel-dense px-2 py-1.5 rounded-xl">
+          {/* Unified minimap + zoom panel */}
+          <div className="absolute bottom-4 right-4 z-20 glass-panel-dense rounded-2xl overflow-hidden flex flex-col" style={{ width: 200 }}>
+            {/* MiniMap container */}
+            <div className="relative w-full" style={{ height: 120 }}>
+              <MiniMap
+                pannable
+                zoomable
+                nodeColor={(n) => {
+                  if (n.type === 'stickyNote') return 'hsl(48 96% 70%)';
+                  const d = n.data as unknown as PipelineNodeData;
+                  if (d.status === 'completed') return 'hsl(160 84% 39%)';
+                  if (d.status === 'active') return 'hsl(38 92% 50%)';
+                  if (d.status === 'error') return 'hsl(350 89% 60%)';
+                  if (d.status === 'waiting') return 'hsl(174 55% 40%)';
+                  return 'hsl(240 4% 46%)';
+                }}
+                style={{
+                  position: 'relative',
+                  width: '100%',
+                  height: '100%',
+                  margin: 0,
+                  borderRadius: 0,
+                  background: 'hsl(222 20% 4% / 0.6)',
+                }}
+                maskColor="hsl(222 15% 6% / 0.6)"
+              />
+            </div>
+            {/* Divider */}
+            <div className="h-px bg-border/30" />
+            {/* Zoom controls */}
+            <div className="flex items-center justify-between px-2 py-1.5">
               <button
                 onClick={() => zoomOut()}
-                className="w-8 h-8 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors text-sm font-bold"
+                className="w-8 h-8 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors text-lg font-bold"
                 title="Отдалить"
               >
                 −
@@ -297,7 +310,7 @@ function PipelinePageInner() {
               </button>
               <button
                 onClick={() => zoomIn()}
-                className="w-8 h-8 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors text-sm font-bold"
+                className="w-8 h-8 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors text-lg font-bold"
                 title="Приблизить"
               >
                 +
