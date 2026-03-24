@@ -1,5 +1,5 @@
 import { memo, useState, useCallback, useRef, useEffect } from 'react';
-import { Handle, Position, type NodeProps, NodeResizer, useReactFlow } from '@xyflow/react';
+import { Handle, Position, type NodeProps, NodeResizer, NodeResizeControl, useReactFlow } from '@xyflow/react';
 import { GripVertical } from 'lucide-react';
 
 export interface StickyNoteData {
@@ -54,15 +54,15 @@ function StickyNoteComponent({ data, id, selected }: NodeProps) {
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     e.stopPropagation();
-    if (e.key === 'Escape') {
-      stopEditing();
-    }
+    if (e.key === 'Escape') stopEditing();
   }, [stopEditing]);
+
+  const showResize = selected || hovered || editing;
 
   return (
     <>
       <NodeResizer
-        isVisible={selected || hovered || editing}
+        isVisible={showResize}
         minWidth={140}
         minHeight={90}
         color={style.resizer}
@@ -70,10 +70,19 @@ function StickyNoteComponent({ data, id, selected }: NodeProps) {
         handleStyle={{ background: style.resizer, width: 10, height: 10, borderRadius: 2 }}
       />
 
+      <NodeResizeControl
+        position="bottom-right"
+        minWidth={140}
+        minHeight={90}
+        className={`!w-3 !h-3 !rounded-sm !border transition-opacity ${showResize ? '!opacity-100' : '!opacity-0'}`}
+        style={{ borderColor: style.resizer, background: style.resizer }}
+      />
+
       <div
         className={`w-full h-full min-w-[140px] min-h-[90px] rounded-lg border-2 shadow-lg ${style.bg} ${style.border} p-3`}
         style={{ boxShadow: '4px 4px 10px hsl(var(--foreground) / 0.12), inset 0 1px 0 hsl(var(--background) / 0.15)' }}
         onDoubleClick={startEditing}
+        onDoubleClickCapture={startEditing}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
       >
