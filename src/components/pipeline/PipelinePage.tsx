@@ -52,8 +52,9 @@ function PipelinePageInner() {
   const [phasesVisible, setPhasesVisible] = useState(true);
   const [contextMenu, setContextMenu] = useState<ContextMenuPosition | null>(null);
   const [edgeMenu, setEdgeMenu] = useState<{ x: number; y: number; edgeId: string } | null>(null);
+  const [interactionMode, setInteractionMode] = useState<InteractionMode>('select');
   const nextIdRef = useRef(200);
-  const { screenToFlowPosition, setViewport, fitView } = useReactFlow();
+  const { screenToFlowPosition, setViewport, fitView, zoomIn, zoomOut, getNodes } = useReactFlow();
 
   const generateId = useCallback(() => {
     nextIdRef.current += 1;
