@@ -1,4 +1,4 @@
-import { Activity, TrendingUp, FileCheck, LayoutGrid, List, Columns3, GanttChart, Sun, Plus } from 'lucide-react';
+import { Activity, TrendingUp, FileCheck, LayoutGrid, List, Columns3, GanttChart, Sun, Plus, Layers } from 'lucide-react';
 import type { ViewMode } from '@/types/pipeline';
 
 interface TopToolbarProps {
@@ -6,6 +6,8 @@ interface TopToolbarProps {
   onViewChange?: (view: ViewMode) => void;
   onBriefingOpen?: () => void;
   onTemplateOpen?: () => void;
+  phasesVisible?: boolean;
+  onTogglePhases?: () => void;
 }
 
 const views: { id: ViewMode; label: string; icon: React.ElementType }[] = [
