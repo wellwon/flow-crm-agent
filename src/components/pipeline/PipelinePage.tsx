@@ -48,6 +48,7 @@ function PipelinePageInner() {
   const [activeView, setActiveView] = useState<ViewMode>('graph');
   const [briefingOpen, setBriefingOpen] = useState(false);
   const [templateOpen, setTemplateOpen] = useState(false);
+  const [phasesVisible, setPhasesVisible] = useState(true);
   const [contextMenu, setContextMenu] = useState<ContextMenuPosition | null>(null);
   const [edgeMenu, setEdgeMenu] = useState<{ x: number; y: number; edgeId: string } | null>(null);
   const nextIdRef = useRef(200);
@@ -213,6 +214,8 @@ function PipelinePageInner() {
         onViewChange={setActiveView}
         onBriefingOpen={() => setBriefingOpen(true)}
         onTemplateOpen={() => setTemplateOpen(true)}
+        phasesVisible={phasesVisible}
+        onTogglePhases={() => setPhasesVisible(v => !v)}
       />
 
       {activeView === 'graph' && (
@@ -255,8 +258,8 @@ function PipelinePageInner() {
               style={{ background: 'hsl(222 20% 6% / 0.8)' }}
               maskColor="hsl(222 15% 6% / 0.7)"
             />
-            {/* Phase swim lanes — rendered as a background layer in flow coordinates */}
-            <PhaseBackground nodes={nodes} />
+            {/* Phase swim lanes */}
+            {phasesVisible && <PhaseBackground nodes={nodes} />}
           </ReactFlow>
         </>
       )}
