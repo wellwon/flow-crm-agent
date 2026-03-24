@@ -260,7 +260,7 @@ function PipelinePageInner() {
             edgeTypes={edgeTypes}
             panOnDrag={interactionMode === 'hand' ? [0] : [1, 2]}
             selectionOnDrag={interactionMode === 'select'}
-            selectionMode={1}
+            selectionMode={SelectionMode.Partial}
             selectNodesOnDrag={interactionMode === 'select'}
             fitView
             fitViewOptions={{ padding: 0.2 }}
