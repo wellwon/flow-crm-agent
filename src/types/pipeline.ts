@@ -12,6 +12,7 @@ export type NodeType =
   | 'parallel-join';
 
 export interface PipelineNodeData {
+  [key: string]: unknown;
   label: string;
   summary: string;
   status: NodeStatus;
