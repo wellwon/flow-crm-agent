@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LayoutGrid, List, Kanban, CalendarDays, Plus, Search, SlidersHorizontal } from 'lucide-react';
-import { mockDeals } from '@/data/mockDeals';
+import { LayoutGrid, List, Kanban, CalendarDays, Plus, Search, X, MapPin, Tag, User, Flag, ChevronDown } from 'lucide-react';
+import { mockDeals, dealStatusLabels, type DealStatus } from '@/data/mockDeals';
 import { DealsTableView } from './DealsTableView';
 import { DealsKanbanView } from './DealsKanbanView';
 import { DealsGridView } from './DealsGridView';
 import { DealsTimelineView } from './DealsTimelineView';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Checkbox } from '@/components/ui/checkbox';
 
 type ViewMode = 'table' | 'kanban' | 'grid' | 'timeline';
 
@@ -18,23 +20,122 @@ const views: { id: ViewMode; label: string; icon: React.ElementType }[] = [
   { id: 'timeline', label: 'Timeline', icon: CalendarDays },
 ];
 
+// Extract unique values from deals
+const allRegions = [...new Set(mockDeals.map((d) => d.region))].sort();
+const allManagers = [...new Set(mockDeals.map((d) => d.manager.name))].sort();
+const allCategories = [...new Set(mockDeals.map((d) => d.category))].sort();
+const allStatuses: DealStatus[] = ['new', 'qualification', 'proposal', 'negotiation', 'won', 'lost'];
+const allPriorities = [
+  { value: 'high', label: 'Высокий' },
+  { value: 'medium', label: 'Средний' },
+  { value: 'low', label: 'Низкий' },
+] as const;
+
+interface FilterDropdownProps {
+  icon: React.ElementType;
+  label: string;
+  options: string[];
+  selected: string[];
+  onChange: (val: string[]) => void;
+  displayMap?: Record<string, string>;
+}
+
+function FilterDropdown({ icon: Icon, label, options, selected, onChange, displayMap }: FilterDropdownProps) {
+  const activeCount = selected.length;
+
+  const toggle = (val: string) => {
+    onChange(
+      selected.includes(val)
+        ? selected.filter((s) => s !== val)
+        : [...selected, val]
+    );
+  };
+
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <button
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm border transition-all ${
+            activeCount > 0
+              ? 'border-primary/40 bg-primary/10 text-primary'
+              : 'border-border/30 bg-secondary/30 text-muted-foreground hover:text-foreground hover:bg-secondary/50'
+          }`}
+        >
+          <Icon className="w-3.5 h-3.5" />
+          <span>{label}</span>
+          {activeCount > 0 && (
+            <span className="bg-primary/20 text-primary text-[10px] font-medium px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
+              {activeCount}
+            </span>
+          )}
+          <ChevronDown className="w-3 h-3 opacity-50" />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent align="start" className="w-52 p-2 bg-card border-border/50">
+        <div className="space-y-0.5 max-h-[240px] overflow-y-auto">
+          {options.map((opt) => (
+            <label
+              key={opt}
+              className="flex items-center gap-2.5 px-2 py-1.5 rounded-md hover:bg-secondary/50 cursor-pointer text-sm"
+            >
+              <Checkbox
+                checked={selected.includes(opt)}
+                onCheckedChange={() => toggle(opt)}
+                className="w-3.5 h-3.5"
+              />
+              <span className="text-foreground">{displayMap?.[opt] ?? opt}</span>
+            </label>
+          ))}
+        </div>
+        {activeCount > 0 && (
+          <button
+            onClick={() => onChange([])}
+            className="w-full mt-1.5 pt-1.5 border-t border-border/30 text-xs text-muted-foreground hover:text-foreground text-center py-1"
+          >
+            Сбросить
+          </button>
+        )}
+      </PopoverContent>
+    </Popover>
+  );
+}
+
 export function WorkspacePage() {
   const [view, setView] = useState<ViewMode>('table');
   const [search, setSearch] = useState('');
+  const [filterRegion, setFilterRegion] = useState<string[]>([]);
+  const [filterStatus, setFilterStatus] = useState<string[]>([]);
+  const [filterManager, setFilterManager] = useState<string[]>([]);
+  const [filterCategory, setFilterCategory] = useState<string[]>([]);
+  const [filterPriority, setFilterPriority] = useState<string[]>([]);
   const navigate = useNavigate();
 
-  const filtered = mockDeals.filter(
-    (d) =>
-      d.title.toLowerCase().includes(search.toLowerCase()) ||
-      d.company.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = mockDeals.filter((d) => {
+    if (search && !(d.title.toLowerCase().includes(search.toLowerCase()) || d.company.toLowerCase().includes(search.toLowerCase()))) return false;
+    if (filterRegion.length && !filterRegion.includes(d.region)) return false;
+    if (filterStatus.length && !filterStatus.includes(d.status)) return false;
+    if (filterManager.length && !filterManager.includes(d.manager.name)) return false;
+    if (filterCategory.length && !filterCategory.includes(d.category)) return false;
+    if (filterPriority.length && !filterPriority.includes(d.priority)) return false;
+    return true;
+  });
 
   const handleOpenDeal = (id: string) => navigate(`/project/${id}`);
 
-  // Summary stats
-  const totalAmount = mockDeals.reduce((s, d) => s + d.amount, 0);
-  const activeDeals = mockDeals.filter((d) => !['won', 'lost'].includes(d.status)).length;
-  const wonDeals = mockDeals.filter((d) => d.status === 'won').length;
+  const totalFilters = filterRegion.length + filterStatus.length + filterManager.length + filterCategory.length + filterPriority.length;
+
+  const clearAll = () => {
+    setFilterRegion([]);
+    setFilterStatus([]);
+    setFilterManager([]);
+    setFilterCategory([]);
+    setFilterPriority([]);
+  };
+
+  // Summary stats (based on filtered)
+  const totalAmount = filtered.reduce((s, d) => s + d.amount, 0);
+  const activeDeals = filtered.filter((d) => !['won', 'lost'].includes(d.status)).length;
+  const wonDeals = filtered.filter((d) => d.status === 'won').length;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -66,16 +167,71 @@ export function WorkspacePage() {
           </div>
         </div>
 
+        {/* Filters row */}
+        <div className="px-6 pb-2 flex items-center gap-2 flex-wrap">
+          <FilterDropdown
+            icon={MapPin}
+            label="Регион"
+            options={allRegions}
+            selected={filterRegion}
+            onChange={setFilterRegion}
+          />
+          <FilterDropdown
+            icon={Flag}
+            label="Статус"
+            options={allStatuses}
+            selected={filterStatus}
+            onChange={setFilterStatus}
+            displayMap={dealStatusLabels}
+          />
+          <FilterDropdown
+            icon={User}
+            label="Менеджер"
+            options={allManagers}
+            selected={filterManager}
+            onChange={setFilterManager}
+          />
+          <FilterDropdown
+            icon={Tag}
+            label="Категория"
+            options={allCategories}
+            selected={filterCategory}
+            onChange={setFilterCategory}
+          />
+          <FilterDropdown
+            icon={Flag}
+            label="Приоритет"
+            options={allPriorities.map((p) => p.value)}
+            selected={filterPriority}
+            onChange={setFilterPriority}
+            displayMap={Object.fromEntries(allPriorities.map((p) => [p.value, p.label]))}
+          />
+
+          {totalFilters > 0 && (
+            <button
+              onClick={clearAll}
+              className="flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <X className="w-3 h-3" />
+              Сбросить всё ({totalFilters})
+            </button>
+          )}
+        </div>
+
         {/* Stats + View Switcher */}
         <div className="px-6 pb-3 flex items-center justify-between">
           <div className="flex items-center gap-6 text-sm">
+            <div className="flex items-center gap-2">
+              <span className="text-muted-foreground">Найдено:</span>
+              <span className="font-medium text-foreground">{filtered.length}</span>
+            </div>
             <div className="flex items-center gap-2">
               <span className="text-muted-foreground">Активных:</span>
               <span className="font-medium text-foreground">{activeDeals}</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-muted-foreground">Выиграно:</span>
-              <span className="font-medium text-emerald-400">{wonDeals}</span>
+              <span className="font-medium text-node-completed">{wonDeals}</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-muted-foreground">Воронка:</span>
