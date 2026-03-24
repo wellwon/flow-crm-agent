@@ -1,5 +1,5 @@
-import { PipelinePage } from '@/components/pipeline/PipelinePage';
+import { WorkspacePage } from '@/components/workspace/WorkspacePage';
 
-const Index = () => <PipelinePage />;
+const Index = () => <WorkspacePage />;
 
 export default Index;
