@@ -1,6 +1,6 @@
 import { useCallback, useState, useRef, DragEvent } from 'react';
 import {
-  ReactFlow, Background, Controls, MiniMap,
+  ReactFlow, Background, MiniMap,
   useNodesState, useEdgesState, BackgroundVariant, SelectionMode,
   type NodeMouseHandler, type EdgeMouseHandler,
   useReactFlow, ReactFlowProvider,
