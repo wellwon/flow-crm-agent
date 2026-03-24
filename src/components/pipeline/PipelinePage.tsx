@@ -259,63 +259,66 @@ function PipelinePageInner() {
             deleteKeyCode={['Backspace', 'Delete']}
           >
             <Background variant={BackgroundVariant.Dots} gap={24} size={1} color="hsl(220 15% 20%)" />
+            <MiniMap
+              pannable
+              zoomable
+              nodeColor={(n) => {
+                if (n.type === 'stickyNote') return 'hsl(48 96% 70%)';
+                const d = n.data as unknown as PipelineNodeData;
+                if (d.status === 'completed') return 'hsl(160 84% 39%)';
+                if (d.status === 'active') return 'hsl(38 92% 50%)';
+                if (d.status === 'error') return 'hsl(350 89% 60%)';
+                if (d.status === 'waiting') return 'hsl(174 55% 40%)';
+                return 'hsl(240 4% 46%)';
+              }}
+              className="!border !border-border/30 !rounded-t-2xl !rounded-b-none"
+              style={{
+                width: 200,
+                height: 120,
+                margin: 0,
+                bottom: 44,
+                right: 16,
+                background: 'hsl(222 20% 6% / 0.85)',
+                backdropFilter: 'blur(24px)',
+              }}
+              maskColor="hsl(222 15% 6% / 0.6)"
+            />
             {/* Phase swim lanes */}
             {phasesVisible && <PhaseBackground nodes={nodes} />}
           </ReactFlow>
 
-          {/* Unified minimap + zoom panel */}
-          <div className="absolute bottom-4 right-4 z-20 glass-panel-dense rounded-2xl overflow-hidden flex flex-col" style={{ width: 200 }}>
-            {/* MiniMap container */}
-            <div className="relative w-full" style={{ height: 120 }}>
-              <MiniMap
-                pannable
-                zoomable
-                nodeColor={(n) => {
-                  if (n.type === 'stickyNote') return 'hsl(48 96% 70%)';
-                  const d = n.data as unknown as PipelineNodeData;
-                  if (d.status === 'completed') return 'hsl(160 84% 39%)';
-                  if (d.status === 'active') return 'hsl(38 92% 50%)';
-                  if (d.status === 'error') return 'hsl(350 89% 60%)';
-                  if (d.status === 'waiting') return 'hsl(174 55% 40%)';
-                  return 'hsl(240 4% 46%)';
-                }}
-                style={{
-                  position: 'relative',
-                  width: '100%',
-                  height: '100%',
-                  margin: 0,
-                  borderRadius: 0,
-                  background: 'hsl(222 20% 4% / 0.6)',
-                }}
-                maskColor="hsl(222 15% 6% / 0.6)"
-              />
-            </div>
-            {/* Divider */}
-            <div className="h-px bg-border/30" />
-            {/* Zoom controls */}
-            <div className="flex items-center justify-between px-2 py-1.5">
-              <button
-                onClick={() => zoomOut()}
-                className="w-8 h-8 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors text-lg font-bold"
-                title="Отдалить"
-              >
-                −
-              </button>
-              <button
-                onClick={() => fitView({ padding: 0.2 })}
-                className="w-8 h-8 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors"
-                title="Вместить всё"
-              >
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="1" y="1" width="12" height="12" rx="2" /><path d="M4 7h6M7 4v6" /></svg>
-              </button>
-              <button
-                onClick={() => zoomIn()}
-                className="w-8 h-8 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors text-lg font-bold"
-                title="Приблизить"
-              >
-                +
-              </button>
-            </div>
+          {/* Zoom controls — visually attached below minimap */}
+          <div
+            className="absolute z-20 flex items-center justify-between border border-t-0 border-border/30 rounded-b-2xl px-2 py-1.5"
+            style={{
+              bottom: 16,
+              right: 16,
+              width: 200,
+              background: 'hsl(222 20% 6% / 0.85)',
+              backdropFilter: 'blur(24px)',
+            }}
+          >
+            <button
+              onClick={() => zoomOut()}
+              className="w-8 h-8 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors text-lg font-bold"
+              title="Отдалить"
+            >
+              −
+            </button>
+            <button
+              onClick={() => fitView({ padding: 0.2 })}
+              className="w-8 h-8 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors"
+              title="Вместить всё"
+            >
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="1" y="1" width="12" height="12" rx="2" /><path d="M4 7h6M7 4v6" /></svg>
+            </button>
+            <button
+              onClick={() => zoomIn()}
+              className="w-8 h-8 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors text-lg font-bold"
+              title="Приблизить"
+            >
+              +
+            </button>
           </div>
         </>
       )}
