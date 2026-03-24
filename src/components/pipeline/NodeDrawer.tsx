@@ -29,7 +29,7 @@ const categoryLabels: Record<NodeCategory, string> = {
   system: 'Система',
 };
 
-export function NodeDrawer({ isOpen, onClose, data, nodeId }: NodeDrawerProps) {
+export function NodeDrawer({ isOpen, onClose, data, nodeId, onComplete, onDelete }: NodeDrawerProps) {
   const [activeTab, setActiveTab] = useState<DrawerTab>('details');
 
   const tabs: { id: DrawerTab; label: string; show: boolean }[] = [
