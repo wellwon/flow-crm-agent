@@ -14,11 +14,6 @@ interface NodePaletteProps {
   onAddSticky: (color: string, position: { x: number; y: number }) => void;
   interactionMode?: InteractionMode;
   onInteractionModeChange?: (mode: InteractionMode) => void;
-  onDeleteSelected?: () => void;
-  onZoomIn?: () => void;
-  onZoomOut?: () => void;
-  onFitView?: () => void;
-  hasSelection?: boolean;
 }
 
 interface PaletteItem {
