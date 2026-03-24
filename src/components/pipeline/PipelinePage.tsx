@@ -268,6 +268,7 @@ function PipelinePageInner() {
       {activeView === 'list' && <ListView nodes={nodes} onNodeSelect={handleNodeSelect} />}
       {activeView === 'kanban' && <KanbanView nodes={nodes} onNodeSelect={handleNodeSelect} onStatusChange={handleStatusChange} />}
       {activeView === 'timeline' && <TimelineView nodes={nodes} onNodeSelect={handleNodeSelect} />}
+      {activeView === 'dashboard' && <DashboardView nodes={nodes} />}
 
       <NodeDrawer
         isOpen={!!selectedNode}

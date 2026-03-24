@@ -11,6 +11,7 @@ interface TopToolbarProps {
 }
 
 const views: { id: ViewMode; label: string; icon: React.ElementType }[] = [
+  { id: 'dashboard', label: 'Дашборд', icon: BarChart3 },
   { id: 'graph', label: 'Граф', icon: LayoutGrid },
   { id: 'list', label: 'Список', icon: List },
   { id: 'kanban', label: 'Kanban', icon: Columns3 },
