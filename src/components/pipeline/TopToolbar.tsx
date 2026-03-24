@@ -1,4 +1,4 @@
-import { Activity, TrendingUp, FileCheck, LayoutGrid, List, Columns3, GanttChart, Sun, Plus, Layers } from 'lucide-react';
+import { Activity, TrendingUp, FileCheck, LayoutGrid, List, Columns3, GanttChart, Sun, Plus, Layers, BarChart3 } from 'lucide-react';
 import type { ViewMode } from '@/types/pipeline';
 
 interface TopToolbarProps {
@@ -11,6 +11,7 @@ interface TopToolbarProps {
 }
 
 const views: { id: ViewMode; label: string; icon: React.ElementType }[] = [
+  { id: 'dashboard', label: 'Дашборд', icon: BarChart3 },
   { id: 'graph', label: 'Граф', icon: LayoutGrid },
   { id: 'list', label: 'Список', icon: List },
   { id: 'kanban', label: 'Kanban', icon: Columns3 },

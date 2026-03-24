@@ -16,6 +16,7 @@ import { JarvisCommandBar } from './JarvisCommandBar';
 import { MorningBriefing } from './MorningBriefing';
 import { ListView } from './ListView';
 import { KanbanView } from './KanbanView';
+import { DashboardView } from './DashboardView';
 import { TimelineView } from './TimelineView';
 import { CanvasContextMenu, type ContextMenuPosition } from './CanvasContextMenu';
 import { EdgeContextMenu } from './EdgeContextMenu';
@@ -267,6 +268,7 @@ function PipelinePageInner() {
       {activeView === 'list' && <ListView nodes={nodes} onNodeSelect={handleNodeSelect} />}
       {activeView === 'kanban' && <KanbanView nodes={nodes} onNodeSelect={handleNodeSelect} onStatusChange={handleStatusChange} />}
       {activeView === 'timeline' && <TimelineView nodes={nodes} onNodeSelect={handleNodeSelect} />}
+      {activeView === 'dashboard' && <DashboardView nodes={nodes} />}
 
       <NodeDrawer
         isOpen={!!selectedNode}
