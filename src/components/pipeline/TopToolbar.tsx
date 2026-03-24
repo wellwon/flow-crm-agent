@@ -1,4 +1,4 @@
-import { Activity, TrendingUp, FileCheck, LayoutGrid, List, Columns3, GanttChart, Sun, Plus, Layers } from 'lucide-react';
+import { Activity, TrendingUp, FileCheck, LayoutGrid, List, Columns3, GanttChart, Sun, Plus, Layers, BarChart3 } from 'lucide-react';
 import type { ViewMode } from '@/types/pipeline';
 
 interface TopToolbarProps {
