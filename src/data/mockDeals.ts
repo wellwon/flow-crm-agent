@@ -12,6 +12,8 @@ export interface Deal {
   nextStep: string;
   createdAt: string;
   priority: 'low' | 'medium' | 'high';
+  region: string;
+  category: string;
 }
 
 export const dealStatusLabels: Record<DealStatus, string> = {
@@ -38,47 +40,55 @@ export const mockDeals: Deal[] = [
     amount: 45_000_000, status: 'negotiation', progress: 72,
     manager: { name: 'Алексей К.', avatar: 'АК' }, deadline: '2026-04-15',
     nextStep: 'Согласование спецификации', createdAt: '2026-01-10', priority: 'high',
+    region: 'Москва', category: 'КТ',
   },
   {
     id: '2', title: 'МРТ GE SIGNA Premier', company: 'НМИЦ Кардиологии',
     amount: 78_000_000, status: 'proposal', progress: 45,
     manager: { name: 'Мария Л.', avatar: 'МЛ' }, deadline: '2026-05-01',
     nextStep: 'Подготовка КП', createdAt: '2026-02-05', priority: 'high',
+    region: 'Москва', category: 'МРТ',
   },
   {
     id: '3', title: 'УЗИ Philips EPIQ Elite', company: 'Клиника «Медси»',
     amount: 12_500_000, status: 'qualification', progress: 25,
     manager: { name: 'Дмитрий В.', avatar: 'ДВ' }, deadline: '2026-04-28',
     nextStep: 'Демонстрация оборудования', createdAt: '2026-03-01', priority: 'medium',
+    region: 'Санкт-Петербург', category: 'УЗИ',
   },
   {
     id: '4', title: 'Рентген-комплекс Carestream', company: 'Поликлиника №42',
     amount: 8_200_000, status: 'new', progress: 5,
     manager: { name: 'Алексей К.', avatar: 'АК' }, deadline: '2026-06-10',
     nextStep: 'Первичный контакт', createdAt: '2026-03-18', priority: 'low',
+    region: 'Казань', category: 'Рентген',
   },
   {
     id: '5', title: 'Ангиограф Philips Azurion', company: 'ФЦССХ Астрахань',
     amount: 120_000_000, status: 'negotiation', progress: 85,
     manager: { name: 'Мария Л.', avatar: 'МЛ' }, deadline: '2026-04-05',
     nextStep: 'Финальное согласование цены', createdAt: '2025-11-20', priority: 'high',
+    region: 'Астрахань', category: 'Ангиография',
   },
   {
     id: '6', title: 'Эндоскопическая стойка Olympus', company: 'ГКБ №31',
     amount: 6_800_000, status: 'won', progress: 100,
     manager: { name: 'Дмитрий В.', avatar: 'ДВ' }, deadline: '2026-03-20',
     nextStep: 'Поставка оборудования', createdAt: '2025-12-15', priority: 'medium',
+    region: 'Москва', category: 'Эндоскопия',
   },
   {
     id: '7', title: 'Лабораторный анализатор Roche', company: 'Инвитро',
     amount: 15_400_000, status: 'proposal', progress: 50,
     manager: { name: 'Алексей К.', avatar: 'АК' }, deadline: '2026-05-15',
     nextStep: 'Ревизия ТЗ', createdAt: '2026-02-20', priority: 'medium',
+    region: 'Новосибирск', category: 'Лаборатория',
   },
   {
     id: '8', title: 'Наркозный аппарат Dräger', company: 'РДКБ',
     amount: 3_200_000, status: 'lost', progress: 60,
     manager: { name: 'Мария Л.', avatar: 'МЛ' }, deadline: '2026-03-01',
     nextStep: '—', createdAt: '2026-01-05', priority: 'low',
+    region: 'Москва', category: 'Анестезиология',
   },
 ];
