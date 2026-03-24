@@ -48,6 +48,7 @@ function PipelinePageInner() {
   const [activeView, setActiveView] = useState<ViewMode>('graph');
   const [briefingOpen, setBriefingOpen] = useState(false);
   const [templateOpen, setTemplateOpen] = useState(false);
+  const [phasesVisible, setPhasesVisible] = useState(true);
   const [contextMenu, setContextMenu] = useState<ContextMenuPosition | null>(null);
   const [edgeMenu, setEdgeMenu] = useState<{ x: number; y: number; edgeId: string } | null>(null);
   const nextIdRef = useRef(200);
