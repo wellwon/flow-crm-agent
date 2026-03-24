@@ -226,7 +226,24 @@ function PipelinePageInner() {
 
       {activeView === 'graph' && (
         <>
-          <NodePalette onAddNode={addNode} onAddSticky={addSticky} />
+          <NodePalette
+            onAddNode={addNode}
+            onAddSticky={addSticky}
+            interactionMode={interactionMode}
+            onInteractionModeChange={setInteractionMode}
+            onDeleteSelected={() => {
+              const selected = nodes.filter(n => n.selected);
+              if (selected.length === 0) return;
+              const ids = new Set(selected.map(n => n.id));
+              setNodes(nds => nds.filter(n => !ids.has(n.id)));
+              setEdges(eds => eds.filter(e => !ids.has(e.source) && !ids.has(e.target)));
+              setSelectedNode(null);
+            }}
+            onZoomIn={() => zoomIn()}
+            onZoomOut={() => zoomOut()}
+            onFitView={() => fitView({ padding: 0.2 })}
+            hasSelection={nodes.some(n => n.selected)}
+          />
           <ReactFlow
             nodes={nodes}
             edges={edges}
@@ -241,11 +258,16 @@ function PipelinePageInner() {
             onDrop={onDrop}
             nodeTypes={nodeTypes}
             edgeTypes={edgeTypes}
+            panOnDrag={interactionMode === 'hand' ? [0] : [1, 2]}
+            selectionOnDrag={interactionMode === 'select'}
+            selectionMode={1}
+            selectNodesOnDrag={interactionMode === 'select'}
             fitView
             fitViewOptions={{ padding: 0.2 }}
             proOptions={{ hideAttribution: true }}
             minZoom={0.15}
             maxZoom={2}
+            deleteKeyCode={['Backspace', 'Delete']}
           >
             <Background variant={BackgroundVariant.Dots} gap={24} size={1} color="hsl(220 15% 20%)" />
             <Controls showInteractive={false} />
