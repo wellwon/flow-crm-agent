@@ -77,7 +77,7 @@ export function NodePalette({
 
   const groups = ['human_action', 'gate', 'ai_action', 'system', 'note'] as const;
 
-  const toolBtn = (active: boolean, onClick: () => void, icon: React.ElementType, label: string, danger = false) => {
+  const toolBtn = (active: boolean, onClick: () => void, icon: React.ElementType, label: string) => {
     const Icon = icon;
     return (
       <button
@@ -87,9 +87,7 @@ export function NodePalette({
         className={`flex items-center justify-center w-full py-2 rounded-lg transition-all ${
           active
             ? 'bg-primary/20 text-primary'
-            : danger
-              ? 'text-node-error/60 hover:bg-node-error/10 hover:text-node-error'
-              : 'text-muted-foreground hover:bg-muted/30 hover:text-foreground'
+            : 'text-muted-foreground hover:bg-muted/30 hover:text-foreground'
         }`}
       >
         <Icon className="w-4 h-4" />
