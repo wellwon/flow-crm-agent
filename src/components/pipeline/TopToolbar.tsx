@@ -17,7 +17,7 @@ const views: { id: ViewMode; label: string; icon: React.ElementType }[] = [
   { id: 'timeline', label: 'Timeline', icon: GanttChart },
 ];
 
-export function TopToolbar({ activeView = 'graph', onViewChange, onBriefingOpen, onTemplateOpen }: TopToolbarProps) {
+export function TopToolbar({ activeView = 'graph', onViewChange, onBriefingOpen, onTemplateOpen, phasesVisible = true, onTogglePhases }: TopToolbarProps) {
   return (
     <div className="absolute top-0 left-0 right-0 z-10 p-4">
       <div className="glass-panel px-5 py-3 flex items-center justify-between gap-4 flex-wrap">
