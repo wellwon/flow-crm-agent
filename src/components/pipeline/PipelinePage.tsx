@@ -1,7 +1,7 @@
 import { useCallback, useState, useRef, DragEvent } from 'react';
 import {
   ReactFlow, Background, Controls, MiniMap,
-  useNodesState, useEdgesState, BackgroundVariant,
+  useNodesState, useEdgesState, BackgroundVariant, SelectionMode,
   type NodeMouseHandler, type EdgeMouseHandler,
   useReactFlow, ReactFlowProvider,
 } from '@xyflow/react';
