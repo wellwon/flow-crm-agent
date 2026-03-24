@@ -20,7 +20,7 @@ import { DashboardView } from './DashboardView';
 import { TimelineView } from './TimelineView';
 import { CanvasContextMenu, type ContextMenuPosition } from './CanvasContextMenu';
 import { EdgeContextMenu } from './EdgeContextMenu';
-import { NodePalette } from './NodePalette';
+import { NodePalette, type InteractionMode } from './NodePalette';
 import { TemplateGallery } from './TemplateGallery';
 import { PhaseBackground } from './PhaseBackground';
 import { initialNodes, initialEdges } from '@/data/mockPipeline';
