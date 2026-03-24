@@ -107,7 +107,11 @@ function PipelinePageInner() {
   const addSticky = useCallback((color: string, position: { x: number; y: number }) => {
     const id = `sticky-${nextIdRef.current++}`;
     setNodes(nds => [...nds, {
-      id, type: 'stickyNote', position,
+      id,
+      type: 'stickyNote',
+      position,
+      dragHandle: '.sticky-drag-handle',
+      style: { width: 220, height: 140 },
       data: { text: '', color } as any,
     }]);
   }, [setNodes]);
