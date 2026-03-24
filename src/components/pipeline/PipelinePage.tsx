@@ -214,6 +214,8 @@ function PipelinePageInner() {
         onViewChange={setActiveView}
         onBriefingOpen={() => setBriefingOpen(true)}
         onTemplateOpen={() => setTemplateOpen(true)}
+        phasesVisible={phasesVisible}
+        onTogglePhases={() => setPhasesVisible(v => !v)}
       />
 
       {activeView === 'graph' && (
