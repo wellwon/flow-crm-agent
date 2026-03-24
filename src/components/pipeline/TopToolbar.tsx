@@ -1,10 +1,11 @@
-import { Activity, TrendingUp, FileCheck, LayoutGrid, List, Columns3, GanttChart, Sun } from 'lucide-react';
+import { Activity, TrendingUp, FileCheck, LayoutGrid, List, Columns3, GanttChart, Sun, Plus } from 'lucide-react';
 import type { ViewMode } from '@/types/pipeline';
 
 interface TopToolbarProps {
   activeView?: ViewMode;
   onViewChange?: (view: ViewMode) => void;
   onBriefingOpen?: () => void;
+  onTemplateOpen?: () => void;
 }
 
 const views: { id: ViewMode; label: string; icon: React.ElementType }[] = [
@@ -14,7 +15,7 @@ const views: { id: ViewMode; label: string; icon: React.ElementType }[] = [
   { id: 'timeline', label: 'Timeline', icon: GanttChart },
 ];
 
-export function TopToolbar({ activeView = 'graph', onViewChange, onBriefingOpen }: TopToolbarProps) {
+export function TopToolbar({ activeView = 'graph', onViewChange, onBriefingOpen, onTemplateOpen }: TopToolbarProps) {
   return (
     <div className="absolute top-0 left-0 right-0 z-10 p-4">
       <div className="glass-panel px-5 py-3 flex items-center justify-between gap-4 flex-wrap">
@@ -44,6 +45,15 @@ export function TopToolbar({ activeView = 'graph', onViewChange, onBriefingOpen 
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
+          {onTemplateOpen && (
+            <button
+              onClick={onTemplateOpen}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-mono font-medium border bg-primary/15 text-primary border-primary/20 hover:bg-primary/25 transition-colors"
+            >
+              <Plus className="w-3 h-3" />
+              Шаблон
+            </button>
+          )}
           {onBriefingOpen && (
             <button
               onClick={onBriefingOpen}
