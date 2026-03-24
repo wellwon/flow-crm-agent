@@ -1,4 +1,4 @@
-import { Activity, TrendingUp, FileCheck, LayoutGrid, List, Columns3, GanttChart, Sun, Plus, Layers, BarChart3 } from 'lucide-react';
+import { LayoutGrid, List, Columns3, GanttChart, Sun, Plus, Layers, BarChart3 } from 'lucide-react';
 import type { ViewMode } from '@/types/pipeline';
 
 interface TopToolbarProps {
@@ -51,52 +51,36 @@ export function TopToolbar({ activeView = 'graph', onViewChange, onBriefingOpen,
           {onTogglePhases && activeView === 'graph' && (
             <button
               onClick={onTogglePhases}
-              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-mono font-medium border transition-colors ${
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium border transition-colors ${
                 phasesVisible
                   ? 'bg-[hsl(265_80%_65%)/0.15] text-[hsl(265_80%_65%)] border-[hsl(265_80%_65%)/0.2] hover:bg-[hsl(265_80%_65%)/0.25]'
                   : 'bg-muted/30 text-muted-foreground border-border/30 hover:bg-muted/50'
               }`}
             >
-              <Layers className="w-3 h-3" />
+              <Layers className="w-3.5 h-3.5" />
               Фазы
             </button>
           )}
           {onTemplateOpen && (
             <button
               onClick={onTemplateOpen}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-mono font-medium border bg-primary/15 text-primary border-primary/20 hover:bg-primary/25 transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium border bg-primary/15 text-primary border-primary/20 hover:bg-primary/25 transition-colors"
             >
-              <Plus className="w-3 h-3" />
+              <Plus className="w-3.5 h-3.5" />
               Шаблон
             </button>
           )}
           {onBriefingOpen && (
             <button
               onClick={onBriefingOpen}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-mono font-medium border bg-node-active/15 text-node-active border-node-active/20 hover:bg-node-active/25 transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium border bg-node-active/15 text-node-active border-node-active/20 hover:bg-node-active/25 transition-colors"
             >
-              <Sun className="w-3 h-3" />
+              <Sun className="w-3.5 h-3.5" />
               Брифинг
             </button>
           )}
-          <Badge icon={<TrendingUp className="w-3 h-3" />} label="6.2М ₽" variant="emerald" />
-          <Badge icon={<Activity className="w-3 h-3" />} label="67% Win" variant="amber" />
-          <Badge icon={<FileCheck className="w-3 h-3" />} label="44-ФЗ" variant="blue" />
         </div>
       </div>
     </div>
-  );
-}
-
-function Badge({ icon, label, variant }: { icon: React.ReactNode; label: string; variant: 'emerald' | 'amber' | 'blue' }) {
-  const variantClasses = {
-    emerald: 'bg-node-completed/15 text-node-completed border-node-completed/20',
-    amber: 'bg-node-active/15 text-node-active border-node-active/20',
-    blue: 'bg-primary/15 text-primary border-primary/20',
-  };
-  return (
-    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-mono font-medium border ${variantClasses[variant]}`}>
-      {icon}{label}
-    </span>
   );
 }
