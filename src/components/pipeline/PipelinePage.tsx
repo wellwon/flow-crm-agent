@@ -259,10 +259,6 @@ function PipelinePageInner() {
             deleteKeyCode={['Backspace', 'Delete']}
           >
             <Background variant={BackgroundVariant.Dots} gap={24} size={1} color="hsl(220 15% 20%)" />
-            <Controls
-              showInteractive={false}
-              position="bottom-right"
-            />
             <MiniMap
               pannable
               zoomable
