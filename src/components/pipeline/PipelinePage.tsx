@@ -14,6 +14,7 @@ import { GlowingEdge } from './GlowingEdge';
 import { TopToolbar } from './TopToolbar';
 import { NodeDrawer } from './NodeDrawer';
 import { JarvisCommandBar } from './JarvisCommandBar';
+import { QuickActionsBar } from './QuickActionsBar';
 
 import { MorningBriefing } from './MorningBriefing';
 import { ListView } from './ListView';
