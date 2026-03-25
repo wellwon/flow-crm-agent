@@ -16,18 +16,18 @@ export function MorningBriefing({ isOpen, onClose }: MorningBriefingProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="absolute inset-0 z-30 flex items-center justify-center p-8"
+          className="fixed inset-0 z-50 flex items-center justify-center p-8"
         >
-          <div className="absolute inset-0 bg-background/60 backdrop-blur-sm" onClick={onClose} />
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={onClose} />
           <motion.div
-            initial={{ scale: 0.95, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.95, opacity: 0 }}
+            initial={{ scale: 0.95, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.95, opacity: 0, y: 20 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="relative glass-panel-dense w-full max-w-3xl max-h-[85vh] overflow-hidden flex flex-col"
+            className="relative matte-glass w-full max-w-3xl max-h-[85vh] overflow-hidden flex flex-col shadow-2xl"
           >
             {/* Header */}
-            <div className="p-5 border-b border-border/50 flex items-center justify-between">
+            <div className="p-5 border-b border-border flex items-center justify-between">
               <div>
                 <div className="flex items-center gap-2">
                   <span className="text-[10px] font-mono text-node-active uppercase tracking-wider">JARVIS · Утренний брифинг</span>
@@ -66,7 +66,7 @@ export function MorningBriefing({ isOpen, onClose }: MorningBriefingProps) {
                     { task: 'Ревью документов от Сергея', time: '~20 мин', draft: false },
                     { task: 'Заполнить отчёт по встрече с ЦРБ', time: '~15 мин', draft: true },
                   ].map((item, i) => (
-                    <div key={i} className="flex items-center gap-3 p-2.5 rounded-lg bg-background/40 border border-border/20 hover:border-primary/20 transition-colors cursor-pointer group">
+                    <div key={i} className="flex items-center gap-3 p-2.5 rounded-lg bg-muted border border-border hover:border-primary/30 transition-colors cursor-pointer group">
                       <span className="text-[11px] text-foreground flex-1">{item.task}</span>
                       {item.draft && <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[hsl(265_80%_65%)/0.15] text-[hsl(265_80%_65%)]">Черновик</span>}
                       <span className="text-[10px] text-muted-foreground font-mono">{item.time}</span>
@@ -86,7 +86,7 @@ export function MorningBriefing({ isOpen, onClose }: MorningBriefingProps) {
                     { eq: 'Рентген', city: 'Казань', amount: '2.8М ₽', deadline: '10 апр' },
                     { eq: 'МРТ', city: 'С-Пб', amount: '12М ₽', deadline: '20 апр' },
                   ].map((t, i) => (
-                    <div key={i} className="flex items-center gap-3 p-2 rounded-lg bg-background/40 border border-border/20">
+                    <div key={i} className="flex items-center gap-3 p-2 rounded-lg bg-muted border border-border">
                       <span className="text-[11px] text-foreground">{t.eq} — {t.city}</span>
                       <span className="text-[10px] font-mono text-node-completed ml-auto">{t.amount}</span>
                       <span className="text-[10px] font-mono text-muted-foreground">→ {t.deadline}</span>
@@ -112,7 +112,7 @@ export function MorningBriefing({ isOpen, onClose }: MorningBriefingProps) {
             </div>
 
             {/* Footer */}
-            <div className="p-4 border-t border-border/50 flex items-center gap-3">
+            <div className="p-4 border-t border-border flex items-center gap-3">
               <button className="flex-1 py-2.5 rounded-xl bg-node-completed text-primary-foreground text-xs font-semibold hover:brightness-110 transition-all">
                 Принять план дня
               </button>
@@ -131,7 +131,7 @@ function BriefingSection({ title, icon: Icon, iconColor, badge, children }: {
   title: string; icon: React.ElementType; iconColor: string; badge?: string; children: React.ReactNode;
 }) {
   return (
-    <div className="p-4 rounded-xl bg-background/30 border border-border/20">
+    <div className="p-4 rounded-xl bg-muted border border-border">
       <div className="flex items-center gap-2 mb-3">
         <Icon className={`w-4 h-4 ${iconColor}`} />
         <h3 className="text-[10px] font-mono text-foreground uppercase tracking-wider">{title}</h3>
@@ -144,7 +144,7 @@ function BriefingSection({ title, icon: Icon, iconColor, badge, children }: {
 
 function BriefingCard({ title, items, actions }: { title: string; items: string[]; actions: string[] }) {
   return (
-    <div className="p-3 rounded-lg bg-background/40 border border-node-error/20 mb-2">
+    <div className="p-3 rounded-lg bg-card border border-destructive/20 mb-2">
       <p className="text-[11px] font-semibold text-foreground mb-2">{title}</p>
       {items.map((item, i) => (
         <p key={i} className="text-[10px] text-muted-foreground">{item}</p>
@@ -160,7 +160,7 @@ function BriefingCard({ title, items, actions }: { title: string; items: string[
 
 function TeamRow({ name, status, detail }: { name: string; status: 'ok' | 'warning' | 'blocked'; detail: string }) {
   return (
-    <div className="flex items-center gap-3 p-2 rounded-lg bg-background/40 border border-border/20">
+    <div className="flex items-center gap-3 p-2 rounded-lg bg-muted border border-border">
       <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-semibold ${
         status === 'ok' ? 'bg-node-completed/20 text-node-completed' :
         status === 'warning' ? 'bg-node-active/20 text-node-active' :
