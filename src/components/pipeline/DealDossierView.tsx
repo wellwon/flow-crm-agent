@@ -820,8 +820,15 @@ function JarvisChat({ onCollapse }: { onCollapse: () => void }) {
   ];
 
   return (
-    <div className="w-[456px] shrink-0 flex flex-col matte-glass overflow-hidden sticky top-0 h-[calc(100vh-160px)]">
+    <div className="w-full flex flex-col matte-glass overflow-hidden sticky top-0 h-[calc(100vh-160px)]">
       <div className="px-4 py-3 border-b border-border flex items-center gap-2.5">
+        <button
+          onClick={onCollapse}
+          className="w-7 h-7 rounded-[8px] flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors shrink-0"
+          title="Свернуть JARVIS"
+        >
+          <PanelLeftClose className="w-4 h-4" />
+        </button>
         <div className="w-7 h-7 rounded-full bg-[hsl(265_80%_65%)/0.15] flex items-center justify-center">
           <Bot className="w-4 h-4 text-[hsl(265_80%_65%)]" />
         </div>
