@@ -48,10 +48,10 @@ const items: PaletteItem[] = [
 ];
 
 const categoryColors: Record<string, string> = {
-  human_action: 'text-primary',
+  human_action: 'text-sidebar-primary',
   gate: 'text-node-active',
   ai_action: 'text-[hsl(265_80%_65%)]',
-  system: 'text-muted-foreground',
+  system: 'text-sidebar-foreground/50',
   note: 'text-[hsl(48_80%_55%)]',
 };
 
@@ -77,44 +77,25 @@ export function NodePalette({
 
   const groups = ['human_action', 'gate', 'ai_action', 'system', 'note'] as const;
 
-  const toolBtn = (active: boolean, onClick: () => void, icon: React.ElementType, label: string) => {
-    const Icon = icon;
-    return (
-      <button
-        key={label}
-        onClick={onClick}
-        title={label}
-        className={`flex items-center justify-center w-full py-2 rounded-lg transition-all ${
-          active
-            ? 'bg-primary/20 text-primary'
-            : 'text-muted-foreground hover:bg-muted/30 hover:text-foreground'
-        }`}
-      >
-        <Icon className="w-4 h-4" />
-        {!collapsed && <span className="ml-2 text-[10px]">{label}</span>}
-      </button>
-    );
-  };
-
   return (
     <div className={`absolute left-4 top-[84px] bottom-4 z-10 transition-all duration-300 ${collapsed ? 'w-10' : 'w-[160px]'}`}>
-      <div className="h-full glass-panel-dark-dense overflow-hidden flex flex-col">
+      <div className="h-full pipeline-chrome-dense overflow-hidden flex flex-col">
         {/* Toggle */}
         <button
           onClick={() => setCollapsed(c => !c)}
-          className="p-2 flex items-center justify-center hover:bg-white/10 transition-colors border-b border-white/10"
+          className="p-2 flex items-center justify-center hover:bg-sidebar-accent/40 transition-colors border-b border-sidebar-border"
         >
-          {collapsed ? <ChevronRight className="w-3.5 h-3.5 text-slate-400" /> : <ChevronLeft className="w-3.5 h-3.5 text-slate-400" />}
+          {collapsed ? <ChevronRight className="w-3.5 h-3.5 text-sidebar-foreground/50" /> : <ChevronLeft className="w-3.5 h-3.5 text-sidebar-foreground/50" />}
         </button>
 
         {/* Interaction tools */}
-        <div className="px-1.5 py-2 border-b border-white/10">
+        <div className="px-1.5 py-2 border-b border-sidebar-border">
           <div className="flex gap-0.5">
             <button
               onClick={() => onInteractionModeChange?.('select')}
               title="Выделение"
               className={`flex-1 flex items-center justify-center py-2 rounded-lg transition-all ${
-                interactionMode === 'select' ? 'bg-primary/20 text-primary' : 'text-slate-400 hover:bg-white/10 hover:text-white'
+                interactionMode === 'select' ? 'bg-sidebar-primary/20 text-sidebar-primary' : 'text-sidebar-foreground/50 hover:bg-sidebar-accent/40 hover:text-sidebar-foreground'
               }`}
             >
               <MousePointer2 className="w-4 h-4" />
@@ -123,7 +104,7 @@ export function NodePalette({
               onClick={() => onInteractionModeChange?.('hand')}
               title="Рука"
               className={`flex-1 flex items-center justify-center py-2 rounded-lg transition-all ${
-                interactionMode === 'hand' ? 'bg-primary/20 text-primary' : 'text-slate-400 hover:bg-white/10 hover:text-white'
+                interactionMode === 'hand' ? 'bg-sidebar-primary/20 text-sidebar-primary' : 'text-sidebar-foreground/50 hover:bg-sidebar-accent/40 hover:text-sidebar-foreground'
               }`}
             >
               <Hand className="w-4 h-4" />
@@ -148,12 +129,12 @@ export function NodePalette({
                       key={item.type}
                       draggable
                       onDragStart={(e) => handleDragStart(e, item)}
-                      className="flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-grab active:cursor-grabbing hover:bg-white/10 transition-colors group"
+                      className="flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-grab active:cursor-grabbing hover:bg-sidebar-accent/40 transition-colors group"
                       title={item.label}
                     >
                       <item.icon className={`w-3.5 h-3.5 shrink-0 ${categoryColors[item.category]} group-hover:scale-110 transition-transform`} />
                       {!collapsed && (
-                        <span className="text-[10px] text-slate-300/80 truncate">{item.label}</span>
+                        <span className="text-[10px] text-sidebar-foreground/80 truncate">{item.label}</span>
                       )}
                     </div>
                   ))}
