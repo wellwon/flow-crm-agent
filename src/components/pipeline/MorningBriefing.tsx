@@ -144,7 +144,7 @@ function BriefingSection({ title, icon: Icon, iconColor, badge, children }: {
 
 function BriefingCard({ title, items, actions }: { title: string; items: string[]; actions: string[] }) {
   return (
-    <div className="p-3 rounded-lg bg-background/40 border border-node-error/20 mb-2">
+    <div className="p-3 rounded-lg bg-card border border-destructive/20 mb-2">
       <p className="text-[11px] font-semibold text-foreground mb-2">{title}</p>
       {items.map((item, i) => (
         <p key={i} className="text-[10px] text-muted-foreground">{item}</p>
