@@ -165,14 +165,14 @@ export function DashboardView({ nodes }: DashboardViewProps) {
             <div className="h-[220px]">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={stats.byPhase} barGap={4}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(220, 15%, 16%)" />
-                  <XAxis dataKey="label" tick={{ fill: 'hsl(215, 20%, 55%)', fontSize: 10 }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fill: 'hsl(215, 20%, 55%)', fontSize: 10 }} axisLine={false} tickLine={false} domain={[0, 100]} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                  <XAxis dataKey="label" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 10 }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 10 }} axisLine={false} tickLine={false} domain={[0, 100]} />
                   <Tooltip
-                    contentStyle={{ background: 'hsl(222, 20%, 8%)', border: '1px solid hsl(220, 15%, 16%)', borderRadius: 8, fontSize: 11 }}
-                    labelStyle={{ color: 'hsl(210, 40%, 96%)' }}
+                    contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: 8, fontSize: 11, color: 'hsl(var(--foreground))' }}
+                    labelStyle={{ color: 'hsl(var(--foreground))' }}
                   />
-                  <Bar dataKey="pct" name="Выполнено %" radius={[4, 4, 0, 0]} fill="hsl(174, 55%, 40%)" />
+                  <Bar dataKey="pct" name="Выполнено %" radius={[4, 4, 0, 0]} fill="hsl(var(--primary))" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -190,7 +190,7 @@ export function DashboardView({ nodes }: DashboardViewProps) {
                   <Pie data={stats.statusDist} cx="50%" cy="50%" innerRadius={50} outerRadius={80} dataKey="value" paddingAngle={3} strokeWidth={0}>
                     {stats.statusDist.map((s, i) => <Cell key={i} fill={s.color} />)}
                   </Pie>
-                  <Tooltip contentStyle={{ background: 'hsl(222, 20%, 8%)', border: '1px solid hsl(220, 15%, 16%)', borderRadius: 8, fontSize: 11 }} />
+                  <Tooltip contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: 8, fontSize: 11, color: 'hsl(var(--foreground))' }} />
                   <Legend iconType="circle" wrapperStyle={{ fontSize: 10 }} />
                 </PieChart>
               </ResponsiveContainer>
@@ -209,12 +209,12 @@ export function DashboardView({ nodes }: DashboardViewProps) {
             <div className="h-[200px]">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={stats.timeline}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(220, 15%, 16%)" />
-                  <XAxis dataKey="name" tick={{ fill: 'hsl(215, 20%, 55%)', fontSize: 9 }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fill: 'hsl(215, 20%, 55%)', fontSize: 10 }} axisLine={false} tickLine={false} domain={[0, 100]} />
-                  <Tooltip contentStyle={{ background: 'hsl(222, 20%, 8%)', border: '1px solid hsl(220, 15%, 16%)', borderRadius: 8, fontSize: 11 }} />
-                  <Area type="monotone" dataKey="target" name="План" stroke="hsl(220, 15%, 30%)" fill="hsl(220, 15%, 16%)" strokeDasharray="4 4" />
-                  <Area type="monotone" dataKey="progress" name="Факт" stroke="hsl(174, 55%, 40%)" fill="hsl(174, 55%, 40%)" fillOpacity={0.15} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                  <XAxis dataKey="name" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 9 }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 10 }} axisLine={false} tickLine={false} domain={[0, 100]} />
+                  <Tooltip contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: 8, fontSize: 11, color: 'hsl(var(--foreground))' }} />
+                  <Area type="monotone" dataKey="target" name="План" stroke="hsl(var(--muted-foreground))" fill="hsl(var(--muted))" strokeDasharray="4 4" />
+                  <Area type="monotone" dataKey="progress" name="Факт" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.15} />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
@@ -229,8 +229,8 @@ export function DashboardView({ nodes }: DashboardViewProps) {
             <div className="h-[200px]">
               <ResponsiveContainer width="100%" height="100%">
                 <RadarChart data={stats.radar} cx="50%" cy="50%" outerRadius="70%">
-                  <PolarGrid stroke="hsl(220, 15%, 16%)" />
-                  <PolarAngleAxis dataKey="metric" tick={{ fill: 'hsl(215, 20%, 55%)', fontSize: 9 }} />
+                  <PolarGrid stroke="hsl(var(--border))" />
+                  <PolarAngleAxis dataKey="metric" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 9 }} />
                   <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
                   <Radar dataKey="value" stroke="hsl(38, 92%, 50%)" fill="hsl(38, 92%, 50%)" fillOpacity={0.2} strokeWidth={2} />
                 </RadarChart>
