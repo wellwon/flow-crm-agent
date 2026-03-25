@@ -293,7 +293,7 @@ function PipelinePageInner() {
                     <div className="absolute z-20 bottom-4 right-4 flex items-center gap-1 matte-glass px-2 py-1.5">
                       <button
                         onClick={() => zoomOut()}
-                        className="w-7 h-7 flex items-center justify-center rounded-[8px] text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors text-lg font-bold"
+                        className="w-7 h-7 flex items-center justify-center rounded-[8px] text-muted-foreground hover:text-primary hover:bg-primary/10 active:bg-primary/20 transition-colors text-lg font-bold"
                         title="Отдалить"
                       >
                         −
