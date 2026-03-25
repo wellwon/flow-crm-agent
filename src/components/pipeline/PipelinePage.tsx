@@ -17,6 +17,7 @@ import { MorningBriefing } from './MorningBriefing';
 import { ListView } from './ListView';
 import { KanbanView } from './KanbanView';
 import { DashboardView } from './DashboardView';
+import { DealDossierView } from './DealDossierView';
 import { TimelineView } from './TimelineView';
 import { CanvasContextMenu, type ContextMenuPosition } from './CanvasContextMenu';
 import { EdgeContextMenu } from './EdgeContextMenu';
@@ -330,6 +331,11 @@ function PipelinePageInner() {
               {activeView === 'dashboard' && (
                 <div className="h-full overflow-y-auto p-6">
                   <DashboardView nodes={nodes} />
+                </div>
+              )}
+              {activeView === 'dossier' && (
+                <div className="h-full overflow-y-auto p-6">
+                  <DealDossierView />
                 </div>
               )}
             </main>

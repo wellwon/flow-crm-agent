@@ -80,4 +80,4 @@ export interface ActivityLogEntry {
   type: 'ai' | 'human' | 'system';
 }
 
-export type ViewMode = 'graph' | 'list' | 'kanban' | 'timeline' | 'dashboard';
+export type ViewMode = 'graph' | 'list' | 'kanban' | 'timeline' | 'dashboard' | 'dossier';
