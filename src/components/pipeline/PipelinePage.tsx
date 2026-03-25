@@ -22,6 +22,7 @@ import { KanbanView } from './KanbanView';
 import { DashboardView } from './DashboardView';
 import { DealDossierView } from './DealDossierView';
 import { TimelineView } from './TimelineView';
+import { QuickActionsBar } from './QuickActionsBar';
 import { CanvasContextMenu, type ContextMenuPosition } from './CanvasContextMenu';
 import { EdgeContextMenu } from './EdgeContextMenu';
 import { NodePalette, type InteractionMode } from './NodePalette';
