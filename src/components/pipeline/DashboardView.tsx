@@ -209,12 +209,12 @@ export function DashboardView({ nodes }: DashboardViewProps) {
             <div className="h-[200px]">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={stats.timeline}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(220, 15%, 16%)" />
-                  <XAxis dataKey="name" tick={{ fill: 'hsl(215, 20%, 55%)', fontSize: 9 }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fill: 'hsl(215, 20%, 55%)', fontSize: 10 }} axisLine={false} tickLine={false} domain={[0, 100]} />
-                  <Tooltip contentStyle={{ background: 'hsl(222, 20%, 8%)', border: '1px solid hsl(220, 15%, 16%)', borderRadius: 8, fontSize: 11 }} />
-                  <Area type="monotone" dataKey="target" name="План" stroke="hsl(220, 15%, 30%)" fill="hsl(220, 15%, 16%)" strokeDasharray="4 4" />
-                  <Area type="monotone" dataKey="progress" name="Факт" stroke="hsl(174, 55%, 40%)" fill="hsl(174, 55%, 40%)" fillOpacity={0.15} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                  <XAxis dataKey="name" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 9 }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 10 }} axisLine={false} tickLine={false} domain={[0, 100]} />
+                  <Tooltip contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: 8, fontSize: 11, color: 'hsl(var(--foreground))' }} />
+                  <Area type="monotone" dataKey="target" name="План" stroke="hsl(var(--muted-foreground))" fill="hsl(var(--muted))" strokeDasharray="4 4" />
+                  <Area type="monotone" dataKey="progress" name="Факт" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.15} />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
