@@ -541,8 +541,19 @@ export function DealDossierView() {
         </motion.div>
       </motion.div>
 
-      {/* ═══ RIGHT: INFO SIDEBAR ═══ */}
-      <DossierInfoSidebar data={d} selectedStep={selectedStep} onClose={() => setSelectedStep(null)} />
+      {/* ═══ RIGHT: TASKS + TIMELINE SIDEBAR ═══ */}
+      <TasksTimelineSidebar data={d} />
+
+      {/* ═══ STEP DETAIL POPUP (overlay on center) ═══ */}
+      <AnimatePresence>
+        {selectedStep !== null && stepDetails[selectedStep] && (
+          <StepDetailPopup
+            step={d.pipeline[selectedStep]}
+            details={stepDetails[selectedStep]}
+            onClose={() => setSelectedStep(null)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
