@@ -1,24 +1,28 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LayoutGrid, List, Kanban, CalendarDays, Plus, Search, X, MapPin, Tag, User, Flag, ChevronDown, Sun, Moon, Brain } from 'lucide-react';
+import { LayoutGrid, List, Kanban, CalendarDays, Plus, Search, X, MapPin, Tag, User, Flag, ChevronDown, Sun, Moon, Brain, Activity } from 'lucide-react';
 import { mockDeals, dealStatusLabels, type DealStatus, type Deal } from '@/data/mockDeals';
 import { DealsTableView } from './DealsTableView';
 import { DealsKanbanView } from './DealsKanbanView';
 import { DealsGridView } from './DealsGridView';
 import { DealsTimelineView } from './DealsTimelineView';
+import { DealsHealthMap } from './DealsHealthMap';
 import { JarvisArchitecturePage } from './JarvisArchitecturePage';
+import { TimelineRibbon } from './TimelineRibbon';
+import { NotificationCenter } from './NotificationCenter';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Checkbox } from '@/components/ui/checkbox';
 
-type ViewMode = 'table' | 'kanban' | 'grid' | 'timeline' | 'jarvis';
+type ViewMode = 'table' | 'kanban' | 'grid' | 'timeline' | 'health' | 'jarvis';
 
 const views: { id: ViewMode; label: string; icon: React.ElementType }[] = [
   { id: 'table', label: 'Таблица', icon: List },
   { id: 'kanban', label: 'Kanban', icon: Kanban },
   { id: 'grid', label: 'Карточки', icon: LayoutGrid },
   { id: 'timeline', label: 'Timeline', icon: CalendarDays },
+  { id: 'health', label: 'Health', icon: Activity },
   { id: 'jarvis', label: 'JARVIS', icon: Brain },
 ];
 
@@ -186,6 +190,7 @@ export function WorkspacePage() {
                 </span>
               </div>
               <div className="flex items-center gap-3">
+                <NotificationCenter />
                 <button
                   onClick={toggleTheme}
                   className="p-2 rounded-[10px] text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
@@ -284,12 +289,16 @@ export function WorkspacePage() {
             </div>
           </header>
 
+          {/* Timeline Ribbon */}
+          {!isJarvisView && view !== 'health' && <TimelineRibbon />}
+
           {/* Content */}
           <main className="flex-1 p-6 overflow-auto">
             {view === 'table' && <DealsTableView deals={filtered} onOpenDeal={handleOpenDeal} />}
             {view === 'kanban' && <DealsKanbanView deals={filtered} onOpenDeal={handleOpenDeal} onMoveDeal={handleMoveDeal} />}
             {view === 'grid' && <DealsGridView deals={filtered} onOpenDeal={handleOpenDeal} />}
             {view === 'timeline' && <DealsTimelineView deals={filtered} onOpenDeal={handleOpenDeal} />}
+            {view === 'health' && <DealsHealthMap deals={filtered} />}
             {view === 'jarvis' && <JarvisArchitecturePage />}
           </main>
         </div>

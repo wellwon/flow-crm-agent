@@ -14,6 +14,7 @@ import { GlowingEdge } from './GlowingEdge';
 import { TopToolbar } from './TopToolbar';
 import { NodeDrawer } from './NodeDrawer';
 import { JarvisCommandBar } from './JarvisCommandBar';
+import { QuickActionsBar } from './QuickActionsBar';
 
 import { MorningBriefing } from './MorningBriefing';
 import { ListView } from './ListView';
@@ -338,8 +339,11 @@ function PipelinePageInner() {
                   </div>
                 )}
                 {activeView === 'dossier' && (
-                  <div className="h-full p-5">
-                    <DealDossierView />
+                  <div className="h-full flex flex-col overflow-hidden">
+                    <QuickActionsBar />
+                    <div className="flex-1 p-5 overflow-auto">
+                      <DealDossierView />
+                    </div>
                   </div>
                 )}
               </main>
