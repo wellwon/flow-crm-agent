@@ -98,7 +98,7 @@ export function NodePalette({
 
   return (
     <div className={`absolute left-4 top-[84px] bottom-4 z-10 transition-all duration-300 ${collapsed ? 'w-10' : 'w-[160px]'}`}>
-      <div className="h-full glass-panel-dense overflow-hidden flex flex-col">
+      <div className="h-full glass-panel-dark-dense overflow-hidden flex flex-col">
         {/* Toggle */}
         <button
           onClick={() => setCollapsed(c => !c)}
