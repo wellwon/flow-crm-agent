@@ -190,7 +190,7 @@ export function DashboardView({ nodes }: DashboardViewProps) {
                   <Pie data={stats.statusDist} cx="50%" cy="50%" innerRadius={50} outerRadius={80} dataKey="value" paddingAngle={3} strokeWidth={0}>
                     {stats.statusDist.map((s, i) => <Cell key={i} fill={s.color} />)}
                   </Pie>
-                  <Tooltip contentStyle={{ background: 'hsl(222, 20%, 8%)', border: '1px solid hsl(220, 15%, 16%)', borderRadius: 8, fontSize: 11 }} />
+                  <Tooltip contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: 8, fontSize: 11, color: 'hsl(var(--foreground))' }} />
                   <Legend iconType="circle" wrapperStyle={{ fontSize: 10 }} />
                 </PieChart>
               </ResponsiveContainer>
