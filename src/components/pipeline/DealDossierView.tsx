@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import {
@@ -9,6 +9,7 @@ import {
   CircleDot, Send, ListChecks, ArrowRight, Sparkles,
   Package, Activity, ArrowLeft, Truck, Wrench, Scale, Briefcase,
   TrendingUp, CreditCard, Banknote, UserCheck,
+  PanelLeftClose, PanelLeftOpen, PanelRightClose, PanelRightOpen,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { QuickActionsBar } from './QuickActionsBar';
@@ -38,46 +39,107 @@ const item = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transiti
 /* ═══ MAIN COMPONENT                      ═══ */
 /* ═══════════════════════════════════════════ */
 
+/* ═══ Hook: responsive panel state ═══ */
+function useResponsivePanels() {
+  const isNarrow = typeof window !== 'undefined' && window.innerWidth < 1600;
+  const [leftOpen, setLeftOpen] = useState(!isNarrow);
+  const [rightOpen, setRightOpen] = useState(!isNarrow);
+
+  useEffect(() => {
+    const onResize = () => {
+      const narrow = window.innerWidth < 1600;
+      if (narrow) {
+        setLeftOpen(false);
+        setRightOpen(false);
+      }
+    };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  return { leftOpen, setLeftOpen, rightOpen, setRightOpen };
+}
+
 export function DealDossierView() {
   const d = projectData;
   const [selectedDealId, setSelectedDealId] = useState<string | null>(null);
+  const { leftOpen, setLeftOpen, rightOpen, setRightOpen } = useResponsivePanels();
 
   const selectedDeal = selectedDealId ? d.deals.find(dl => dl.id === selectedDealId) ?? null : null;
 
   return (
-    <div className="flex gap-5 h-full">
-      {/* ═══ LEFT: JARVIS CHAT ═══ */}
-      <JarvisChat />
+    <div className="flex gap-0 h-full">
+      {/* ═══ LEFT: JARVIS CHAT (collapsible) ═══ */}
+      <div className={`shrink-0 flex flex-col transition-all duration-300 ease-in-out ${leftOpen ? 'w-[340px] 2xl:w-[400px]' : 'w-[44px]'}`}>
+        {leftOpen ? (
+          <JarvisChat onCollapse={() => setLeftOpen(false)} />
+        ) : (
+          <CollapsedPanel side="left" onExpand={() => setLeftOpen(true)} icon={Bot} label="JARVIS" />
+        )}
+      </div>
 
       {/* ═══ CENTER: CONTENT ═══ */}
-      <AnimatePresence mode="wait">
-        {selectedDeal ? (
-          <motion.div
-            key={`deal-${selectedDeal.id}`}
-            initial={{ opacity: 0, x: 40 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -40 }}
-            transition={{ duration: 0.3 }}
-            className="flex-1 min-w-0 pb-8 overflow-y-auto pr-1"
-          >
-            <DealScreen deal={selectedDeal} onBack={() => setSelectedDealId(null)} />
-          </motion.div>
-        ) : (
-          <motion.div
-            key="project"
-            initial={{ opacity: 0, x: -40 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 40 }}
-            transition={{ duration: 0.3 }}
-            className="flex-1 min-w-0 pb-8 overflow-y-auto pr-1"
-          >
-            <ProjectScreen data={d} onSelectDeal={setSelectedDealId} />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <div className="flex-1 min-w-0 mx-2">
+        <AnimatePresence mode="wait">
+          {selectedDeal ? (
+            <motion.div
+              key={`deal-${selectedDeal.id}`}
+              initial={{ opacity: 0, x: 40 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -40 }}
+              transition={{ duration: 0.3 }}
+              className="h-full pb-8 overflow-y-auto pr-1"
+            >
+              <DealScreen deal={selectedDeal} onBack={() => setSelectedDealId(null)} />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="project"
+              initial={{ opacity: 0, x: -40 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 40 }}
+              transition={{ duration: 0.3 }}
+              className="h-full pb-8 overflow-y-auto pr-1"
+            >
+              <ProjectScreen data={d} onSelectDeal={setSelectedDealId} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
 
-      {/* ═══ RIGHT: AGGREGATED SIDEBAR ═══ */}
-      <AggregatedSidebar data={d} selectedDealId={selectedDealId} />
+      {/* ═══ RIGHT: AGGREGATED SIDEBAR (collapsible) ═══ */}
+      <div className={`shrink-0 flex flex-col transition-all duration-300 ease-in-out ${rightOpen ? 'w-[340px] 2xl:w-[400px]' : 'w-[44px]'}`}>
+        {rightOpen ? (
+          <AggregatedSidebar data={d} selectedDealId={selectedDealId} onCollapse={() => setRightOpen(false)} />
+        ) : (
+          <CollapsedPanel side="right" onExpand={() => setRightOpen(true)} icon={ListChecks} label="Задачи" />
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════ */
+/* ═══ COLLAPSED PANEL STRIP              ═══ */
+/* ═══════════════════════════════════════════ */
+
+function CollapsedPanel({ side, onExpand, icon: Icon, label }: {
+  side: 'left' | 'right'; onExpand: () => void; icon: React.ElementType; label: string;
+}) {
+  const ExpandIcon = side === 'left' ? PanelLeftOpen : PanelRightOpen;
+  return (
+    <div className="h-[calc(100vh-160px)] matte-glass flex flex-col items-center py-3 gap-3">
+      <button
+        onClick={onExpand}
+        className="w-8 h-8 rounded-[8px] flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+        title={`Открыть ${label}`}
+      >
+        <ExpandIcon className="w-4 h-4" />
+      </button>
+      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+        <Icon className="w-4 h-4 text-primary" />
+      </div>
+      <span className="text-[9px] text-muted-foreground font-mono [writing-mode:vertical-lr] rotate-180 mt-2">{label}</span>
     </div>
   );
 }
@@ -554,7 +616,7 @@ function TimelineList({ entries }: { entries: TimelineEntry[] }) {
 /* ═══ AGGREGATED SIDEBAR                 ═══ */
 /* ═══════════════════════════════════════════ */
 
-function AggregatedSidebar({ data, selectedDealId }: { data: ProjectData; selectedDealId: string | null }) {
+function AggregatedSidebar({ data, selectedDealId, onCollapse }: { data: ProjectData; selectedDealId: string | null; onCollapse: () => void }) {
   const [tab, setTab] = useState<'tasks' | 'timeline'>('tasks');
 
   const allTasks: (ProjectTask & { source: string })[] = [
@@ -575,9 +637,16 @@ function AggregatedSidebar({ data, selectedDealId }: { data: ProjectData; select
     : allTimeline;
 
   return (
-    <div className="w-[456px] shrink-0 flex flex-col matte-glass overflow-hidden sticky top-0 h-[calc(100vh-160px)]">
-      {/* Tabs */}
+    <div className="w-full flex flex-col matte-glass overflow-hidden sticky top-0 h-[calc(100vh-160px)]">
+      {/* Header with collapse */}
       <div className="px-3 pt-3 pb-0 flex gap-1">
+        <button
+          onClick={onCollapse}
+          className="w-8 h-8 rounded-[8px] flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors shrink-0"
+          title="Свернуть"
+        >
+          <PanelRightClose className="w-4 h-4" />
+        </button>
         <button
           onClick={() => setTab('tasks')}
           className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-t-[10px] text-[11px] font-semibold transition-colors ${
@@ -718,7 +787,7 @@ function AggregatedSidebar({ data, selectedDealId }: { data: ProjectData; select
 /* ═══ JARVIS CHAT                        ═══ */
 /* ═══════════════════════════════════════════ */
 
-function JarvisChat() {
+function JarvisChat({ onCollapse }: { onCollapse: () => void }) {
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
   const [input, setInput] = useState('');
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -751,8 +820,15 @@ function JarvisChat() {
   ];
 
   return (
-    <div className="w-[456px] shrink-0 flex flex-col matte-glass overflow-hidden sticky top-0 h-[calc(100vh-160px)]">
+    <div className="w-full flex flex-col matte-glass overflow-hidden sticky top-0 h-[calc(100vh-160px)]">
       <div className="px-4 py-3 border-b border-border flex items-center gap-2.5">
+        <button
+          onClick={onCollapse}
+          className="w-7 h-7 rounded-[8px] flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors shrink-0"
+          title="Свернуть JARVIS"
+        >
+          <PanelLeftClose className="w-4 h-4" />
+        </button>
         <div className="w-7 h-7 rounded-full bg-[hsl(265_80%_65%)/0.15] flex items-center justify-center">
           <Bot className="w-4 h-4 text-[hsl(265_80%_65%)]" />
         </div>
