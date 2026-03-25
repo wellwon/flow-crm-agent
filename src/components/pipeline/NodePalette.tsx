@@ -102,7 +102,7 @@ export function NodePalette({
         {/* Toggle */}
         <button
           onClick={() => setCollapsed(c => !c)}
-          className="p-2 flex items-center justify-center hover:bg-muted/30 transition-colors border-b border-border/30"
+          className="p-2 flex items-center justify-center hover:bg-muted/30 transition-colors border-b border-border"
         >
           {collapsed ? <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" /> : <ChevronLeft className="w-3.5 h-3.5 text-muted-foreground" />}
         </button>
