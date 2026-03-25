@@ -333,6 +333,11 @@ function PipelinePageInner() {
                   <DashboardView nodes={nodes} />
                 </div>
               )}
+              {activeView === 'dossier' && (
+                <div className="h-full overflow-y-auto p-6">
+                  <DealDossierView />
+                </div>
+              )}
             </main>
           </div>
         </div>
