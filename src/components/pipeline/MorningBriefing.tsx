@@ -131,7 +131,7 @@ function BriefingSection({ title, icon: Icon, iconColor, badge, children }: {
   title: string; icon: React.ElementType; iconColor: string; badge?: string; children: React.ReactNode;
 }) {
   return (
-    <div className="p-4 rounded-xl bg-background/30 border border-border/20">
+    <div className="p-4 rounded-xl bg-muted border border-border">
       <div className="flex items-center gap-2 mb-3">
         <Icon className={`w-4 h-4 ${iconColor}`} />
         <h3 className="text-[10px] font-mono text-foreground uppercase tracking-wider">{title}</h3>
