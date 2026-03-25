@@ -33,6 +33,31 @@ export interface TimelineEntry {
   dealId: string | null;
 }
 
+export interface Supplier {
+  name: string;
+  role: string; // e.g. "Основной вендор", "Логистика", "Сервис"
+  contactPerson: string;
+  phone: string;
+  email: string;
+  inn?: string;
+}
+
+export interface TeamMember {
+  name: string;
+  role: string; // e.g. "Менеджер", "Инженер", "Логист", "Юрист"
+  phone: string;
+  email: string;
+  avatar?: string;
+}
+
+export interface ProjectFinances {
+  totalBudget: number;
+  dealsTotal: number;
+  marginPercent: number;
+  paidAmount: number;
+  pendingPayments: number;
+}
+
 export interface ProjectDeal {
   id: string;
   title: string;
@@ -59,12 +84,17 @@ export interface ProjectData {
     customer: string;
     fullName: string;
     inn: string;
+    ogrn: string;
+    address: string;
     region: string;
     category: string;
     manager: string;
     lastUpdated: string;
     contacts: { name: string; role: string; position: string; phone: string; email: string }[];
   };
+  suppliers: Supplier[];
+  team: TeamMember[];
+  finances: ProjectFinances;
   /** Project-level tasks (before any deal) */
   tasks: ProjectTask[];
   documents: ProjectDocument[];
@@ -105,6 +135,8 @@ export const projectData: ProjectData = {
     customer: 'ЦРБ Коломна',
     fullName: 'ОГБУЗ «Центральная районная больница г. Коломна»',
     inn: '5022012345',
+    ogrn: '1025002750320',
+    address: '140400, Московская обл., г. Коломна, ул. Октябрьской Революции, д. 318',
     region: 'Московская область',
     category: 'УЗИ',
     manager: 'Алексей М.',
@@ -114,6 +146,27 @@ export const projectData: ProjectData = {
       { name: 'Петрова А.С.', role: 'Техн. спец.', position: 'Нач. отд. УЗД', phone: '+7-926-xxx-xx-xx', email: 'petrova@crb.ru' },
       { name: 'Сидоров В.М.', role: 'Финансы', position: 'Главный бухгалтер', phone: '+7-915-xxx-xx-xx', email: 'sidorov@crb.ru' },
     ],
+  },
+
+  suppliers: [
+    { name: 'Mindray Medical International', role: 'Основной вендор', contactPerson: 'Ли Вэй', phone: '+7-495-xxx-xx-01', email: 'li.wei@mindray.com', inn: '7701234567' },
+    { name: 'ООО «МедТранс»', role: 'Логистика', contactPerson: 'Кузнецов П.А.', phone: '+7-499-xxx-xx-02', email: 'logistics@medtrans.ru', inn: '7722345678' },
+    { name: 'ООО «МедСервис Плюс»', role: 'Сервис и ПНР', contactPerson: 'Горохов Д.В.', phone: '+7-495-xxx-xx-03', email: 'service@medservice.ru', inn: '7733456789' },
+  ],
+
+  team: [
+    { name: 'Алексей М.', role: 'Менеджер проекта', phone: '+7-916-xxx-xx-10', email: 'aleksey@wellwon.ru' },
+    { name: 'Дмитрий В.', role: 'Инженер', phone: '+7-926-xxx-xx-11', email: 'dmitriy@wellwon.ru' },
+    { name: 'Ирина С.', role: 'Логист', phone: '+7-916-xxx-xx-12', email: 'irina@wellwon.ru' },
+    { name: 'Марина С.', role: 'Юрист', phone: '+7-495-xxx-xx-13', email: 'marina@wellwon.ru' },
+  ],
+
+  finances: {
+    totalBudget: 62_000_000,
+    dealsTotal: 62_000_000,
+    marginPercent: 18,
+    paidAmount: 8_000_000,
+    pendingPayments: 3_200_000,
   },
 
   // Project-level tasks (pre-deal phase)
