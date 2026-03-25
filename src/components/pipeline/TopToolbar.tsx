@@ -33,7 +33,7 @@ export function TopToolbar({ activeView = 'graph', onViewChange, onBriefingOpen,
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
-          <div className="w-px h-5 bg-border/30" />
+          <div className="w-px h-5 bg-border" />
           <div className="w-2 h-2 rounded-full bg-node-active animate-pulse" />
           <h1 className="text-sm font-semibold text-foreground">
             ОБ Коломна — 3× УЗИ Mindray DC-70
@@ -41,7 +41,7 @@ export function TopToolbar({ activeView = 'graph', onViewChange, onBriefingOpen,
         </div>
 
         {/* View switcher */}
-        <div className="flex items-center gap-1 bg-background/40 rounded-lg p-0.5">
+        <div className="flex items-center gap-1 bg-muted/30 rounded-[10px] p-0.5 border border-border">
           {views.map(v => (
             <button
               key={v.id}

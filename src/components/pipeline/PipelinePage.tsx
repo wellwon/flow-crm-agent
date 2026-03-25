@@ -210,10 +210,9 @@ function PipelinePageInner() {
   }, []);
 
   return (
-    <div className="w-screen h-screen bg-background relative overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none"
-        style={{ background: 'radial-gradient(ellipse at 50% 30%, hsl(200 60% 8%) 0%, hsl(222 15% 6%) 70%)' }}
-      />
+    <div className="w-screen h-screen relative overflow-hidden">
+      {/* Layer 0: Gradient background */}
+      <div className="fixed inset-0 z-0" style={{ background: 'var(--bg-gradient)' }} />
 
       <TopToolbar
         activeView={activeView}
@@ -258,7 +257,7 @@ function PipelinePageInner() {
             maxZoom={2}
             deleteKeyCode={['Backspace', 'Delete']}
           >
-            <Background variant={BackgroundVariant.Dots} gap={24} size={1} color="hsl(220 15% 20%)" />
+            <Background variant={BackgroundVariant.Dots} gap={24} size={1} color="hsl(var(--muted-foreground) / 0.2)" />
             <MiniMap
               pannable
               zoomable
@@ -271,17 +270,17 @@ function PipelinePageInner() {
                 if (d.status === 'waiting') return 'hsl(174 55% 40%)';
                 return 'hsl(240 4% 46%)';
               }}
-              className="!border !border-border/30 !rounded-t-2xl !rounded-b-none"
+              className="!border !border-border !rounded-t-2xl !rounded-b-none"
               style={{
                 width: 200,
                 height: 120,
                 margin: 0,
                 bottom: 44,
                 right: 16,
-                background: 'hsl(222 20% 6% / 0.85)',
+                background: 'hsl(var(--card) / 0.85)',
                 backdropFilter: 'blur(24px)',
               }}
-              maskColor="hsl(222 15% 6% / 0.6)"
+              maskColor="hsl(var(--background) / 0.6)"
             />
             {/* Phase swim lanes */}
             {phasesVisible && <PhaseBackground nodes={nodes} />}
@@ -289,12 +288,12 @@ function PipelinePageInner() {
 
           {/* Zoom controls — visually attached below minimap */}
           <div
-            className="absolute z-20 flex items-center justify-between border border-t-0 border-border/30 rounded-b-2xl px-2 py-1.5"
+            className="absolute z-20 flex items-center justify-between border border-t-0 border-border rounded-b-2xl px-2 py-1.5"
             style={{
               bottom: 16,
               right: 16,
               width: 200,
-              background: 'hsl(222 20% 6% / 0.85)',
+              background: 'hsl(var(--card) / 0.85)',
               backdropFilter: 'blur(24px)',
             }}
           >
