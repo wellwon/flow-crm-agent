@@ -229,8 +229,8 @@ export function DashboardView({ nodes }: DashboardViewProps) {
             <div className="h-[200px]">
               <ResponsiveContainer width="100%" height="100%">
                 <RadarChart data={stats.radar} cx="50%" cy="50%" outerRadius="70%">
-                  <PolarGrid stroke="hsl(220, 15%, 16%)" />
-                  <PolarAngleAxis dataKey="metric" tick={{ fill: 'hsl(215, 20%, 55%)', fontSize: 9 }} />
+                  <PolarGrid stroke="hsl(var(--border))" />
+                  <PolarAngleAxis dataKey="metric" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 9 }} />
                   <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
                   <Radar dataKey="value" stroke="hsl(38, 92%, 50%)" fill="hsl(38, 92%, 50%)" fillOpacity={0.2} strokeWidth={2} />
                 </RadarChart>
