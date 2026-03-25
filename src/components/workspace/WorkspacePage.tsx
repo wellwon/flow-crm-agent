@@ -190,6 +190,7 @@ export function WorkspacePage() {
                 </span>
               </div>
               <div className="flex items-center gap-3">
+                <NotificationCenter />
                 <button
                   onClick={toggleTheme}
                   className="p-2 rounded-[10px] text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
