@@ -193,7 +193,7 @@ export function WorkspacePage() {
                 <NotificationCenter />
                 <button
                   onClick={toggleTheme}
-                  className="p-2 rounded-[10px] text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+                  className="p-2 rounded-[10px] text-muted-foreground hover:text-primary hover:bg-primary/10 active:bg-primary/20 transition-colors"
                   title={isDark ? 'Светлая тема' : 'Тёмная тема'}
                 >
                   {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
