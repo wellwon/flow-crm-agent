@@ -289,12 +289,16 @@ export function WorkspacePage() {
             </div>
           </header>
 
+          {/* Timeline Ribbon */}
+          {!isJarvisView && view !== 'health' && <TimelineRibbon />}
+
           {/* Content */}
           <main className="flex-1 p-6 overflow-auto">
             {view === 'table' && <DealsTableView deals={filtered} onOpenDeal={handleOpenDeal} />}
             {view === 'kanban' && <DealsKanbanView deals={filtered} onOpenDeal={handleOpenDeal} onMoveDeal={handleMoveDeal} />}
             {view === 'grid' && <DealsGridView deals={filtered} onOpenDeal={handleOpenDeal} />}
             {view === 'timeline' && <DealsTimelineView deals={filtered} onOpenDeal={handleOpenDeal} />}
+            {view === 'health' && <DealsHealthMap deals={filtered} />}
             {view === 'jarvis' && <JarvisArchitecturePage />}
           </main>
         </div>
