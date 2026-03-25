@@ -243,7 +243,10 @@
 }
 
 .react-flow__minimap {
-  border-radius: 16px 16px 0 0 !important;
+  border-radius: var(--radius) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  box-shadow: var(--shadow-glass) !important;
+  overflow: hidden !important;
 }
 
 .react-flow__handle {
