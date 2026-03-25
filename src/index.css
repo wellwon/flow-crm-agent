@@ -57,7 +57,7 @@
 
   /* ===== DARK MODE (Design System v2) ===== */
   .dark {
-    --glass-opacity: 0.70;
+    --glass-opacity: 0.92;
 
     --background: 214 58% 9%;          /* #0a1625 */
     --foreground: 210 40% 98%;         /* #f8fafc */
