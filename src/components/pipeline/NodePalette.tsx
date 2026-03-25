@@ -108,7 +108,7 @@ export function NodePalette({
         </button>
 
         {/* Interaction tools */}
-        <div className="px-1.5 py-2 border-b border-border/30">
+        <div className="px-1.5 py-2 border-b border-border">
           <div className="flex gap-0.5">
             <button
               onClick={() => onInteractionModeChange?.('select')}

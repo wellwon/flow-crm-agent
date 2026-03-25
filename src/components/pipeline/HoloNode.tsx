@@ -50,7 +50,7 @@ function HoloNodeComponent({ data, selected }: NodeProps) {
       whileHover={{ scale: 1.04 }}
       transition={{ type: 'spring', stiffness: 400, damping: 25 }}
       className={`
-        relative w-[220px] rounded-xl border backdrop-blur-md bg-secondary/80
+        relative w-[220px] rounded-xl border backdrop-blur-md bg-card/90
         ${style.border} ${style.glow}
         ${selected ? 'ring-2 ring-primary/50' : ''}
         ${nodeData.status === 'skipped' ? 'opacity-50' : ''}
