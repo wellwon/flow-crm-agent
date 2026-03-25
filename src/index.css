@@ -127,8 +127,8 @@
   }
 
   .dark .matte-glass {
-    background: hsl(215 41% 14%);
-    border-color: hsl(0 0% 100% / 0.05);
+    background: hsl(200 38% 11%);
+    border-color: hsl(200 30% 18% / 0.6);
   }
 
   .main-content-panel {
