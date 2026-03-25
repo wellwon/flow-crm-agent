@@ -148,7 +148,7 @@ export function NodePalette({
                       key={item.type}
                       draggable
                       onDragStart={(e) => handleDragStart(e, item)}
-                      className="flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-grab active:cursor-grabbing hover:bg-muted/40 transition-colors group"
+                      className="flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-grab active:cursor-grabbing hover:bg-white/10 transition-colors group"
                       title={item.label}
                     >
                       <item.icon className={`w-3.5 h-3.5 shrink-0 ${categoryColors[item.category]} group-hover:scale-110 transition-transform`} />
