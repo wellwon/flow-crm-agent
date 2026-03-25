@@ -257,7 +257,7 @@ function PipelinePageInner() {
             maxZoom={2}
             deleteKeyCode={['Backspace', 'Delete']}
           >
-            <Background variant={BackgroundVariant.Dots} gap={24} size={1} color="hsl(220 15% 20%)" />
+            <Background variant={BackgroundVariant.Dots} gap={24} size={1} color="hsl(var(--muted-foreground) / 0.2)" />
             <MiniMap
               pannable
               zoomable
