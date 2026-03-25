@@ -17,6 +17,7 @@ import { MorningBriefing } from './MorningBriefing';
 import { ListView } from './ListView';
 import { KanbanView } from './KanbanView';
 import { DashboardView } from './DashboardView';
+import { DealDossierView } from './DealDossierView';
 import { TimelineView } from './TimelineView';
 import { CanvasContextMenu, type ContextMenuPosition } from './CanvasContextMenu';
 import { EdgeContextMenu } from './EdgeContextMenu';
