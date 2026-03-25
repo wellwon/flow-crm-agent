@@ -154,7 +154,10 @@ export function DealDossierView() {
 
   return (
     <div className="flex gap-5 h-full">
-      {/* ═══ LEFT: DOSSIER CONTENT ═══ */}
+      {/* ═══ LEFT: JARVIS CHAT ═══ */}
+      <JarvisChat />
+
+      {/* ═══ CENTER: DOSSIER CONTENT ═══ */}
       <motion.div variants={container} initial="hidden" animate="show" className="flex-1 min-w-0 space-y-5 pb-8 overflow-y-auto pr-1">
         {/* HERO HEADER */}
         <motion.div variants={item} className="matte-glass p-6 relative overflow-hidden">
@@ -537,8 +540,8 @@ export function DealDossierView() {
         </motion.div>
       </motion.div>
 
-      {/* ═══ RIGHT: JARVIS CHAT ═══ */}
-      <JarvisChat />
+      {/* ═══ RIGHT: INFO SIDEBAR ═══ */}
+      <DossierInfoSidebar data={d} />
     </div>
   );
 }
@@ -702,6 +705,151 @@ function getJarvisResponse(input: string): string {
     return '📋 **Подготовка к встрече:**\n\n**ЛПР:** Иванов И.И., зам. главврача\n**Техспец:** Петрова А.С., нач. УЗД\n\n**Ключевые моменты:**\n• Бюджет 6М утверждён\n• Конкурент GE — может дать ниже\n• Петрова хочет кардио-датчики — уточни\n• ТЗ готов, нужно согласовать\n\n💡 Рекомендую начать со сравнительной таблицы DC-80 vs GE — я уже подготовил.';
   }
   return '✨ Понял, работаю над этим. Обновлю досье когда будет готово.\n\nЧто-нибудь ещё по этой сделке?';
+}
+
+/* ═══ RIGHT INFO SIDEBAR ═══ */
+
+function DossierInfoSidebar({ data }: { data: typeof dossierData }) {
+  const d = data;
+  return (
+    <div className="w-[300px] shrink-0 flex flex-col matte-glass overflow-hidden sticky top-0 h-[calc(100vh-160px)]">
+      {/* Header */}
+      <div className="px-4 py-3 border-b border-border">
+        <div className="text-xs font-semibold text-foreground flex items-center gap-2">
+          <Activity className="w-4 h-4 text-primary" />
+          Обзор сделки
+        </div>
+        <div className="text-[9px] text-muted-foreground mt-0.5">{d.deal.customer} • {d.deal.id}</div>
+      </div>
+
+      <div className="flex-1 overflow-y-auto px-3 py-3 space-y-4">
+        {/* Progress */}
+        <div>
+          <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider mb-2">Прогресс</div>
+          <div className="flex items-center gap-2 mb-2">
+            <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
+              <div className="h-full bg-primary rounded-full transition-all" style={{ width: `${d.deal.progress}%` }} />
+            </div>
+            <span className="text-xs font-mono font-semibold text-foreground">{d.deal.progress}%</span>
+          </div>
+          <div className="flex gap-1">
+            {d.stages.map((s, i) => (
+              <div key={i} className={`flex-1 h-1.5 rounded-full ${s.done ? 'bg-primary' : 'bg-muted'}`} />
+            ))}
+          </div>
+        </div>
+
+        {/* Key metrics */}
+        <div>
+          <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider mb-2">Финансы</div>
+          <div className="space-y-1.5">
+            <div className="flex justify-between text-[11px]">
+              <span className="text-muted-foreground">Сумма</span>
+              <span className="font-mono font-semibold text-foreground">{fmt(d.finances.budget)}</span>
+            </div>
+            <div className="flex justify-between text-[11px]">
+              <span className="text-muted-foreground">Наша цена</span>
+              <span className="font-mono text-foreground">{fmt(d.finances.ourPrice)}</span>
+            </div>
+            <div className="flex justify-between text-[11px]">
+              <span className="text-muted-foreground">Маржа</span>
+              <span className="font-mono text-primary font-semibold">{d.finances.marginPct}%</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Risks */}
+        <div>
+          <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider mb-2">Риски</div>
+          <div className="space-y-1.5">
+            {d.risks.map((r, i) => (
+              <div key={i} className={`flex items-start gap-2 p-2 rounded-[8px] border text-[10px] ${
+                r.level === 'warning' ? 'bg-node-active/5 border-node-active/20' : 'bg-node-completed/5 border-node-completed/20'
+              }`}>
+                <span>{r.level === 'warning' ? '🟡' : '🟢'}</span>
+                <span className="text-foreground/90">{r.text}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Team */}
+        <div>
+          <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider mb-2">Команда</div>
+          <div className="space-y-1.5">
+            {d.team.map((m, i) => (
+              <div key={i} className="flex items-center gap-2 p-2 rounded-[8px] bg-muted/30 border border-border/50">
+                <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-semibold shrink-0 ${
+                  m.name === 'JARVIS' ? 'bg-[hsl(265_80%_65%)/0.15]' : 'bg-primary/15 text-primary'
+                }`}>
+                  {m.name === 'JARVIS' ? '🤖' : m.avatar}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-[10px] font-semibold text-foreground">{m.name}</div>
+                  <div className="text-[9px] text-muted-foreground">{m.role}</div>
+                </div>
+                <span className="text-[9px] font-mono text-muted-foreground">{m.done}/{m.tasks}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Documents quick list */}
+        <div>
+          <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider mb-2">Документы</div>
+          <div className="space-y-1">
+            {d.documents.map((doc, i) => (
+              <div key={i} className="flex items-center gap-2 p-1.5 rounded-[8px] bg-muted/30 border border-border/50 hover:border-primary/30 transition-colors cursor-pointer">
+                <Paperclip className="w-3 h-3 text-muted-foreground shrink-0" />
+                <span className="text-[10px] text-foreground truncate flex-1">{doc.name}</span>
+                <span className={`text-[8px] ${
+                  doc.status === 'sent' ? 'text-node-completed' : doc.status === 'ai-draft' ? 'text-[hsl(265_80%_65%)]' : 'text-muted-foreground/50'
+                }`}>
+                  {doc.status === 'sent' ? '✅' : doc.status === 'ai-draft' ? '🤖' : '⏳'}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Similar tenders */}
+        <div>
+          <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider mb-2">Похожие тендеры</div>
+          <div className="space-y-1.5">
+            {d.similarTenders.map((t, i) => (
+              <div key={i} className="p-2 rounded-[8px] bg-muted/30 border border-border/50 cursor-pointer hover:border-primary/30 transition-colors">
+                <div className="text-[10px] font-semibold text-foreground">{t.title}</div>
+                <div className="flex items-center justify-between mt-1">
+                  <span className="text-[9px] font-mono text-muted-foreground">{fmt(t.amount)}</span>
+                  <span className="text-[9px] font-mono text-primary font-semibold">{t.match}%</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Timeline */}
+        <div>
+          <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider mb-2">Хронология</div>
+          <div className="space-y-2">
+            {d.timeline.slice(0, 5).map((ev, i) => {
+              const IconEl = ev.icon === 'ai' ? Bot : ev.icon === 'system' ? Zap : MessageSquare;
+              const iconColor = ev.icon === 'ai' ? 'text-[hsl(265_80%_65%)]' : ev.icon === 'system' ? 'text-node-active' : 'text-primary';
+              return (
+                <div key={i} className="flex items-start gap-2">
+                  <IconEl className={`w-3 h-3 mt-0.5 shrink-0 ${iconColor}`} />
+                  <div>
+                    <p className="text-[10px] text-foreground/90">{ev.text}</p>
+                    <span className="text-[8px] font-mono text-muted-foreground/40">{ev.date}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 /* ─── Sub-components ─── */

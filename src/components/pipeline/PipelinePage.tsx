@@ -14,7 +14,7 @@ import { GlowingEdge } from './GlowingEdge';
 import { TopToolbar } from './TopToolbar';
 import { NodeDrawer } from './NodeDrawer';
 import { JarvisCommandBar } from './JarvisCommandBar';
-import { JarvisChatSidebar } from './JarvisChatSidebar';
+
 import { MorningBriefing } from './MorningBriefing';
 import { ListView } from './ListView';
 import { KanbanView } from './KanbanView';
@@ -222,10 +222,7 @@ function PipelinePageInner() {
 
           {/* Body: JARVIS chat left | content center | node drawer right */}
           <div className="flex-1 flex overflow-hidden">
-            {/* Left: JARVIS Chat */}
-            <JarvisChatSidebar />
-
-            {/* Center content area */}
+            {/* Main content area */}
             <div className="flex-1 flex overflow-hidden relative">
               {/* Sidebar palette — only in graph view */}
               {activeView === 'graph' && (
