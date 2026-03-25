@@ -221,7 +221,6 @@ function PipelinePageInner() {
             phasesVisible={phasesVisible}
             onTogglePhases={() => setPhasesVisible(v => !v)}
           />
-          <QuickActionsBar />
 
           {/* Body: JARVIS chat left | content center | node drawer right */}
           <div className="flex-1 flex overflow-hidden">
@@ -341,8 +340,11 @@ function PipelinePageInner() {
                   </div>
                 )}
                 {activeView === 'dossier' && (
-                  <div className="h-full p-5 overflow-auto">
-                    <DealDossierView />
+                  <div className="h-full overflow-auto flex flex-col">
+                    <QuickActionsBar />
+                    <div className="flex-1 p-5 overflow-auto">
+                      <DealDossierView />
+                    </div>
                   </div>
                 )}
               </main>
