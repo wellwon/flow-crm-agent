@@ -12,8 +12,7 @@ const actions = [
 
 export function QuickActionsBar() {
   return (
-    <div className="mx-5 mt-3 matte-glass px-4 py-2 flex items-center gap-1 overflow-x-auto">
-      <span className="text-[11px] text-muted-foreground font-medium mr-2 whitespace-nowrap">Быстрые действия</span>
+    <div className="matte-glass px-4 py-2 flex items-center gap-1 overflow-x-auto">
       {actions.map(a => (
         <button
           key={a.label}
