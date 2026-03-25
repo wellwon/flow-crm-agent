@@ -542,7 +542,7 @@ export function DealDossierView() {
       </motion.div>
 
       {/* ═══ RIGHT: INFO SIDEBAR ═══ */}
-      <DossierInfoSidebar data={d} />
+      <DossierInfoSidebar data={d} selectedStep={selectedStep} onClose={() => setSelectedStep(null)} />
     </div>
   );
 }
