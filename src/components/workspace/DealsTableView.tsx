@@ -14,17 +14,17 @@ interface Props {
 
 export function DealsTableView({ deals, onOpenDeal }: Props) {
   return (
-    <div className="glass-panel overflow-hidden">
+    <div className="rounded-xl overflow-hidden border border-border/30">
       <Table>
         <TableHeader>
-          <TableRow className="border-border/20 hover:bg-transparent">
-            <TableHead className="text-muted-foreground font-medium">Сделка</TableHead>
-            <TableHead className="text-muted-foreground font-medium">Статус</TableHead>
-            <TableHead className="text-muted-foreground font-medium text-right">Сумма</TableHead>
-            <TableHead className="text-muted-foreground font-medium">Прогресс</TableHead>
-            <TableHead className="text-muted-foreground font-medium">Менеджер</TableHead>
-            <TableHead className="text-muted-foreground font-medium">Дедлайн</TableHead>
-            <TableHead className="text-muted-foreground font-medium">Следующий шаг</TableHead>
+          <TableRow className="border-border/20 hover:bg-transparent bg-muted/20">
+            <TableHead className="text-muted-foreground font-medium text-xs">Сделка</TableHead>
+            <TableHead className="text-muted-foreground font-medium text-xs">Статус</TableHead>
+            <TableHead className="text-muted-foreground font-medium text-xs text-right">Сумма</TableHead>
+            <TableHead className="text-muted-foreground font-medium text-xs">Прогресс</TableHead>
+            <TableHead className="text-muted-foreground font-medium text-xs">Менеджер</TableHead>
+            <TableHead className="text-muted-foreground font-medium text-xs">Дедлайн</TableHead>
+            <TableHead className="text-muted-foreground font-medium text-xs">Следующий шаг</TableHead>
             <TableHead className="w-10" />
           </TableRow>
         </TableHeader>
@@ -33,11 +33,11 @@ export function DealsTableView({ deals, onOpenDeal }: Props) {
             <TableRow
               key={deal.id}
               onClick={() => onOpenDeal(deal.id)}
-              className="border-border/10 cursor-pointer hover:bg-primary/5 transition-colors group"
+              className="border-border/10 cursor-pointer hover:bg-muted/20 transition-colors group"
             >
               <TableCell>
                 <div>
-                  <div className="font-medium text-foreground">{deal.title}</div>
+                  <div className="font-medium text-foreground text-sm">{deal.title}</div>
                   <div className="text-xs text-muted-foreground">{deal.company}</div>
                 </div>
               </TableCell>

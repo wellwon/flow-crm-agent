@@ -18,7 +18,7 @@ export function DealsGridView({ deals, onOpenDeal }: Props) {
         <div
           key={deal.id}
           onClick={() => onOpenDeal(deal.id)}
-          className="glass-panel p-5 cursor-pointer hover:border-primary/30 hover:shadow-[0_0_24px_hsl(var(--primary)/0.12)] transition-all group flex flex-col"
+          className="bg-muted/20 border border-border/20 rounded-xl p-5 cursor-pointer hover:border-primary/30 hover:bg-muted/30 transition-all group flex flex-col"
         >
           <div className="flex items-start justify-between mb-3">
             <Badge variant="outline" className={`text-[10px] border ${dealStatusColors[deal.status]}`}>
