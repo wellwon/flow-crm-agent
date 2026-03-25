@@ -1,67 +1,101 @@
 
 
-# Implementation Plan: 4 New Features
+# Редизайн досье: Проект как главная страница + Сделки как отдельные экраны
 
-## Overview
-Adding Timeline Ribbon, Notification Center, Health Map, and Quick Actions Bar to the workspace and pipeline views.
+## Текущая проблема
 
-## 1. Timeline Ribbon — `src/components/workspace/TimelineRibbon.tsx` (NEW)
+Сейчас проект и сделки живут в одном аккордеоне — это сливается в кашу. Пользователь хочет четкое разделение: проект — это полноценная информативная страница с плашками данных, а каждая сделка — отдельный экран, на который переходишь и возвращаешься назад.
 
-Horizontal collapsible bar between header and main content in WorkspacePage. Shows deal deadlines on a 90-day axis:
-- SVG-based horizontal timeline with "today" marker line
-- Each deal = colored dot (by status) positioned proportionally on the axis
-- Tooltip on hover with deal name, amount, deadline
-- Click navigates to `/project/{id}`
-- Collapse/expand toggle
-- Uses `matte-glass` styling, month labels along axis
+---
 
-## 2. Notification Center — `src/components/workspace/NotificationCenter.tsx` (NEW)
+## Новая структура
 
-Bell icon button added to WorkspacePage header (next to theme toggle):
-- Badge with unread count
-- Popover with 3 groups: **Срочно** (overdue/errors), **Сегодня** (due within 3 days), **Информация** (status updates)
-- Notifications auto-generated from mockDeals data (overdue deadlines, approaching deadlines, won/lost deals)
-- Each notification: icon, text, timestamp, dismiss button
-- Mark all as read button
-- Design: `bg-card border-border rounded-[14px]` popover
+### Экран 1: Досье проекта (главная)
 
-## 3. Health Map — `src/components/workspace/DealsHealthMap.tsx` (NEW)
+Центральная колонка (между JARVIS и сайдбаром) содержит информационные блоки-плашки:
 
-New view mode `'health'` in WorkspacePage view switcher (Activity icon):
-- Grid of cells, each = one deal
-- Color determined by health score formula:
-  - Days to deadline weight + progress % weight + priority weight
-  - Green (healthy) / Yellow (at risk) / Red (critical) / Gray (won/lost)
-- Cell shows: company name, amount, small progress bar
-- Tooltip with full details on hover
-- Click → navigate to deal
-- Uses `matte-glass` for each cell
+```text
+┌─────────────────────────────────────────────────┐
+│  Quick Actions Bar  (градиент сверху)           │
+├─────────────────────────────────────────────────┤
+│  🏥 Заголовок проекта + ID, регион, категория   │
+├──────────────────────┬──────────────────────────┤
+│  КОНТРАГЕНТ          │  ПОСТАВЩИКИ / ВЕНДОРЫ    │
+│  Полное название     │  Mindray — основной      │
+│  ИНН / ОГРН          │  ООО "МедТранс" — логист │
+│  Адрес               │  Контакты менеджеров     │
+│  Контакты ЛПР        │                          │
+├──────────────────────┴──────────────────────────┤
+│  ФИНАНСОВЫЙ БЛОК                                │
+│  Общий бюджет | Сумма сделок | Маржа | Оплаты  │
+├──────────────────────┬──────────────────────────┤
+│  КОМАНДА ПРОЕКТА     │  ОБЩИЕ ЗАДАЧИ / ДЕЛА    │
+│  Менеджер, Инженер   │  Активные задачи проекта │
+│  Логист, Юрист       │  уровня (не по сделкам)  │
+├──────────────────────┴──────────────────────────┤
+│  СДЕЛКИ  (мини-таблица)                         │
+│  ┌─ D-52 УЗИ... │ 6M │ Подготовка │ →  ────┐   │
+│  ├─ D-53 КТ...  │18M │ Подана     │ →  ────┤   │
+│  ├─ D-54 Рентг. │ 9M │ Торги      │ →  ────┤   │
+│  └─ ... (клик → переход на экран сделки)        │
+├─────────────────────────────────────────────────┤
+│  ХРОНОЛОГИЯ + ДОКУМЕНТЫ проекта                 │
+└─────────────────────────────────────────────────┘
+```
 
-## 4. Quick Actions Bar — `src/components/pipeline/QuickActionsBar.tsx` (NEW)
+### Экран 2: Досье сделки (отдельный экран)
 
-Horizontal bar shown in PipelinePage when `activeView === 'dossier'`, placed between toolbar and dossier content:
-- 5-6 icon buttons: «Сгенерировать ТЗ», «Отправить КП», «Запланировать звонок», «Создать задачу», «Запросить документ», «AI-анализ»
-- Each button triggers a toast notification (mock action)
-- Style: `matte-glass` bar with icon + short label per button
-- Compact horizontal layout
+При клике на строку сделки — центральная колонка полностью заменяется на экран конкретной сделки. Сверху — кнопка "← Назад к проекту". JARVIS и сайдбар остаются, но фильтруются на контекст этой сделки.
 
-## Files to modify
+```text
+┌─────────────────────────────────────────────────┐
+│  ← Назад к проекту  │  D-52 УЗИ Mindray DC-80  │
+├──────────────────────┬──────────────────────────┤
+│  ИНФО СДЕЛКИ         │  СТАТУС + ПРОГРЕСС       │
+│  Закон, Площадка     │  Подготовка • 22%        │
+│  Оборудование × кол  │  Дедлайн: 15 апр         │
+│  Менеджер            │  Сумма: 6 000 000 ₽      │
+├──────────────────────┴──────────────────────────┤
+│  ЧТО ДЕЛАТЬ ДАЛЬШЕ  (next actions)              │
+├──────────────────────┬──────────────────────────┤
+│  ЗАДАЧИ СДЕЛКИ       │  РИСКИ                   │
+├──────────────────────┴──────────────────────────┤
+│  ДОКУМЕНТЫ           │  ХРОНОЛОГИЯ              │
+└─────────────────────────────────────────────────┘
+```
 
-| File | Change |
-|------|--------|
-| `src/components/workspace/TimelineRibbon.tsx` | **Create** |
-| `src/components/workspace/NotificationCenter.tsx` | **Create** |
-| `src/components/workspace/DealsHealthMap.tsx` | **Create** |
-| `src/components/pipeline/QuickActionsBar.tsx` | **Create** |
-| `src/components/workspace/WorkspacePage.tsx` | Add `health` to ViewMode, import TimelineRibbon + NotificationCenter + DealsHealthMap, add to header + view switcher + content |
-| `src/components/pipeline/PipelinePage.tsx` | Import QuickActionsBar, render when dossier view active |
+---
 
-## Color scheme adherence
-All new components will use the design system tokens:
-- Backgrounds: `bg-card`, `matte-glass` class
-- Borders: `border-border`
-- Text: `text-foreground`, `text-muted-foreground`
-- Accent: `text-primary` (#4ecdc4 in dark)
-- Shadows: `var(--shadow-glass)`, `var(--shadow-soft)`
-- Border-radius: 14px cards, 10px buttons, 6px badges
+## Технический план
+
+### 1. Расширить мок-данные (`mockProjectData.ts`)
+
+- Добавить поля: `address`, `ogrn`, реквизиты в `project`
+- Добавить массив `suppliers` (поставщики/вендоры с контактами)
+- Добавить `team` (роли: менеджер, инженер, логист, юрист)
+- Добавить финансовые поля: `totalBudget`, `marginPercent`, `paidAmount`
+
+### 2. Переписать `DealDossierView.tsx`
+
+Разделить на два состояния через `selectedDealId`:
+- **`selectedDealId === null`** — рендерит экран проекта с инфо-плашками (контрагент, поставщики, финансы, команда) + мини-таблица сделок + общие задачи/документы/хронология
+- **`selectedDealId === 'D-52'`** — рендерит полноценный экран сделки с навигацией "← Назад к проекту"
+
+Внутренние компоненты:
+- `ProjectDossierScreen` — экран проекта с плашками
+- `DealDossierScreen` — экран конкретной сделки
+- Существующие `TasksList`, `DocumentsList`, `TimelineList`, `JarvisChat`, `AggregatedSidebar` — переиспользуются
+
+### 3. Обновить сайдбар
+
+При открытой сделке — фильтрация задач/хронологии на конкретную сделку (как сейчас, но без проектных задач в миксе). При проекте — показывать все агрегировано.
+
+---
+
+## Что изменится для пользователя
+
+- Проект — полноценная информативная страница: кто заказчик, у кого закупаем, бюджет, команда
+- Сделки — не раскрываются в списке, а открываются как отдельные экраны
+- Навигация "назад" — всегда можно вернуться к проекту
+- Каждый экран самодостаточен и не перегружен
 
