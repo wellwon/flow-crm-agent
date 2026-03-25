@@ -18,7 +18,7 @@ export function DealsGridView({ deals, onOpenDeal }: Props) {
         <div
           key={deal.id}
           onClick={() => onOpenDeal(deal.id)}
-          className="rounded-xl border border-border/30 bg-card/40 backdrop-blur-sm p-5 cursor-pointer hover:border-primary/30 hover:bg-primary/5 transition-all group flex flex-col"
+          className="glass-panel p-5 cursor-pointer hover:border-primary/30 hover:shadow-[0_0_24px_hsl(var(--primary)/0.12)] transition-all group flex flex-col"
         >
           <div className="flex items-start justify-between mb-3">
             <Badge variant="outline" className={`text-[10px] border ${dealStatusColors[deal.status]}`}>
@@ -43,10 +43,10 @@ export function DealsGridView({ deals, onOpenDeal }: Props) {
               <Progress value={deal.progress} className="h-1.5" />
             </div>
 
-            <div className="flex items-center justify-between pt-2 border-t border-border/20">
+            <div className="flex items-center justify-between pt-2 border-t border-border/15">
               <div className="flex items-center gap-2">
                 <Avatar className="w-6 h-6">
-                  <AvatarFallback className="text-[10px] bg-secondary text-foreground">
+                  <AvatarFallback className="text-[10px] bg-primary/10 text-primary border border-primary/20">
                     {deal.manager.avatar}
                   </AvatarFallback>
                 </Avatar>
