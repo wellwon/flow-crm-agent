@@ -10,6 +10,7 @@ import {
   Package, Activity,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { QuickActionsBar } from './QuickActionsBar';
 import {
   projectData, dealStatusLabels, dealStatusColors, fmt,
   type ProjectData, type ProjectDeal, type ProjectTask,
@@ -55,6 +56,8 @@ export function DealDossierView() {
 
       {/* ═══ CENTER: DOSSIER CONTENT ═══ */}
       <motion.div variants={container} initial="hidden" animate="show" className="flex-1 min-w-0 space-y-5 pb-8 overflow-y-auto pr-1">
+        <QuickActionsBar />
+
         {/* ═══ PROJECT HERO HEADER ═══ */}
         <motion.div variants={item} className="matte-glass p-6 relative overflow-hidden">
           <div className="flex items-start justify-between gap-4 mb-3">
