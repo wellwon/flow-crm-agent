@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { QuickActionsBar } from './QuickActionsBar';
 import {
   Building2, User, Phone, Mail, MapPin, FileText, Bot, Clock,
   CheckCircle, AlertTriangle, TrendingUp, Shield, ExternalLink,
