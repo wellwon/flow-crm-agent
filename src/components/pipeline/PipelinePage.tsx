@@ -6,6 +6,12 @@ import {
   useReactFlow, ReactFlowProvider,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
+import { AnimatePresence } from 'framer-motion';
+  useNodesState, useEdgesState, BackgroundVariant, SelectionMode,
+  type NodeMouseHandler, type EdgeMouseHandler,
+  useReactFlow, ReactFlowProvider,
+} from '@xyflow/react';
+import '@xyflow/react/dist/style.css';
 
 import { HoloNode } from './HoloNode';
 import { StickyNote } from './StickyNote';
