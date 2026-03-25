@@ -1,84 +1,67 @@
 
 
-# Полная унификация дизайна: две темы, единый стиль
+# Implementation Plan: 4 New Features
 
-## Проблема
+## Overview
+Adding Timeline Ribbon, Notification Center, Health Map, and Quick Actions Bar to the workspace and pipeline views.
 
-Сейчас базовая страница (WorkspacePage) визуально корректна — `main-content-panel` с правильным фоном, карточки `matte-glass`. Но:
-1. **Карточки на главной** — в светлой теме `matte-glass` прозрачные (rgba), фон gradient просвечивает и даёт синеватый оттенок
-2. **Внутренняя страница (PipelinePage)** — использует свой набор классов (`pipeline-chrome`, произвольные стили), не наследует layout и токены с главной
-3. **Подвиды Pipeline** (Dashboard, List, Kanban, Timeline) — висят поверх gradient без `main-content-panel`, карточки `glass-panel` — полупрозрачные на gradient
+## 1. Timeline Ribbon — `src/components/workspace/TimelineRibbon.tsx` (NEW)
 
-## Что будет сделано
+Horizontal collapsible bar between header and main content in WorkspacePage. Shows deal deadlines on a 90-day axis:
+- SVG-based horizontal timeline with "today" marker line
+- Each deal = colored dot (by status) positioned proportionally on the axis
+- Tooltip on hover with deal name, amount, deadline
+- Click navigates to `/project/{id}`
+- Collapse/expand toggle
+- Uses `matte-glass` styling, month labels along axis
 
-### 1. Исправить `matte-glass` для светлой темы
-Карточки должны быть непрозрачными с тенью, а не прозрачными на градиенте:
-- Light: `background: hsl(var(--card))` (белый), `border: 1px solid hsl(var(--border))`, `box-shadow: var(--shadow-glass)`
-- Dark: `background: #121e32`, `border: 1px solid rgba(255,255,255,0.05)` (как в дизайн-системе)
+## 2. Notification Center — `src/components/workspace/NotificationCenter.tsx` (NEW)
 
-### 2. Перестроить PipelinePage на layout главной страницы
-Сейчас Pipeline — полноэкранный ReactFlow без `main-content-panel`. Нужно:
-- Обернуть в тот же layout: gradient (layer 0) → padding → `main-content-panel` (layer 1)
-- Верхний хедер внутри `main-content-panel` с `border-b border-border` (как на главной)
-- Кнопка "Назад", название сделки, view switcher, действия — всё в едином хедере
-- Контент (ReactFlow / List / Kanban / Dashboard / Timeline) занимает `flex-1` внутри панели
+Bell icon button added to WorkspacePage header (next to theme toggle):
+- Badge with unread count
+- Popover with 3 groups: **Срочно** (overdue/errors), **Сегодня** (due within 3 days), **Информация** (status updates)
+- Notifications auto-generated from mockDeals data (overdue deadlines, approaching deadlines, won/lost deals)
+- Each notification: icon, text, timestamp, dismiss button
+- Mark all as read button
+- Design: `bg-card border-border rounded-[14px]` popover
 
-### 3. Удалить `pipeline-chrome` и `glass-panel-dark`
-Эти классы — источник разнобоя. Заменить на:
-- Хедер Pipeline → стандартный `header` с `border-b border-border` внутри `main-content-panel`
-- NodePalette → сайдбар внутри панели с `border-r border-border`, фон `bg-card`
-- JarvisCommandBar → `matte-glass` или `bg-card` вместо `pipeline-chrome`
-- Zoom controls → `matte-glass` с правильными border-radius
+## 3. Health Map — `src/components/workspace/DealsHealthMap.tsx` (NEW)
 
-### 4. Унифицировать все карточки Pipeline подвидов
-ListView, KanbanView, TimelineView, DashboardView — заменить `glass-panel` на `matte-glass` (теперь непрозрачный).
+New view mode `'health'` in WorkspacePage view switcher (Activity icon):
+- Grid of cells, each = one deal
+- Color determined by health score formula:
+  - Days to deadline weight + progress % weight + priority weight
+  - Green (healthy) / Yellow (at risk) / Red (critical) / Gray (won/lost)
+- Cell shows: company name, amount, small progress bar
+- Tooltip with full details on hover
+- Click → navigate to deal
+- Uses `matte-glass` for each cell
 
-### 5. Minimap — правильные border-radius и стиль
-- `rounded-[14px]` (по дизайн-системе для карточек)
-- В light: `bg-card`, `border border-border`, `shadow-glass`
-- В dark: `bg-[#121e32]`, `border rgba(255,255,255,0.05)`
+## 4. Quick Actions Bar — `src/components/pipeline/QuickActionsBar.tsx` (NEW)
 
----
+Horizontal bar shown in PipelinePage when `activeView === 'dossier'`, placed between toolbar and dossier content:
+- 5-6 icon buttons: «Сгенерировать ТЗ», «Отправить КП», «Запланировать звонок», «Создать задачу», «Запросить документ», «AI-анализ»
+- Each button triggers a toast notification (mock action)
+- Style: `matte-glass` bar with icon + short label per button
+- Compact horizontal layout
 
-## Технический план (файлы)
+## Files to modify
 
-### `src/index.css`
-- Исправить `:root .matte-glass` → `background: hsl(var(--card))`
-- Удалить `.pipeline-chrome`, `.pipeline-chrome-dense` — больше не нужны
-- Обновить `.react-flow__minimap` стили
+| File | Change |
+|------|--------|
+| `src/components/workspace/TimelineRibbon.tsx` | **Create** |
+| `src/components/workspace/NotificationCenter.tsx` | **Create** |
+| `src/components/workspace/DealsHealthMap.tsx` | **Create** |
+| `src/components/pipeline/QuickActionsBar.tsx` | **Create** |
+| `src/components/workspace/WorkspacePage.tsx` | Add `health` to ViewMode, import TimelineRibbon + NotificationCenter + DealsHealthMap, add to header + view switcher + content |
+| `src/components/pipeline/PipelinePage.tsx` | Import QuickActionsBar, render when dossier view active |
 
-### `src/components/pipeline/PipelinePage.tsx`
-- Обернуть в layout: `div.h-screen` → gradient bg → padding → `main-content-panel flex flex-col`
-- Перенести хедер (TopToolbar) внутрь панели как `<header>` с `border-b`
-- NodePalette — внутри flex-row как `border-r` сайдбар
-- ReactFlow, List, Kanban, Dashboard, Timeline — в `<main className="flex-1 overflow-hidden">`
-- Minimap и zoom controls — стили через токены
-
-### `src/components/pipeline/TopToolbar.tsx`
-- Из absolute-positioned `pipeline-chrome` → обычный `<header>` внутри flow, стиль как в WorkspacePage (px-6 py-4, border-b)
-
-### `src/components/pipeline/NodePalette.tsx`
-- Из absolute `pipeline-chrome-dense` → flex-shrink-0 сайдбар внутри layout, `bg-card border-r border-border`
-
-### `src/components/pipeline/JarvisCommandBar.tsx`
-- `pipeline-chrome` → `matte-glass` или `bg-card border border-border`
-
-### `src/components/pipeline/HoloNode.tsx`
-- `bg-card/90` → `bg-card` (полностью непрозрачный в обеих темах)
-
-### `src/components/pipeline/ListView.tsx`, `KanbanView.tsx`, `TimelineView.tsx`, `DashboardView.tsx`
-- `glass-panel` → `matte-glass`
-- Убрать `absolute inset-0 top-[72px]` → обычный flex-1 overflow-auto (layout теперь управляется PipelinePage)
-- DashboardView: карточки stats — `matte-glass` вместо inline стилей
-
-### `src/components/pipeline/NodeDrawer.tsx`
-- Проверить что drawer использует `bg-card` и `border-border`
-
----
-
-## Результат
-- Главная страница и Pipeline выглядят идентично по структуре: gradient → padding → белая/тёмная панель с контентом
-- Все карточки непрозрачные, с тенью, в цветах дизайн-системы
-- Единый набор CSS-классов: `main-content-panel`, `matte-glass`, стандартные токены
-- Никаких `pipeline-chrome`, `glass-panel-dark` и прочих одноразовых классов
+## Color scheme adherence
+All new components will use the design system tokens:
+- Backgrounds: `bg-card`, `matte-glass` class
+- Borders: `border-border`
+- Text: `text-foreground`, `text-muted-foreground`
+- Accent: `text-primary` (#4ecdc4 in dark)
+- Shadows: `var(--shadow-glass)`, `var(--shadow-soft)`
+- Border-radius: 14px cards, 10px buttons, 6px badges
 
