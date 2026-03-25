@@ -22,7 +22,6 @@ import { KanbanView } from './KanbanView';
 import { DashboardView } from './DashboardView';
 import { DealDossierView } from './DealDossierView';
 import { TimelineView } from './TimelineView';
-import { QuickActionsBar } from './QuickActionsBar';
 import { CanvasContextMenu, type ContextMenuPosition } from './CanvasContextMenu';
 import { EdgeContextMenu } from './EdgeContextMenu';
 import { NodePalette, type InteractionMode } from './NodePalette';
@@ -340,11 +339,8 @@ function PipelinePageInner() {
                   </div>
                 )}
                 {activeView === 'dossier' && (
-                  <div className="h-full overflow-auto flex flex-col">
-                    <QuickActionsBar />
-                    <div className="flex-1 p-5 overflow-auto">
-                      <DealDossierView />
-                    </div>
+                  <div className="h-full overflow-auto p-5">
+                    <DealDossierView />
                   </div>
                 )}
               </main>
