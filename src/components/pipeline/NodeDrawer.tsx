@@ -39,16 +39,16 @@ export function NodeDrawer({ isOpen, onClose, data, nodeId, onComplete, onDelete
     { id: 'compliance', label: 'Checks', show: !!data?.complianceChecks?.length },
   ];
 
+  if (!isOpen || !data) return null;
+
   return (
-    <AnimatePresence>
-      {isOpen && data && (
-        <motion.div
-          initial={{ x: '100%' }}
-          animate={{ x: 0 }}
-          exit={{ x: '100%' }}
-          transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-          className="absolute top-0 right-0 bottom-0 w-[420px] z-20 bg-card border-l border-border overflow-hidden"
-        >
+    <motion.div
+      initial={{ width: 0, opacity: 0 }}
+      animate={{ width: 380, opacity: 1 }}
+      exit={{ width: 0, opacity: 0 }}
+      transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+      className="flex-shrink-0 border-l border-border bg-card overflow-hidden h-full"
+    >
           <div className="h-full flex flex-col">
             {/* Header */}
             <div className="p-4 border-b border-border">
