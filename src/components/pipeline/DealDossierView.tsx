@@ -6,7 +6,7 @@ import {
   Calendar, Package, DollarSign, Users, Activity, Zap, Eye,
   ChevronRight, Paperclip, MessageSquare, Star, CircleDot,
   Send, ListChecks, Target, Flag, ArrowRight, Sparkles,
-  CircleAlert, UserCheck, Mic,
+  CircleAlert, UserCheck, Mic, ArrowLeft, X,
 } from 'lucide-react';
 
 /* ─── Mock dossier data ─── */
