@@ -200,14 +200,14 @@ export function TemplateGallery({ isOpen, onClose, onApplyTemplate }: TemplateGa
             initial={{ scale: 0.95, y: 20 }}
             animate={{ scale: 1, y: 0 }}
             exit={{ scale: 0.95, y: 20 }}
-            className="relative glass-panel-dense w-full max-w-2xl p-6 space-y-5"
+            className="relative w-full max-w-2xl matte-glass p-6 space-y-5"
           >
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-sm font-semibold text-foreground">Шаблоны пайплайнов</h2>
                 <p className="text-[11px] text-muted-foreground mt-0.5">Выберите шаблон для новой сделки</p>
               </div>
-              <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-muted/50 transition-colors">
+              <button onClick={onClose} className="p-1.5 rounded-[8px] hover:bg-muted/50 transition-colors">
                 <X className="w-4 h-4 text-muted-foreground" />
               </button>
             </div>
@@ -219,10 +219,10 @@ export function TemplateGallery({ isOpen, onClose, onApplyTemplate }: TemplateGa
                   <button
                     key={t.id}
                     onClick={() => setSelected(t.id)}
-                    className={`text-left p-4 rounded-xl border transition-all ${
+                    className={`text-left p-4 rounded-[14px] border transition-all ${
                       isSelected
                         ? 'border-primary bg-primary/10 ring-1 ring-primary/30'
-                        : 'border-border/30 bg-background/40 hover:border-border/60 hover:bg-background/60'
+                        : 'border-border bg-card hover:border-primary/30 hover:bg-muted/30'
                     }`}
                   >
                     <div className="flex items-center gap-2 mb-2">
@@ -231,9 +231,9 @@ export function TemplateGallery({ isOpen, onClose, onApplyTemplate }: TemplateGa
                     </div>
                     <p className="text-[10px] text-muted-foreground leading-relaxed mb-3">{t.description}</p>
                     <div className="flex items-center gap-3">
-                      <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-muted text-muted-foreground">{t.nodeCount} нод</span>
-                      <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-muted text-muted-foreground">{t.duration}</span>
-                      <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-muted text-muted-foreground">{t.category}</span>
+                      <span className="text-[9px] font-mono px-1.5 py-0.5 rounded-[6px] bg-muted text-muted-foreground">{t.nodeCount} нод</span>
+                      <span className="text-[9px] font-mono px-1.5 py-0.5 rounded-[6px] bg-muted text-muted-foreground">{t.duration}</span>
+                      <span className="text-[9px] font-mono px-1.5 py-0.5 rounded-[6px] bg-muted text-muted-foreground">{t.category}</span>
                     </div>
                   </button>
                 );
@@ -241,13 +241,13 @@ export function TemplateGallery({ isOpen, onClose, onApplyTemplate }: TemplateGa
             </div>
 
             <div className="flex justify-end gap-2">
-              <button onClick={onClose} className="px-4 py-2 rounded-xl text-xs text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-colors">
+              <button onClick={onClose} className="px-4 py-2 rounded-[10px] text-xs text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-colors">
                 Отмена
               </button>
               <button
                 onClick={handleApply}
                 disabled={!selected}
-                className="px-5 py-2 rounded-xl text-xs font-semibold bg-primary text-primary-foreground hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center gap-1.5"
+                className="px-5 py-2 rounded-[10px] text-xs font-semibold bg-primary text-primary-foreground hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center gap-1.5"
               >
                 <Sparkles className="w-3.5 h-3.5" />
                 Создать пайплайн
