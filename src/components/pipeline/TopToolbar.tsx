@@ -24,7 +24,7 @@ export function TopToolbar({ activeView = 'graph', onViewChange, onBriefingOpen,
 
   return (
     <div className="absolute top-0 left-0 right-0 z-10 p-4">
-      <div className="glass-panel px-5 py-3 flex items-center justify-between gap-4 flex-wrap">
+      <div className="glass-panel-dark px-5 py-3 flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate('/')}
