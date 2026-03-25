@@ -23,33 +23,33 @@ export function TopToolbar({ activeView = 'graph', onViewChange, onBriefingOpen,
   const navigate = useNavigate();
 
   return (
-    <div className="absolute top-0 left-0 right-0 z-10 p-4">
-      <div className="pipeline-chrome px-5 py-3 flex items-center justify-between gap-4 flex-wrap">
+    <header className="border-b border-border flex-shrink-0">
+      <div className="px-6 py-3 flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate('/')}
-            className="flex items-center justify-center w-8 h-8 rounded-lg text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent/50 transition-colors"
+            className="flex items-center justify-center w-8 h-8 rounded-[10px] text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
             title="Назад к сделкам"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
-          <div className="w-px h-5 bg-sidebar-border" />
+          <div className="w-px h-5 bg-border" />
           <div className="w-2 h-2 rounded-full bg-node-active animate-pulse" />
-          <h1 className="text-sm font-semibold text-sidebar-foreground">
+          <h1 className="text-sm font-semibold text-foreground">
             ОБ Коломна — 3× УЗИ Mindray DC-70
           </h1>
         </div>
 
         {/* View switcher */}
-        <div className="flex items-center gap-1 bg-sidebar-accent/30 rounded-[10px] p-0.5 border border-sidebar-border">
+        <div className="flex items-center gap-0.5 bg-muted/30 p-1 rounded-[10px] border border-border">
           {views.map(v => (
             <button
               key={v.id}
               onClick={() => onViewChange?.(v.id)}
-              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[11px] font-medium transition-all ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[8px] text-[13px] font-medium transition-all ${
                 activeView === v.id
-                  ? 'bg-sidebar-primary/20 text-sidebar-primary'
-                  : 'text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent/50'
+                  ? 'bg-primary text-primary-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
               }`}
             >
               <v.icon className="w-3.5 h-3.5" />
@@ -62,43 +62,36 @@ export function TopToolbar({ activeView = 'graph', onViewChange, onBriefingOpen,
           {onTogglePhases && activeView === 'graph' && (
             <button
               onClick={onTogglePhases}
-              className={`group relative inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all duration-200 overflow-hidden ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[10px] text-xs font-medium transition-all ${
                 phasesVisible
-                  ? 'text-[hsl(265_80%_75%)]'
-                  : 'text-sidebar-foreground/60 hover:text-sidebar-foreground'
+                  ? 'bg-primary/15 text-primary border border-primary/30'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
               }`}
             >
-              <span className={`absolute inset-0 rounded-lg transition-opacity duration-200 ${
-                phasesVisible
-                  ? 'opacity-100 bg-[hsl(265_80%_65%)/0.1] shadow-[inset_0_0_0_1px_hsl(265_80%_65%/0.25),0_0_12px_-4px_hsl(265_80%_65%/0.3)]'
-                  : 'opacity-0 group-hover:opacity-100 bg-sidebar-accent/20 shadow-[inset_0_0_0_1px_hsl(var(--sidebar-border)/0.2)]'
-              }`} />
-              <Layers className="w-3.5 h-3.5 relative z-10" />
-              <span className="relative z-10">Фазы</span>
+              <Layers className="w-3.5 h-3.5" />
+              <span>Фазы</span>
             </button>
           )}
           {onTemplateOpen && (
             <button
               onClick={onTemplateOpen}
-              className="group relative inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium text-sidebar-primary/80 hover:text-sidebar-primary transition-all duration-200 overflow-hidden"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-[10px] text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all"
             >
-              <span className="absolute inset-0 rounded-lg bg-sidebar-primary/5 shadow-[inset_0_0_0_1px_hsl(var(--sidebar-primary)/0.15)] group-hover:bg-sidebar-primary/10 group-hover:shadow-[inset_0_0_0_1px_hsl(var(--sidebar-primary)/0.3),0_0_12px_-4px_hsl(var(--sidebar-primary)/0.25)] transition-all duration-200" />
-              <Plus className="w-3.5 h-3.5 relative z-10" />
-              <span className="relative z-10">Шаблон</span>
+              <Plus className="w-3.5 h-3.5" />
+              <span>Шаблон</span>
             </button>
           )}
           {onBriefingOpen && (
             <button
               onClick={onBriefingOpen}
-              className="group relative inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium text-node-active/80 hover:text-node-active transition-all duration-200 overflow-hidden"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-[10px] text-xs font-medium text-node-active hover:bg-node-active/10 transition-all"
             >
-              <span className="absolute inset-0 rounded-lg bg-node-active/5 shadow-[inset_0_0_0_1px_hsl(38_92%_50%/0.15)] group-hover:bg-node-active/10 group-hover:shadow-[inset_0_0_0_1px_hsl(38_92%_50%/0.3),0_0_12px_-4px_hsl(38_92%_50%/0.25)] transition-all duration-200" />
-              <Sun className="w-3.5 h-3.5 relative z-10" />
-              <span className="relative z-10">Брифинг</span>
+              <Sun className="w-3.5 h-3.5" />
+              <span>Брифинг</span>
             </button>
           )}
         </div>
       </div>
-    </div>
+    </header>
   );
 }

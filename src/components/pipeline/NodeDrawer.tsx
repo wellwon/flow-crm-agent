@@ -47,11 +47,11 @@ export function NodeDrawer({ isOpen, onClose, data, nodeId, onComplete, onDelete
           animate={{ x: 0 }}
           exit={{ x: '100%' }}
           transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-          className="absolute top-0 right-0 bottom-0 w-[420px] z-20 glass-panel-dense rounded-none rounded-l-2xl overflow-hidden"
+          className="absolute top-0 right-0 bottom-0 w-[420px] z-20 bg-card border-l border-border overflow-hidden"
         >
           <div className="h-full flex flex-col">
             {/* Header */}
-            <div className="p-4 border-b border-border/50">
+            <div className="p-4 border-b border-border">
               <div className="flex items-center justify-between mb-3">
                 <div>
                   <div className="flex items-center gap-2">
@@ -69,7 +69,7 @@ export function NodeDrawer({ isOpen, onClose, data, nodeId, onComplete, onDelete
                   </div>
                   <h2 className="text-sm font-semibold text-foreground mt-1">{data.label}</h2>
                 </div>
-                <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-muted/50 transition-colors" aria-label="Close drawer">
+                <button onClick={onClose} className="p-1.5 rounded-[8px] hover:bg-muted/50 transition-colors" aria-label="Close drawer">
                   <X className="w-4 h-4 text-muted-foreground" />
                 </button>
               </div>
@@ -80,7 +80,7 @@ export function NodeDrawer({ isOpen, onClose, data, nodeId, onComplete, onDelete
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`px-3 py-1.5 rounded-lg text-[11px] font-medium transition-colors ${
+                    className={`px-3 py-1.5 rounded-[8px] text-[11px] font-medium transition-colors ${
                       activeTab === tab.id
                         ? 'bg-primary/20 text-primary'
                         : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
@@ -102,17 +102,17 @@ export function NodeDrawer({ isOpen, onClose, data, nodeId, onComplete, onDelete
 
             {/* Footer */}
             {data.status !== 'completed' && nodeId && (
-              <div className="p-4 border-t border-border/50 flex gap-2">
+              <div className="p-4 border-t border-border flex gap-2">
                 <button
                   onClick={() => onComplete?.(nodeId)}
-                  className="flex-1 py-2.5 rounded-xl bg-node-completed text-primary-foreground text-xs font-semibold hover:brightness-110 transition-all flex items-center justify-center gap-2"
+                  className="flex-1 py-2.5 rounded-[14px] bg-node-completed text-primary-foreground text-xs font-semibold hover:brightness-110 transition-all flex items-center justify-center gap-2"
                 >
                   <CheckCircle className="w-4 h-4" />
                   Завершить шаг
                 </button>
                 <button
                   onClick={() => onDelete?.(nodeId)}
-                  className="px-4 py-2.5 rounded-xl bg-node-error/15 text-node-error text-xs font-medium hover:bg-node-error/25 transition-all"
+                  className="px-4 py-2.5 rounded-[14px] bg-node-error/15 text-node-error text-xs font-medium hover:bg-node-error/25 transition-all"
                 >
                   Удалить
                 </button>
@@ -208,7 +208,7 @@ function AITab({ data }: { data: PipelineNodeData }) {
   return (
     <>
       <Section title="JARVIS OUTPUT">
-        <div className="bg-background/60 rounded-lg p-3 border border-border/30 font-mono text-[11px] text-node-completed space-y-1">
+        <div className="bg-muted rounded-[8px] p-3 border border-border font-mono text-[11px] text-node-completed space-y-1">
           {output.map((line, i) => (
             <p key={i} className={line === '> _' ? 'text-muted-foreground animate-pulse' : ''}>{line}</p>
           ))}
@@ -247,7 +247,7 @@ function ComplianceTab({ data }: { data: PipelineNodeData }) {
       <Section title="ПРОВЕРКИ">
         <div className="space-y-2">
           {data.complianceChecks.map((check, i) => (
-            <div key={i} className="flex items-center gap-2 p-2 rounded-lg bg-background/40 border border-border/20">
+            <div key={i} className="flex items-center gap-2 p-2 rounded-[8px] bg-muted/50 border border-border">
               {check.passed === true && <ShieldCheck className="w-4 h-4 text-node-completed shrink-0" />}
               {check.passed === false && <ShieldX className="w-4 h-4 text-node-error shrink-0" />}
               {check.passed === null && <ShieldAlert className="w-4 h-4 text-muted-foreground shrink-0" />}
@@ -268,7 +268,7 @@ function ComplianceTab({ data }: { data: PipelineNodeData }) {
 
 function MetricCard({ label, value, color }: { label: string; value: string; color?: string }) {
   return (
-    <div className="p-2 rounded-lg bg-background/40 border border-border/20">
+    <div className="p-2 rounded-[8px] bg-muted/50 border border-border">
       <span className="text-[9px] text-muted-foreground uppercase tracking-wider block">{label}</span>
       <span className={`text-sm font-mono font-semibold ${color || 'text-foreground'}`}>{value}</span>
     </div>

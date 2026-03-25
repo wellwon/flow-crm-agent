@@ -119,50 +119,11 @@
 
 /* Glassmorphism utilities */
 @layer components {
-  .glass-panel {
-    @apply backdrop-blur-xl border;
-    border-radius: 24px;
-    background: hsl(var(--glass-bg) / var(--glass-opacity));
-    border-color: hsl(var(--glass-border) / 0.08);
-    box-shadow: var(--shadow-glass);
-  }
-
-  .glass-panel-dense {
-    @apply backdrop-blur-2xl border;
-    border-radius: 24px;
-    background: hsl(var(--glass-bg) / 0.85);
-    border-color: hsl(var(--glass-border) / 0.06);
-    box-shadow: var(--shadow-soft);
-  }
-
-  /* Pipeline chrome — uses sidebar tokens for consistent theming */
-  .pipeline-chrome {
-    @apply backdrop-blur-xl border;
-    border-radius: 24px;
-    background: hsl(var(--sidebar-background) / var(--glass-opacity));
-    border-color: hsl(var(--glass-border) / 0.08);
-    box-shadow: var(--shadow-glass);
-    color: hsl(var(--sidebar-foreground));
-  }
-
-  .pipeline-chrome-dense {
-    @apply backdrop-blur-2xl border;
-    border-radius: 24px;
-    background: hsl(var(--sidebar-background) / 0.88);
-    border-color: hsl(var(--glass-border) / 0.06);
-    box-shadow: var(--shadow-soft);
-    color: hsl(var(--sidebar-foreground));
-  }
-
   .matte-glass {
     border-radius: 14px;
+    background: hsl(var(--card));
     border: 1px solid hsl(var(--border));
-    box-shadow: 0 8px 32px 0 rgba(0,0,0,0.05), inset 0 1px 1px rgba(255,255,255,0.1);
-  }
-
-  :root .matte-glass {
-    background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.01));
-    backdrop-filter: blur(24px);
+    box-shadow: var(--shadow-glass);
   }
 
   .dark .matte-glass {
@@ -243,10 +204,14 @@
 }
 
 .react-flow__minimap {
-  border-radius: var(--radius) !important;
+  border-radius: 14px !important;
   border: 1px solid hsl(var(--border)) !important;
   box-shadow: var(--shadow-glass) !important;
   overflow: hidden !important;
+}
+
+.dark .react-flow__minimap {
+  border-color: hsl(0 0% 100% / 0.05) !important;
 }
 
 .react-flow__handle {

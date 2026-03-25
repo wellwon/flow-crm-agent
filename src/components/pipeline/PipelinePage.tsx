@@ -91,7 +91,6 @@ function PipelinePageInner() {
     }
   }, []);
 
-  // Add node
   const addNode = useCallback((type: NodeType, position: { x: number; y: number }) => {
     const id = generateId();
     const newNode = {
@@ -104,7 +103,6 @@ function PipelinePageInner() {
     setNodes(nds => [...nds, newNode]);
   }, [generateId, setNodes]);
 
-  // Add sticky note
   const addSticky = useCallback((color: string, position: { x: number; y: number }) => {
     const id = `sticky-${nextIdRef.current++}`;
     setNodes(nds => [...nds, {
@@ -117,7 +115,6 @@ function PipelinePageInner() {
     }]);
   }, [setNodes]);
 
-  // Insert node on edge
   const insertNodeOnEdge = useCallback((edgeId: string, type: NodeType) => {
     const edge = edges.find(e => e.id === edgeId);
     if (!edge) return;
@@ -147,7 +144,6 @@ function PipelinePageInner() {
     });
   }, [edges, nodes, generateId, setNodes, setEdges]);
 
-  // Drag-drop from palette
   const onDragOver = useCallback((e: DragEvent) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
@@ -197,123 +193,149 @@ function PipelinePageInner() {
     }));
   }, [setNodes]);
 
-  // Apply template
   const handleApplyTemplate = useCallback((tplNodes: Node<PipelineNodeData>[], tplEdges: Edge[]) => {
     setNodes(tplNodes as any);
     setEdges(tplEdges);
     setTimeout(() => fitView({ padding: 0.2 }), 100);
   }, [setNodes, setEdges, fitView]);
 
-  // Minimap click → navigate
-  const handleMiniMapClick = useCallback((_: any, position: { x: number; y: number }) => {
-    // Not directly supported — we use fitView on node click instead
-  }, []);
-
   return (
-    <div className="w-screen h-screen relative overflow-hidden">
+    <div className="h-screen overflow-hidden flex flex-col relative">
       {/* Layer 0: Gradient background */}
       <div className="fixed inset-0 z-0" style={{ background: 'var(--bg-gradient)' }} />
 
-      <TopToolbar
-        activeView={activeView}
-        onViewChange={setActiveView}
-        onBriefingOpen={() => setBriefingOpen(true)}
-        onTemplateOpen={() => setTemplateOpen(true)}
-        phasesVisible={phasesVisible}
-        onTogglePhases={() => setPhasesVisible(v => !v)}
-      />
-
-      {activeView === 'graph' && (
-        <>
-          <NodePalette
-            onAddNode={addNode}
-            onAddSticky={addSticky}
-            interactionMode={interactionMode}
-            onInteractionModeChange={setInteractionMode}
+      {/* Layer 1: Content */}
+      <div className="relative z-[1] h-screen flex flex-col p-3 gap-3 overflow-hidden">
+        <div className="flex-1 flex flex-col main-content-panel overflow-hidden">
+          {/* Header — same style as WorkspacePage */}
+          <TopToolbar
+            activeView={activeView}
+            onViewChange={setActiveView}
+            onBriefingOpen={() => setBriefingOpen(true)}
+            onTemplateOpen={() => setTemplateOpen(true)}
+            phasesVisible={phasesVisible}
+            onTogglePhases={() => setPhasesVisible(v => !v)}
           />
-          <ReactFlow
-            className="border border-border/20 rounded-xl"
-            style={{ backgroundColor: 'hsl(var(--card))' }}
-            nodes={nodes}
-            edges={edges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onNodeClick={onNodeClick}
-            onPaneClick={onPaneClick}
-            onPaneContextMenu={onPaneContextMenu}
-            onEdgeContextMenu={onEdgeContextMenu}
-            onEdgeClick={onEdgeClick}
-            onDragOver={onDragOver}
-            onDrop={onDrop}
-            nodeTypes={nodeTypes}
-            edgeTypes={edgeTypes}
-            panOnDrag={interactionMode === 'hand' ? [0] : [1, 2]}
-            selectionOnDrag={interactionMode === 'select'}
-            selectionMode={SelectionMode.Partial}
-            selectNodesOnDrag={interactionMode === 'select'}
-            fitView
-            fitViewOptions={{ padding: 0.2 }}
-            proOptions={{ hideAttribution: true }}
-            minZoom={0.15}
-            maxZoom={2}
-            deleteKeyCode={['Backspace', 'Delete']}
-          >
-            <Background variant={BackgroundVariant.Dots} gap={24} size={1} color="hsl(var(--muted-foreground) / 0.15)" />
-            <MiniMap
-              pannable
-              zoomable
-              nodeColor={(n) => {
-                if (n.type === 'stickyNote') return 'hsl(48 96% 70%)';
-                const d = n.data as unknown as PipelineNodeData;
-                if (d.status === 'completed') return 'hsl(160 84% 39%)';
-                if (d.status === 'active') return 'hsl(38 92% 50%)';
-                if (d.status === 'error') return 'hsl(350 89% 60%)';
-                if (d.status === 'waiting') return 'hsl(174 55% 40%)';
-                return 'hsl(240 4% 46%)';
-              }}
-              style={{
-                width: 200,
-                height: 140,
-                background: 'hsl(var(--card) / 0.9)',
-                backdropFilter: 'blur(24px)',
-              }}
-              maskColor="hsl(var(--muted) / 0.5)"
-            />
-            {/* Phase swim lanes */}
-            {phasesVisible && <PhaseBackground nodes={nodes} />}
-          </ReactFlow>
 
-          {/* Zoom controls */}
-          <div className="absolute z-20 bottom-4 right-4 flex items-center gap-1 pipeline-chrome px-2 py-1.5 !rounded-xl">
-            <button
-              onClick={() => zoomOut()}
-              className="w-7 h-7 flex items-center justify-center rounded-lg text-sidebar-foreground/50 hover:text-sidebar-foreground hover:bg-sidebar-accent/40 transition-colors text-lg font-bold"
-              title="Отдалить"
-            >
-              −
-            </button>
-            <button
-              onClick={() => fitView({ padding: 0.2 })}
-              className="w-7 h-7 flex items-center justify-center rounded-lg text-sidebar-foreground/50 hover:text-sidebar-foreground hover:bg-sidebar-accent/40 transition-colors"
-              title="Вместить всё"
-            >
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="1" y="1" width="12" height="12" rx="2" /><path d="M4 7h6M7 4v6" /></svg>
-            </button>
-            <button
-              onClick={() => zoomIn()}
-              className="w-7 h-7 flex items-center justify-center rounded-lg text-sidebar-foreground/50 hover:text-sidebar-foreground hover:bg-sidebar-accent/40 transition-colors text-lg font-bold"
-              title="Приблизить"
-            >
-              +
-            </button>
+          {/* Body */}
+          <div className="flex-1 flex overflow-hidden relative">
+            {/* Sidebar palette — only in graph view */}
+            {activeView === 'graph' && (
+              <NodePalette
+                onAddNode={addNode}
+                onAddSticky={addSticky}
+                interactionMode={interactionMode}
+                onInteractionModeChange={setInteractionMode}
+              />
+            )}
+
+            {/* Main content area */}
+            <main className="flex-1 overflow-hidden relative">
+              {activeView === 'graph' && (
+                <>
+                  <ReactFlow
+                    className="w-full h-full"
+                    style={{ backgroundColor: 'hsl(var(--card))' }}
+                    nodes={nodes}
+                    edges={edges}
+                    onNodesChange={onNodesChange}
+                    onEdgesChange={onEdgesChange}
+                    onNodeClick={onNodeClick}
+                    onPaneClick={onPaneClick}
+                    onPaneContextMenu={onPaneContextMenu}
+                    onEdgeContextMenu={onEdgeContextMenu}
+                    onEdgeClick={onEdgeClick}
+                    onDragOver={onDragOver}
+                    onDrop={onDrop}
+                    nodeTypes={nodeTypes}
+                    edgeTypes={edgeTypes}
+                    panOnDrag={interactionMode === 'hand' ? [0] : [1, 2]}
+                    selectionOnDrag={interactionMode === 'select'}
+                    selectionMode={SelectionMode.Partial}
+                    selectNodesOnDrag={interactionMode === 'select'}
+                    fitView
+                    fitViewOptions={{ padding: 0.2 }}
+                    proOptions={{ hideAttribution: true }}
+                    minZoom={0.15}
+                    maxZoom={2}
+                    deleteKeyCode={['Backspace', 'Delete']}
+                  >
+                    <Background variant={BackgroundVariant.Dots} gap={24} size={1} color="hsl(var(--muted-foreground) / 0.15)" />
+                    <MiniMap
+                      pannable
+                      zoomable
+                      nodeColor={(n) => {
+                        if (n.type === 'stickyNote') return 'hsl(48 96% 70%)';
+                        const d = n.data as unknown as PipelineNodeData;
+                        if (d.status === 'completed') return 'hsl(160 84% 39%)';
+                        if (d.status === 'active') return 'hsl(38 92% 50%)';
+                        if (d.status === 'error') return 'hsl(350 89% 60%)';
+                        if (d.status === 'waiting') return 'hsl(174 55% 40%)';
+                        return 'hsl(240 4% 46%)';
+                      }}
+                      style={{
+                        width: 200,
+                        height: 140,
+                        background: 'hsl(var(--card))',
+                      }}
+                      maskColor="hsl(var(--muted) / 0.5)"
+                    />
+                    {phasesVisible && <PhaseBackground nodes={nodes} />}
+                  </ReactFlow>
+
+                  {/* Zoom controls */}
+                  <div className="absolute z-20 bottom-4 right-4 flex items-center gap-1 matte-glass px-2 py-1.5">
+                    <button
+                      onClick={() => zoomOut()}
+                      className="w-7 h-7 flex items-center justify-center rounded-[8px] text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors text-lg font-bold"
+                      title="Отдалить"
+                    >
+                      −
+                    </button>
+                    <button
+                      onClick={() => fitView({ padding: 0.2 })}
+                      className="w-7 h-7 flex items-center justify-center rounded-[8px] text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+                      title="Вместить всё"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="1" y="1" width="12" height="12" rx="2" /><path d="M4 7h6M7 4v6" /></svg>
+                    </button>
+                    <button
+                      onClick={() => zoomIn()}
+                      className="w-7 h-7 flex items-center justify-center rounded-[8px] text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors text-lg font-bold"
+                      title="Приблизить"
+                    >
+                      +
+                    </button>
+                  </div>
+
+                  <JarvisCommandBar />
+                </>
+              )}
+
+              {activeView === 'list' && (
+                <div className="h-full overflow-y-auto p-6">
+                  <ListView nodes={nodes} onNodeSelect={handleNodeSelect} />
+                </div>
+              )}
+              {activeView === 'kanban' && (
+                <div className="h-full overflow-x-auto p-6">
+                  <KanbanView nodes={nodes} onNodeSelect={handleNodeSelect} onStatusChange={handleStatusChange} />
+                </div>
+              )}
+              {activeView === 'timeline' && (
+                <div className="h-full overflow-y-auto p-6">
+                  <TimelineView nodes={nodes} onNodeSelect={handleNodeSelect} />
+                </div>
+              )}
+              {activeView === 'dashboard' && (
+                <div className="h-full overflow-y-auto p-6">
+                  <DashboardView nodes={nodes} />
+                </div>
+              )}
+            </main>
           </div>
-        </>
-      )}
-
-      {activeView === 'list' && <ListView nodes={nodes} onNodeSelect={handleNodeSelect} />}
-      {activeView === 'kanban' && <KanbanView nodes={nodes} onNodeSelect={handleNodeSelect} onStatusChange={handleStatusChange} />}
-      {activeView === 'timeline' && <TimelineView nodes={nodes} onNodeSelect={handleNodeSelect} />}
-      {activeView === 'dashboard' && <DashboardView nodes={nodes} />}
+        </div>
+      </div>
 
       <NodeDrawer
         isOpen={!!selectedNode}
@@ -337,7 +359,6 @@ function PipelinePageInner() {
         onInsertNode={insertNodeOnEdge}
       />
 
-      <JarvisCommandBar />
       <MorningBriefing isOpen={briefingOpen} onClose={() => setBriefingOpen(false)} />
       <TemplateGallery isOpen={templateOpen} onClose={() => setTemplateOpen(false)} onApplyTemplate={handleApplyTemplate} />
     </div>
