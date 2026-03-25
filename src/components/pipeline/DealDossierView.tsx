@@ -161,8 +161,6 @@ export function DealDossierView() {
 
       {/* ═══ CENTER: DOSSIER CONTENT ═══ */}
       <motion.div variants={container} initial="hidden" animate="show" className="flex-1 min-w-0 space-y-5 pb-8 overflow-y-auto pr-1">
-        {/* Quick Actions Bar */}
-        <QuickActionsBar />
         {/* HERO HEADER */}
         <motion.div variants={item} className="matte-glass p-6 relative overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-node-active to-primary rounded-t-[14px]" />
