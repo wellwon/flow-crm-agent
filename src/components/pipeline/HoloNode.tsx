@@ -50,7 +50,7 @@ function HoloNodeComponent({ data, selected }: NodeProps) {
       whileHover={{ scale: 1.04 }}
       transition={{ type: 'spring', stiffness: 400, damping: 25 }}
       className={`
-        relative w-[220px] rounded-xl border backdrop-blur-md bg-card/90
+        relative w-[220px] rounded-xl border bg-card
         ${style.border} ${style.glow}
         ${selected ? 'ring-2 ring-primary/50' : ''}
         ${nodeData.status === 'skipped' ? 'opacity-50' : ''}
@@ -71,7 +71,7 @@ function HoloNodeComponent({ data, selected }: NodeProps) {
       {docs && docs.length > 0 && (
         <div className="absolute -top-7 left-0 right-0 opacity-0 group-hover/node:opacity-100 transition-opacity flex gap-1 justify-center">
           {docs.map((doc, i) => (
-            <div key={i} className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-background/90 backdrop-blur border border-border/40 text-[9px] text-foreground/70 cursor-pointer hover:border-primary/40 hover:text-primary transition-colors">
+            <div key={i} className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-card border border-border text-[9px] text-foreground/70 cursor-pointer hover:border-primary/40 hover:text-primary transition-colors">
               <Paperclip className="w-2.5 h-2.5" />
               <span className="truncate max-w-[80px]">{doc}</span>
             </div>

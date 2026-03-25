@@ -48,10 +48,10 @@ const items: PaletteItem[] = [
 ];
 
 const categoryColors: Record<string, string> = {
-  human_action: 'text-sidebar-primary',
+  human_action: 'text-primary',
   gate: 'text-node-active',
   ai_action: 'text-[hsl(265_80%_65%)]',
-  system: 'text-sidebar-foreground/50',
+  system: 'text-muted-foreground',
   note: 'text-[hsl(48_80%_55%)]',
 };
 
@@ -78,71 +78,69 @@ export function NodePalette({
   const groups = ['human_action', 'gate', 'ai_action', 'system', 'note'] as const;
 
   return (
-    <div className={`absolute left-4 top-[84px] bottom-4 z-10 transition-all duration-300 ${collapsed ? 'w-10' : 'w-[160px]'}`}>
-      <div className="h-full pipeline-chrome-dense overflow-hidden flex flex-col">
-        {/* Toggle */}
-        <button
-          onClick={() => setCollapsed(c => !c)}
-          className="p-2 flex items-center justify-center hover:bg-sidebar-accent/40 transition-colors border-b border-sidebar-border"
-        >
-          {collapsed ? <ChevronRight className="w-3.5 h-3.5 text-sidebar-foreground/50" /> : <ChevronLeft className="w-3.5 h-3.5 text-sidebar-foreground/50" />}
-        </button>
+    <div className={`flex-shrink-0 border-r border-border bg-card overflow-hidden flex flex-col transition-all duration-300 ${collapsed ? 'w-10' : 'w-[160px]'}`}>
+      {/* Toggle */}
+      <button
+        onClick={() => setCollapsed(c => !c)}
+        className="p-2 flex items-center justify-center hover:bg-muted/50 transition-colors border-b border-border"
+      >
+        {collapsed ? <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" /> : <ChevronLeft className="w-3.5 h-3.5 text-muted-foreground" />}
+      </button>
 
-        {/* Interaction tools */}
-        <div className="px-1.5 py-2 border-b border-sidebar-border">
-          <div className="flex gap-0.5">
-            <button
-              onClick={() => onInteractionModeChange?.('select')}
-              title="Выделение"
-              className={`flex-1 flex items-center justify-center py-2 rounded-lg transition-all ${
-                interactionMode === 'select' ? 'bg-sidebar-primary/20 text-sidebar-primary' : 'text-sidebar-foreground/50 hover:bg-sidebar-accent/40 hover:text-sidebar-foreground'
-              }`}
-            >
-              <MousePointer2 className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => onInteractionModeChange?.('hand')}
-              title="Рука"
-              className={`flex-1 flex items-center justify-center py-2 rounded-lg transition-all ${
-                interactionMode === 'hand' ? 'bg-sidebar-primary/20 text-sidebar-primary' : 'text-sidebar-foreground/50 hover:bg-sidebar-accent/40 hover:text-sidebar-foreground'
-              }`}
-            >
-              <Hand className="w-4 h-4" />
-            </button>
-          </div>
+      {/* Interaction tools */}
+      <div className="px-1.5 py-2 border-b border-border">
+        <div className="flex gap-0.5">
+          <button
+            onClick={() => onInteractionModeChange?.('select')}
+            title="Выделение"
+            className={`flex-1 flex items-center justify-center py-2 rounded-[8px] transition-all ${
+              interactionMode === 'select' ? 'bg-primary/15 text-primary' : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
+            }`}
+          >
+            <MousePointer2 className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => onInteractionModeChange?.('hand')}
+            title="Рука"
+            className={`flex-1 flex items-center justify-center py-2 rounded-[8px] transition-all ${
+              interactionMode === 'hand' ? 'bg-primary/15 text-primary' : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
+            }`}
+          >
+            <Hand className="w-4 h-4" />
+          </button>
         </div>
+      </div>
 
-        {/* Node palette */}
-        <div className="flex-1 overflow-y-auto py-2 px-1.5 space-y-3">
-          {groups.map(cat => {
-            const catItems = items.filter(i => i.category === cat);
-            return (
-              <div key={cat}>
-                {!collapsed && (
-                  <span className={`text-[8px] font-mono uppercase tracking-[0.15em] px-1.5 mb-1 block ${categoryColors[cat]}`}>
-                    {categoryLabels[cat]}
-                  </span>
-                )}
-                <div className="space-y-0.5">
-                  {catItems.map(item => (
-                    <div
-                      key={item.type}
-                      draggable
-                      onDragStart={(e) => handleDragStart(e, item)}
-                      className="flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-grab active:cursor-grabbing hover:bg-sidebar-accent/40 transition-colors group"
-                      title={item.label}
-                    >
-                      <item.icon className={`w-3.5 h-3.5 shrink-0 ${categoryColors[item.category]} group-hover:scale-110 transition-transform`} />
-                      {!collapsed && (
-                        <span className="text-[10px] text-sidebar-foreground/80 truncate">{item.label}</span>
-                      )}
-                    </div>
-                  ))}
-                </div>
+      {/* Node palette */}
+      <div className="flex-1 overflow-y-auto py-2 px-1.5 space-y-3">
+        {groups.map(cat => {
+          const catItems = items.filter(i => i.category === cat);
+          return (
+            <div key={cat}>
+              {!collapsed && (
+                <span className={`text-[8px] font-mono uppercase tracking-[0.15em] px-1.5 mb-1 block ${categoryColors[cat]}`}>
+                  {categoryLabels[cat]}
+                </span>
+              )}
+              <div className="space-y-0.5">
+                {catItems.map(item => (
+                  <div
+                    key={item.type}
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, item)}
+                    className="flex items-center gap-2 px-2 py-1.5 rounded-[8px] cursor-grab active:cursor-grabbing hover:bg-muted/50 transition-colors group"
+                    title={item.label}
+                  >
+                    <item.icon className={`w-3.5 h-3.5 shrink-0 ${categoryColors[item.category]} group-hover:scale-110 transition-transform`} />
+                    {!collapsed && (
+                      <span className="text-[10px] text-foreground/80 truncate">{item.label}</span>
+                    )}
+                  </div>
+                ))}
               </div>
-            );
-          })}
-        </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
