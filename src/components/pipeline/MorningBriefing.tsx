@@ -27,7 +27,7 @@ export function MorningBriefing({ isOpen, onClose }: MorningBriefingProps) {
             className="relative matte-glass w-full max-w-3xl max-h-[85vh] overflow-hidden flex flex-col shadow-2xl"
           >
             {/* Header */}
-            <div className="p-5 border-b border-border/50 flex items-center justify-between">
+            <div className="p-5 border-b border-border flex items-center justify-between">
               <div>
                 <div className="flex items-center gap-2">
                   <span className="text-[10px] font-mono text-node-active uppercase tracking-wider">JARVIS · Утренний брифинг</span>
