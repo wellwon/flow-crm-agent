@@ -151,6 +151,7 @@ const item = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transiti
 
 export function DealDossierView() {
   const d = dossierData;
+  const [selectedStep, setSelectedStep] = useState<number | null>(null);
 
   return (
     <div className="flex gap-5 h-full">
@@ -408,7 +409,7 @@ export function DealDossierView() {
                 <div className="w-4 h-4 rounded-full border-2 border-muted-foreground/20" />
               );
               return (
-                <div key={i} className="relative flex items-start gap-3 py-1.5">
+                <div key={i} className={`relative flex items-start gap-3 py-1.5 cursor-pointer rounded-[8px] px-2 -mx-2 transition-colors ${selectedStep === i ? 'bg-primary/10' : 'hover:bg-muted/30'}`} onClick={() => setSelectedStep(i)}>
                   <div className="absolute left-[-18px] top-2.5 z-10 bg-card rounded-full">{statusIcon}</div>
                   <div className="flex-1 flex items-center gap-2 min-w-0">
                     <span className={`text-xs ${step.status === 'completed' ? 'text-foreground' : step.status === 'active' ? 'text-foreground font-semibold' : 'text-muted-foreground'}`}>
@@ -541,7 +542,7 @@ export function DealDossierView() {
       </motion.div>
 
       {/* ═══ RIGHT: INFO SIDEBAR ═══ */}
-      <DossierInfoSidebar data={d} />
+      <DossierInfoSidebar data={d} selectedStep={selectedStep} onClose={() => setSelectedStep(null)} />
     </div>
   );
 }
@@ -586,7 +587,7 @@ function JarvisChat() {
   ];
 
   return (
-    <div className="w-[380px] shrink-0 flex flex-col matte-glass overflow-hidden sticky top-0 h-[calc(100vh-160px)]">
+    <div className="w-[456px] shrink-0 flex flex-col matte-glass overflow-hidden sticky top-0 h-[calc(100vh-160px)]">
       {/* Header */}
       <div className="px-4 py-3 border-b border-border flex items-center gap-2.5">
         <div className="w-7 h-7 rounded-full bg-[hsl(265_80%_65%)/0.15] flex items-center justify-center">
@@ -707,147 +708,265 @@ function getJarvisResponse(input: string): string {
   return '✨ Понял, работаю над этим. Обновлю досье когда будет готово.\n\nЧто-нибудь ещё по этой сделке?';
 }
 
+/* ═══ Step detail data ═══ */
+const stepDetails: Record<number, { summary: string; details: string[]; documents?: string[]; contacts?: string[]; notes?: string[] }> = {
+  0: {
+    summary: 'Первый контакт с ЦРБ Коломна состоялся 12 марта. Встреча с зам. главврача Ивановым И.И.',
+    details: ['Звонок от Иванова — запрос на УЗИ экспертного класса', 'Назначена очная встреча на 14 марта', 'Иванов подтвердил бюджет ~6М₽'],
+    contacts: ['Иванов И.И. — ЛПР, зам. главврача по закупкам'],
+    notes: ['Конкурент GE уже предлагал Voluson E10', 'Заказчик открыт к Mindray'],
+  },
+  1: {
+    summary: 'Уточнение потребности: заказчику нужно 2 аппарата DC-80 для отделения УЗД.',
+    details: ['Петрова А.С. уточнила: нужен кардиологический пакет датчиков', 'Объём: 2 шт Mindray DC-80', 'Размещение: кабинеты 201 и 205'],
+    contacts: ['Петрова А.С. — нач. отд. УЗД, технический специалист'],
+    notes: ['Петрова хочет демо DC-80 на месте', 'Текущее оборудование — устаревший Philips HD11'],
+  },
+  2: {
+    summary: 'Коммерческое предложение отправлено 18 марта Иванову И.И.',
+    details: ['КП на 5 600 000 ₽ за 2 аппарата', 'Включены: доставка, монтаж, обучение', 'Гарантия 3 года'],
+    documents: ['КП_ЦРБ_Коломна_DC80.pdf — отправлено 18 мар'],
+    notes: ['Цена ниже рынка на 7%', 'Иванов обещал рассмотреть до 22 марта'],
+  },
+  3: {
+    summary: 'JARVIS автоматически сгенерировал черновик ТЗ на основе тендерной документации.',
+    details: ['Черновик содержит 12 разделов', 'Секция «Датчики» требует проверки — Петрова просила кардио', '⚠️ Ждёт одобрения менеджера Алексея М.'],
+    documents: ['ТЗ_УЗИ_DC80_draft.docx — AI-черновик, 25 мар'],
+    notes: ['Блокер: без утверждённого ТЗ нельзя считать НМЦК', 'Дедлайн утверждения: 28 марта'],
+  },
+  4: {
+    summary: 'Для расчёта НМЦК необходимо собрать 3 коммерческих предложения от разных поставщиков.',
+    details: ['Запросы отправлены: МедТехСнаб, Альфа-Мед, ДиагностПро', 'Ожидаемые ответы: 27-28 марта', 'Дедлайн расчёта: 30 марта'],
+    documents: ['НМЦК_расчёт.xlsx — ожидает данных'],
+    notes: ['Без 3 КП НМЦК не пройдёт проверку', 'JARVIS мониторит почту на входящие КП'],
+  },
+  5: {
+    summary: 'Подготовка заявки для подачи на электронную площадку.',
+    details: ['Требуется: утверждённое ТЗ + НМЦК', 'Форма заявки — стандартная для 44-ФЗ', 'Планируемая дата: 5 апреля'],
+    documents: ['Заявка_аукцион.pdf — не готово'],
+  },
+  6: {
+    summary: 'Подача документов на электронную торговую площадку.',
+    details: ['Площадка: РТС-тендер', 'Планируемая дата подачи: 10 апреля', 'Нужна ЭЦП руководителя'],
+  },
+  7: {
+    summary: 'Электронный аукцион по 44-ФЗ.',
+    details: ['Планируемая дата: 15 апреля', 'Стратегия: снижение до 5-15% от НМЦК', 'Основной конкурент: GE Healthcare'],
+    notes: ['GE может демпинговать', 'Наше преимущество: сервис и гарантия'],
+  },
+};
+
 /* ═══ RIGHT INFO SIDEBAR ═══ */
 
-function DossierInfoSidebar({ data }: { data: typeof dossierData }) {
+function DossierInfoSidebar({ data, selectedStep, onClose }: { data: typeof dossierData; selectedStep: number | null; onClose: () => void }) {
   const d = data;
+  const step = selectedStep !== null ? d.pipeline[selectedStep] : null;
+  const details = selectedStep !== null ? stepDetails[selectedStep] : null;
+
   return (
-    <div className="w-[300px] shrink-0 flex flex-col matte-glass overflow-hidden sticky top-0 h-[calc(100vh-160px)]">
-      {/* Header */}
-      <div className="px-4 py-3 border-b border-border">
-        <div className="text-xs font-semibold text-foreground flex items-center gap-2">
-          <Activity className="w-4 h-4 text-primary" />
-          Обзор сделки
-        </div>
-        <div className="text-[9px] text-muted-foreground mt-0.5">{d.deal.customer} • {d.deal.id}</div>
-      </div>
-
-      <div className="flex-1 overflow-y-auto px-3 py-3 space-y-4">
-        {/* Progress */}
-        <div>
-          <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider mb-2">Прогресс</div>
-          <div className="flex items-center gap-2 mb-2">
-            <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
-              <div className="h-full bg-primary rounded-full transition-all" style={{ width: `${d.deal.progress}%` }} />
-            </div>
-            <span className="text-xs font-mono font-semibold text-foreground">{d.deal.progress}%</span>
-          </div>
-          <div className="flex gap-1">
-            {d.stages.map((s, i) => (
-              <div key={i} className={`flex-1 h-1.5 rounded-full ${s.done ? 'bg-primary' : 'bg-muted'}`} />
-            ))}
-          </div>
-        </div>
-
-        {/* Key metrics */}
-        <div>
-          <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider mb-2">Финансы</div>
-          <div className="space-y-1.5">
-            <div className="flex justify-between text-[11px]">
-              <span className="text-muted-foreground">Сумма</span>
-              <span className="font-mono font-semibold text-foreground">{fmt(d.finances.budget)}</span>
-            </div>
-            <div className="flex justify-between text-[11px]">
-              <span className="text-muted-foreground">Наша цена</span>
-              <span className="font-mono text-foreground">{fmt(d.finances.ourPrice)}</span>
-            </div>
-            <div className="flex justify-between text-[11px]">
-              <span className="text-muted-foreground">Маржа</span>
-              <span className="font-mono text-primary font-semibold">{d.finances.marginPct}%</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Risks */}
-        <div>
-          <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider mb-2">Риски</div>
-          <div className="space-y-1.5">
-            {d.risks.map((r, i) => (
-              <div key={i} className={`flex items-start gap-2 p-2 rounded-[8px] border text-[10px] ${
-                r.level === 'warning' ? 'bg-node-active/5 border-node-active/20' : 'bg-node-completed/5 border-node-completed/20'
-              }`}>
-                <span>{r.level === 'warning' ? '🟡' : '🟢'}</span>
-                <span className="text-foreground/90">{r.text}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Team */}
-        <div>
-          <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider mb-2">Команда</div>
-          <div className="space-y-1.5">
-            {d.team.map((m, i) => (
-              <div key={i} className="flex items-center gap-2 p-2 rounded-[8px] bg-muted/30 border border-border/50">
-                <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-semibold shrink-0 ${
-                  m.name === 'JARVIS' ? 'bg-[hsl(265_80%_65%)/0.15]' : 'bg-primary/15 text-primary'
-                }`}>
-                  {m.name === 'JARVIS' ? '🤖' : m.avatar}
+    <div className="w-[456px] shrink-0 flex flex-col matte-glass overflow-hidden sticky top-0 h-[calc(100vh-160px)]">
+      <AnimatePresence mode="wait">
+        {step && details ? (
+          <motion.div
+            key={`step-${selectedStep}`}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}
+            transition={{ duration: 0.2 }}
+            className="flex flex-col h-full"
+          >
+            {/* Header */}
+            <div className="px-4 py-3 border-b border-border">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  {step.status === 'completed' ? (
+                    <CheckCircle className="w-4 h-4 text-node-completed" />
+                  ) : step.status === 'active' ? (
+                    <CircleDot className="w-4 h-4 text-node-active" />
+                  ) : (
+                    <Clock className="w-4 h-4 text-muted-foreground" />
+                  )}
+                  <span className="text-xs font-semibold text-foreground">{step.label}</span>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-[10px] font-semibold text-foreground">{m.name}</div>
-                  <div className="text-[9px] text-muted-foreground">{m.role}</div>
-                </div>
-                <span className="text-[9px] font-mono text-muted-foreground">{m.done}/{m.tasks}</span>
+                <button onClick={onClose} className="text-muted-foreground hover:text-foreground text-xs transition-colors">✕</button>
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Documents quick list */}
-        <div>
-          <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider mb-2">Документы</div>
-          <div className="space-y-1">
-            {d.documents.map((doc, i) => (
-              <div key={i} className="flex items-center gap-2 p-1.5 rounded-[8px] bg-muted/30 border border-border/50 hover:border-primary/30 transition-colors cursor-pointer">
-                <Paperclip className="w-3 h-3 text-muted-foreground shrink-0" />
-                <span className="text-[10px] text-foreground truncate flex-1">{doc.name}</span>
-                <span className={`text-[8px] ${
-                  doc.status === 'sent' ? 'text-node-completed' : doc.status === 'ai-draft' ? 'text-[hsl(265_80%_65%)]' : 'text-muted-foreground/50'
-                }`}>
-                  {doc.status === 'sent' ? '✅' : doc.status === 'ai-draft' ? '🤖' : '⏳'}
-                </span>
+              <div className="flex items-center gap-3 mt-1">
+                {step.date && <span className="text-[10px] font-mono text-muted-foreground">{step.date}</span>}
+                {step.assignee && <span className="text-[10px] text-muted-foreground">{step.assignee}</span>}
               </div>
-            ))}
-          </div>
-        </div>
+            </div>
 
-        {/* Similar tenders */}
-        <div>
-          <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider mb-2">Похожие тендеры</div>
-          <div className="space-y-1.5">
-            {d.similarTenders.map((t, i) => (
-              <div key={i} className="p-2 rounded-[8px] bg-muted/30 border border-border/50 cursor-pointer hover:border-primary/30 transition-colors">
-                <div className="text-[10px] font-semibold text-foreground">{t.title}</div>
-                <div className="flex items-center justify-between mt-1">
-                  <span className="text-[9px] font-mono text-muted-foreground">{fmt(t.amount)}</span>
-                  <span className="text-[9px] font-mono text-primary font-semibold">{t.match}%</span>
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+              {/* Summary */}
+              <div className="p-3 rounded-[10px] bg-primary/5 border border-primary/15">
+                <p className="text-[11px] text-foreground leading-relaxed">{details.summary}</p>
+              </div>
+
+              {/* Details */}
+              <div>
+                <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider mb-2">Детали</div>
+                <div className="space-y-1.5">
+                  {details.details.map((d, i) => (
+                    <div key={i} className="flex items-start gap-2 text-[11px]">
+                      <ChevronRight className="w-3 h-3 text-primary shrink-0 mt-0.5" />
+                      <span className="text-foreground/90">{d}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
 
-        {/* Timeline */}
-        <div>
-          <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider mb-2">Хронология</div>
-          <div className="space-y-2">
-            {d.timeline.slice(0, 5).map((ev, i) => {
-              const IconEl = ev.icon === 'ai' ? Bot : ev.icon === 'system' ? Zap : MessageSquare;
-              const iconColor = ev.icon === 'ai' ? 'text-[hsl(265_80%_65%)]' : ev.icon === 'system' ? 'text-node-active' : 'text-primary';
-              return (
-                <div key={i} className="flex items-start gap-2">
-                  <IconEl className={`w-3 h-3 mt-0.5 shrink-0 ${iconColor}`} />
-                  <div>
-                    <p className="text-[10px] text-foreground/90">{ev.text}</p>
-                    <span className="text-[8px] font-mono text-muted-foreground/40">{ev.date}</span>
+              {/* Contacts */}
+              {details.contacts && (
+                <div>
+                  <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider mb-2">Контакты</div>
+                  <div className="space-y-1.5">
+                    {details.contacts.map((c, i) => (
+                      <div key={i} className="flex items-center gap-2 p-2 rounded-[8px] bg-muted/30 border border-border/50">
+                        <User className="w-3.5 h-3.5 text-primary shrink-0" />
+                        <span className="text-[10px] text-foreground">{c}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
+              )}
+
+              {/* Documents */}
+              {details.documents && (
+                <div>
+                  <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider mb-2">Документы</div>
+                  <div className="space-y-1.5">
+                    {details.documents.map((doc, i) => (
+                      <div key={i} className="flex items-center gap-2 p-2 rounded-[8px] bg-muted/30 border border-border/50 hover:border-primary/30 transition-colors cursor-pointer">
+                        <Paperclip className="w-3 h-3 text-muted-foreground shrink-0" />
+                        <span className="text-[10px] text-foreground">{doc}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Notes */}
+              {details.notes && (
+                <div>
+                  <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider mb-2">Заметки</div>
+                  <div className="space-y-1.5">
+                    {details.notes.map((n, i) => (
+                      <div key={i} className="flex items-start gap-2 p-2 rounded-[8px] bg-node-active/5 border border-node-active/15">
+                        <Star className="w-3 h-3 text-node-active shrink-0 mt-0.5" />
+                        <span className="text-[10px] text-foreground/90">{n}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Warning */}
+              {step.warning && (
+                <div className="flex items-start gap-2 p-3 rounded-[10px] bg-node-active/10 border border-node-active/20">
+                  <AlertTriangle className="w-4 h-4 text-node-active shrink-0" />
+                  <span className="text-[11px] text-foreground">{step.warning}</span>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="overview"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="flex flex-col h-full"
+          >
+            {/* Default overview header */}
+            <div className="px-4 py-3 border-b border-border">
+              <div className="text-xs font-semibold text-foreground flex items-center gap-2">
+                <Activity className="w-4 h-4 text-primary" />
+                Обзор сделки
+              </div>
+              <div className="text-[9px] text-muted-foreground mt-0.5">{d.deal.customer} • {d.deal.id}</div>
+            </div>
+
+            <div className="flex-1 overflow-y-auto px-3 py-3 space-y-4">
+              {/* Progress */}
+              <div>
+                <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider mb-2">Прогресс</div>
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
+                    <div className="h-full bg-primary rounded-full transition-all" style={{ width: `${d.deal.progress}%` }} />
+                  </div>
+                  <span className="text-xs font-mono font-semibold text-foreground">{d.deal.progress}%</span>
+                </div>
+                <div className="flex gap-1">
+                  {d.stages.map((s, i) => (
+                    <div key={i} className={`flex-1 h-1.5 rounded-full ${s.done ? 'bg-primary' : 'bg-muted'}`} />
+                  ))}
+                </div>
+              </div>
+
+              {/* Finances */}
+              <div>
+                <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider mb-2">Финансы</div>
+                <div className="space-y-1.5">
+                  <div className="flex justify-between text-[11px]">
+                    <span className="text-muted-foreground">Сумма</span>
+                    <span className="font-mono font-semibold text-foreground">{fmt(d.finances.budget)}</span>
+                  </div>
+                  <div className="flex justify-between text-[11px]">
+                    <span className="text-muted-foreground">Наша цена</span>
+                    <span className="font-mono text-foreground">{fmt(d.finances.ourPrice)}</span>
+                  </div>
+                  <div className="flex justify-between text-[11px]">
+                    <span className="text-muted-foreground">Маржа</span>
+                    <span className="font-mono text-primary font-semibold">{d.finances.marginPct}%</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Risks */}
+              <div>
+                <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider mb-2">Риски</div>
+                <div className="space-y-1.5">
+                  {d.risks.map((r, i) => (
+                    <div key={i} className={`flex items-start gap-2 p-2 rounded-[8px] border text-[10px] ${
+                      r.level === 'warning' ? 'bg-node-active/5 border-node-active/20' : 'bg-node-completed/5 border-node-completed/20'
+                    }`}>
+                      <span>{r.level === 'warning' ? '🟡' : '🟢'}</span>
+                      <span className="text-foreground/90">{r.text}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Team */}
+              <div>
+                <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider mb-2">Команда</div>
+                <div className="space-y-1.5">
+                  {d.team.map((m, i) => (
+                    <div key={i} className="flex items-center gap-2 p-2 rounded-[8px] bg-muted/30 border border-border/50">
+                      <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-semibold shrink-0 ${
+                        m.name === 'JARVIS' ? 'bg-[hsl(265_80%_65%)/0.15]' : 'bg-primary/15 text-primary'
+                      }`}>
+                        {m.name === 'JARVIS' ? '🤖' : m.avatar}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-[10px] font-semibold text-foreground">{m.name}</div>
+                        <div className="text-[9px] text-muted-foreground">{m.role}</div>
+                      </div>
+                      <span className="text-[9px] font-mono text-muted-foreground">{m.done}/{m.tasks}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Hint */}
+              <div className="p-3 rounded-[10px] bg-muted/20 border border-border/30 text-center">
+                <p className="text-[10px] text-muted-foreground">👆 Нажмите на этап пайплайна для просмотра деталей</p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
