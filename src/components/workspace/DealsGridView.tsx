@@ -18,10 +18,10 @@ export function DealsGridView({ deals, onOpenDeal }: Props) {
         <div
           key={deal.id}
           onClick={() => onOpenDeal(deal.id)}
-          className="bg-muted/20 border border-border/20 rounded-xl p-5 cursor-pointer hover:border-primary/30 hover:bg-muted/30 transition-all group flex flex-col"
+          className="matte-glass p-5 cursor-pointer hover:border-primary/30 transition-all group flex flex-col"
         >
           <div className="flex items-start justify-between mb-3">
-            <Badge variant="outline" className={`text-[10px] border ${dealStatusColors[deal.status]}`}>
+            <Badge variant="outline" className={`text-[11px] border rounded-full ${dealStatusColors[deal.status]}`}>
               {dealStatusLabels[deal.status]}
             </Badge>
             <span className="text-lg font-mono font-semibold text-foreground">
@@ -29,36 +29,36 @@ export function DealsGridView({ deals, onOpenDeal }: Props) {
             </span>
           </div>
 
-          <h3 className="font-medium text-foreground mb-1 group-hover:text-primary transition-colors">
+          <h3 className="font-medium text-foreground text-[15px] mb-1 group-hover:text-primary transition-colors">
             {deal.title}
           </h3>
-          <p className="text-xs text-muted-foreground mb-4">{deal.company}</p>
+          <p className="text-[12px] text-muted-foreground mb-4">{deal.company}</p>
 
           <div className="mt-auto space-y-3">
             <div>
-              <div className="flex justify-between text-xs text-muted-foreground mb-1">
+              <div className="flex justify-between text-[12px] text-muted-foreground mb-1">
                 <span>Прогресс</span>
                 <span>{deal.progress}%</span>
               </div>
               <Progress value={deal.progress} className="h-1.5" />
             </div>
 
-            <div className="flex items-center justify-between pt-2 border-t border-border/15">
+            <div className="flex items-center justify-between pt-2 border-t border-border">
               <div className="flex items-center gap-2">
                 <Avatar className="w-6 h-6">
                   <AvatarFallback className="text-[10px] bg-primary/10 text-primary border border-primary/20">
                     {deal.manager.avatar}
                   </AvatarFallback>
                 </Avatar>
-                <span className="text-xs text-muted-foreground">{deal.manager.name}</span>
+                <span className="text-[12px] text-muted-foreground">{deal.manager.name}</span>
               </div>
-              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+              <div className="flex items-center gap-1 text-[12px] text-muted-foreground">
                 <Calendar className="w-3 h-3" />
                 {format(new Date(deal.deadline), 'd MMM', { locale: ru })}
               </div>
             </div>
 
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <div className="flex items-center gap-1.5 text-[12px] text-muted-foreground">
               <ArrowRight className="w-3 h-3 text-primary" />
               <span className="truncate">{deal.nextStep}</span>
             </div>
