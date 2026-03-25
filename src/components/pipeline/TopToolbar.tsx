@@ -30,7 +30,7 @@ export function TopToolbar({ activeView = 'graph', onViewChange, onBriefingOpen,
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate('/')}
-            className="flex items-center justify-center w-8 h-8 rounded-[10px] text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+            className="flex items-center justify-center w-8 h-8 rounded-[10px] text-muted-foreground hover:text-primary hover:bg-primary/10 active:bg-primary/20 transition-colors"
             title="Назад к сделкам"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -51,7 +51,7 @@ export function TopToolbar({ activeView = 'graph', onViewChange, onBriefingOpen,
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[8px] text-[13px] font-medium transition-all ${
                 activeView === v.id
                   ? 'bg-primary text-primary-foreground shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                  : 'text-muted-foreground hover:text-primary hover:bg-primary/10 active:bg-primary/20'
               }`}
             >
               <v.icon className="w-3.5 h-3.5" />
@@ -67,7 +67,7 @@ export function TopToolbar({ activeView = 'graph', onViewChange, onBriefingOpen,
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[10px] text-xs font-medium transition-all ${
                 phasesVisible
                   ? 'bg-primary/15 text-primary border border-primary/30'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                  : 'text-muted-foreground hover:text-primary hover:bg-primary/10 active:bg-primary/20'
               }`}
             >
               <Layers className="w-3.5 h-3.5" />
@@ -77,7 +77,7 @@ export function TopToolbar({ activeView = 'graph', onViewChange, onBriefingOpen,
           {onTemplateOpen && (
             <button
               onClick={onTemplateOpen}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-[10px] text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-[10px] text-xs font-medium text-muted-foreground hover:text-primary hover:bg-primary/10 active:bg-primary/20 transition-all"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Шаблон</span>
