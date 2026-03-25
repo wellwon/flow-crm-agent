@@ -102,6 +102,23 @@ function FilterDropdown({ icon: Icon, label, options, selected, onChange, displa
 export function WorkspacePage() {
   const [view, setView] = useState<ViewMode>('table');
   const [search, setSearch] = useState('');
+  const [isDark, setIsDark] = useState(() => {
+    if (typeof document !== 'undefined') {
+      return document.documentElement.classList.contains('dark');
+    }
+    return true;
+  });
+
+  const toggleTheme = () => {
+    const next = !isDark;
+    setIsDark(next);
+    if (next) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  };
+
   const [deals, setDeals] = useState<Deal[]>(mockDeals);
   const [filterRegion, setFilterRegion] = useState<string[]>([]);
   const [filterStatus, setFilterStatus] = useState<string[]>([]);
