@@ -25,7 +25,7 @@ export function TopToolbar({ activeView = 'graph', onViewChange, onBriefingOpen,
 
   return (
     <header className="border-b border-border flex-shrink-0 relative">
-      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-primary via-node-active to-primary" />
+      
       <div className="px-6 py-3 flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-3">
           <button

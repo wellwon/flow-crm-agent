@@ -22,6 +22,7 @@ import { KanbanView } from './KanbanView';
 import { DashboardView } from './DashboardView';
 import { DealDossierView } from './DealDossierView';
 import { TimelineView } from './TimelineView';
+import { QuickActionsBar } from './QuickActionsBar';
 import { CanvasContextMenu, type ContextMenuPosition } from './CanvasContextMenu';
 import { EdgeContextMenu } from './EdgeContextMenu';
 import { NodePalette, type InteractionMode } from './NodePalette';
@@ -220,6 +221,7 @@ function PipelinePageInner() {
             phasesVisible={phasesVisible}
             onTogglePhases={() => setPhasesVisible(v => !v)}
           />
+          <QuickActionsBar />
 
           {/* Body: JARVIS chat left | content center | node drawer right */}
           <div className="flex-1 flex overflow-hidden">
