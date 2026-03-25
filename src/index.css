@@ -135,23 +135,23 @@
     box-shadow: var(--shadow-soft);
   }
 
-  /* Always-dark glass for pipeline chrome (toolbar, sidebar) */
-  .glass-panel-dark {
+  /* Pipeline chrome — uses sidebar tokens for consistent theming */
+  .pipeline-chrome {
     @apply backdrop-blur-xl border;
     border-radius: 24px;
-    background: hsl(214 50% 7% / 0.92);
-    border-color: hsl(0 0% 100% / 0.08);
-    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-    color: hsl(210 40% 98%);
+    background: hsl(var(--sidebar-background) / var(--glass-opacity));
+    border-color: hsl(var(--glass-border) / 0.08);
+    box-shadow: var(--shadow-glass);
+    color: hsl(var(--sidebar-foreground));
   }
 
-  .glass-panel-dark-dense {
+  .pipeline-chrome-dense {
     @apply backdrop-blur-2xl border;
     border-radius: 24px;
-    background: hsl(214 50% 7% / 0.88);
-    border-color: hsl(0 0% 100% / 0.06);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-    color: hsl(210 40% 98%);
+    background: hsl(var(--sidebar-background) / 0.88);
+    border-color: hsl(var(--glass-border) / 0.06);
+    box-shadow: var(--shadow-soft);
+    color: hsl(var(--sidebar-foreground));
   }
 
   .matte-glass {
