@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LayoutGrid, List, Kanban, CalendarDays, Plus, Search, X, MapPin, Tag, User, Flag, ChevronDown } from 'lucide-react';
+import { LayoutGrid, List, Kanban, CalendarDays, Plus, Search, X, MapPin, Tag, User, Flag, ChevronDown, Sun, Moon } from 'lucide-react';
 import { mockDeals, dealStatusLabels, type DealStatus, type Deal } from '@/data/mockDeals';
 import { DealsTableView } from './DealsTableView';
 import { DealsKanbanView } from './DealsKanbanView';
@@ -102,6 +102,23 @@ function FilterDropdown({ icon: Icon, label, options, selected, onChange, displa
 export function WorkspacePage() {
   const [view, setView] = useState<ViewMode>('table');
   const [search, setSearch] = useState('');
+  const [isDark, setIsDark] = useState(() => {
+    if (typeof document !== 'undefined') {
+      return document.documentElement.classList.contains('dark');
+    }
+    return true;
+  });
+
+  const toggleTheme = () => {
+    const next = !isDark;
+    setIsDark(next);
+    if (next) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  };
+
   const [deals, setDeals] = useState<Deal[]>(mockDeals);
   const [filterRegion, setFilterRegion] = useState<string[]>([]);
   const [filterStatus, setFilterStatus] = useState<string[]>([]);
@@ -145,7 +162,7 @@ export function WorkspacePage() {
       {/* Layer 0: Gradient background */}
       <div
         className="fixed inset-0 z-0"
-        style={{ background: 'linear-gradient(to bottom, #0d3331 0%, #0e3f4f 50%, #0a1120 100%)' }}
+        style={{ background: 'var(--bg-gradient)' }}
       />
 
       {/* Layer 1: Content */}
@@ -165,6 +182,13 @@ export function WorkspacePage() {
                 </span>
               </div>
               <div className="flex items-center gap-3">
+                <button
+                  onClick={toggleTheme}
+                  className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+                  title={isDark ? 'Светлая тема' : 'Тёмная тема'}
+                >
+                  {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                </button>
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
