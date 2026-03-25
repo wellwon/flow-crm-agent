@@ -233,6 +233,7 @@ function PipelinePageInner() {
           />
           <ReactFlow
             className="border border-border/20 rounded-xl"
+            style={{ backgroundColor: 'hsl(var(--card))' }}
             nodes={nodes}
             edges={edges}
             onNodesChange={onNodesChange}
@@ -257,7 +258,7 @@ function PipelinePageInner() {
             maxZoom={2}
             deleteKeyCode={['Backspace', 'Delete']}
           >
-            <Background variant={BackgroundVariant.Dots} gap={24} size={1} color="hsl(var(--muted-foreground) / 0.2)" />
+            <Background variant={BackgroundVariant.Dots} gap={24} size={1} color="hsl(var(--muted-foreground) / 0.15)" />
             <MiniMap
               pannable
               zoomable
