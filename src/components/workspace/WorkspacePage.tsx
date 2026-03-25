@@ -1,18 +1,21 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LayoutGrid, List, Kanban, CalendarDays, Plus, Search, X, MapPin, Tag, User, Flag, ChevronDown, Sun, Moon, Brain } from 'lucide-react';
+import { LayoutGrid, List, Kanban, CalendarDays, Plus, Search, X, MapPin, Tag, User, Flag, ChevronDown, Sun, Moon, Brain, Activity } from 'lucide-react';
 import { mockDeals, dealStatusLabels, type DealStatus, type Deal } from '@/data/mockDeals';
 import { DealsTableView } from './DealsTableView';
 import { DealsKanbanView } from './DealsKanbanView';
 import { DealsGridView } from './DealsGridView';
 import { DealsTimelineView } from './DealsTimelineView';
+import { DealsHealthMap } from './DealsHealthMap';
 import { JarvisArchitecturePage } from './JarvisArchitecturePage';
+import { TimelineRibbon } from './TimelineRibbon';
+import { NotificationCenter } from './NotificationCenter';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Checkbox } from '@/components/ui/checkbox';
 
-type ViewMode = 'table' | 'kanban' | 'grid' | 'timeline' | 'jarvis';
+type ViewMode = 'table' | 'kanban' | 'grid' | 'timeline' | 'health' | 'jarvis';
 
 const views: { id: ViewMode; label: string; icon: React.ElementType }[] = [
   { id: 'table', label: 'Таблица', icon: List },
