@@ -98,23 +98,23 @@ export function NodePalette({
 
   return (
     <div className={`absolute left-4 top-[84px] bottom-4 z-10 transition-all duration-300 ${collapsed ? 'w-10' : 'w-[160px]'}`}>
-      <div className="h-full glass-panel-dense overflow-hidden flex flex-col">
+      <div className="h-full glass-panel-dark-dense overflow-hidden flex flex-col">
         {/* Toggle */}
         <button
           onClick={() => setCollapsed(c => !c)}
-          className="p-2 flex items-center justify-center hover:bg-muted/30 transition-colors border-b border-border"
+          className="p-2 flex items-center justify-center hover:bg-white/10 transition-colors border-b border-white/10"
         >
-          {collapsed ? <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" /> : <ChevronLeft className="w-3.5 h-3.5 text-muted-foreground" />}
+          {collapsed ? <ChevronRight className="w-3.5 h-3.5 text-slate-400" /> : <ChevronLeft className="w-3.5 h-3.5 text-slate-400" />}
         </button>
 
         {/* Interaction tools */}
-        <div className="px-1.5 py-2 border-b border-border">
+        <div className="px-1.5 py-2 border-b border-white/10">
           <div className="flex gap-0.5">
             <button
               onClick={() => onInteractionModeChange?.('select')}
               title="Выделение"
               className={`flex-1 flex items-center justify-center py-2 rounded-lg transition-all ${
-                interactionMode === 'select' ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:bg-muted/30 hover:text-foreground'
+                interactionMode === 'select' ? 'bg-primary/20 text-primary' : 'text-slate-400 hover:bg-white/10 hover:text-white'
               }`}
             >
               <MousePointer2 className="w-4 h-4" />
@@ -123,7 +123,7 @@ export function NodePalette({
               onClick={() => onInteractionModeChange?.('hand')}
               title="Рука"
               className={`flex-1 flex items-center justify-center py-2 rounded-lg transition-all ${
-                interactionMode === 'hand' ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:bg-muted/30 hover:text-foreground'
+                interactionMode === 'hand' ? 'bg-primary/20 text-primary' : 'text-slate-400 hover:bg-white/10 hover:text-white'
               }`}
             >
               <Hand className="w-4 h-4" />
@@ -148,12 +148,12 @@ export function NodePalette({
                       key={item.type}
                       draggable
                       onDragStart={(e) => handleDragStart(e, item)}
-                      className="flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-grab active:cursor-grabbing hover:bg-muted/40 transition-colors group"
+                      className="flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-grab active:cursor-grabbing hover:bg-white/10 transition-colors group"
                       title={item.label}
                     >
                       <item.icon className={`w-3.5 h-3.5 shrink-0 ${categoryColors[item.category]} group-hover:scale-110 transition-transform`} />
                       {!collapsed && (
-                        <span className="text-[10px] text-foreground/80 truncate">{item.label}</span>
+                        <span className="text-[10px] text-slate-300/80 truncate">{item.label}</span>
                       )}
                     </div>
                   ))}

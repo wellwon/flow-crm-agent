@@ -233,6 +233,7 @@ function PipelinePageInner() {
           />
           <ReactFlow
             className="border border-border/20 rounded-xl"
+            style={{ backgroundColor: 'hsl(var(--card))' }}
             nodes={nodes}
             edges={edges}
             onNodesChange={onNodesChange}
@@ -257,7 +258,7 @@ function PipelinePageInner() {
             maxZoom={2}
             deleteKeyCode={['Backspace', 'Delete']}
           >
-            <Background variant={BackgroundVariant.Dots} gap={24} size={1} color="hsl(var(--muted-foreground) / 0.2)" />
+            <Background variant={BackgroundVariant.Dots} gap={24} size={1} color="hsl(var(--muted-foreground) / 0.15)" />
             <MiniMap
               pannable
               zoomable
@@ -270,17 +271,14 @@ function PipelinePageInner() {
                 if (d.status === 'waiting') return 'hsl(174 55% 40%)';
                 return 'hsl(240 4% 46%)';
               }}
-              className="!border !border-border !rounded-t-2xl !rounded-b-none"
+              className="!border !border-white/10 !rounded-t-2xl !rounded-b-none"
               style={{
                 width: 200,
                 height: 120,
-                margin: 0,
-                bottom: 44,
-                right: 16,
-                background: 'hsl(var(--card) / 0.85)',
+                background: 'hsl(214 50% 7% / 0.9)',
                 backdropFilter: 'blur(24px)',
               }}
-              maskColor="hsl(var(--background) / 0.6)"
+              maskColor="hsl(214 50% 7% / 0.5)"
             />
             {/* Phase swim lanes */}
             {phasesVisible && <PhaseBackground nodes={nodes} />}
@@ -288,32 +286,32 @@ function PipelinePageInner() {
 
           {/* Zoom controls — visually attached below minimap */}
           <div
-            className="absolute z-20 flex items-center justify-between border border-t-0 border-border rounded-b-2xl px-2 py-1.5"
+            className="absolute z-20 flex items-center justify-between border border-white/10 border-t-0 rounded-b-2xl px-2 py-1.5"
             style={{
               bottom: 16,
               right: 16,
               width: 200,
-              background: 'hsl(var(--card) / 0.85)',
+              background: 'hsl(214 50% 7% / 0.9)',
               backdropFilter: 'blur(24px)',
             }}
           >
             <button
               onClick={() => zoomOut()}
-              className="w-8 h-8 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors text-lg font-bold"
+              className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors text-lg font-bold"
               title="Отдалить"
             >
               −
             </button>
             <button
               onClick={() => fitView({ padding: 0.2 })}
-              className="w-8 h-8 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors"
+              className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
               title="Вместить всё"
             >
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="1" y="1" width="12" height="12" rx="2" /><path d="M4 7h6M7 4v6" /></svg>
             </button>
             <button
               onClick={() => zoomIn()}
-              className="w-8 h-8 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors text-lg font-bold"
+              className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors text-lg font-bold"
               title="Приблизить"
             >
               +

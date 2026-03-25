@@ -24,24 +24,24 @@ export function TopToolbar({ activeView = 'graph', onViewChange, onBriefingOpen,
 
   return (
     <div className="absolute top-0 left-0 right-0 z-10 p-4">
-      <div className="glass-panel px-5 py-3 flex items-center justify-between gap-4 flex-wrap">
+      <div className="glass-panel-dark px-5 py-3 flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate('/')}
-            className="flex items-center justify-center w-8 h-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
+            className="flex items-center justify-center w-8 h-8 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
             title="Назад к сделкам"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
-          <div className="w-px h-5 bg-border" />
+          <div className="w-px h-5 bg-white/10" />
           <div className="w-2 h-2 rounded-full bg-node-active animate-pulse" />
-          <h1 className="text-sm font-semibold text-foreground">
+          <h1 className="text-sm font-semibold text-white">
             ОБ Коломна — 3× УЗИ Mindray DC-70
           </h1>
         </div>
 
         {/* View switcher */}
-        <div className="flex items-center gap-1 bg-muted/30 rounded-[10px] p-0.5 border border-border">
+        <div className="flex items-center gap-1 bg-white/5 rounded-[10px] p-0.5 border border-white/10">
           {views.map(v => (
             <button
               key={v.id}
@@ -49,7 +49,7 @@ export function TopToolbar({ activeView = 'graph', onViewChange, onBriefingOpen,
               className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[11px] font-medium transition-all ${
                 activeView === v.id
                   ? 'bg-primary/20 text-primary'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/30'
+                  : 'text-slate-400 hover:text-white hover:bg-white/10'
               }`}
             >
               <v.icon className="w-3.5 h-3.5" />
