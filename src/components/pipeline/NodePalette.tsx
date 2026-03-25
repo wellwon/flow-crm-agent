@@ -153,7 +153,7 @@ export function NodePalette({
                     >
                       <item.icon className={`w-3.5 h-3.5 shrink-0 ${categoryColors[item.category]} group-hover:scale-110 transition-transform`} />
                       {!collapsed && (
-                        <span className="text-[10px] text-foreground/80 truncate">{item.label}</span>
+                        <span className="text-[10px] text-slate-300/80 truncate">{item.label}</span>
                       )}
                     </div>
                   ))}
