@@ -3,7 +3,57 @@
 @tailwind utilities;
 
 @layer base {
+  /* ===== LIGHT MODE ===== */
   :root {
+    --background: 40 12% 90%;
+    --foreground: 0 0% 7%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 7%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 7%;
+    --primary: 174 55% 40%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 220 9% 34%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 240 4% 34%;
+    --accent: 174 55% 40%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 174 55% 40%;
+    --radius: 0.75rem;
+
+    --node-pending: 240 4% 46%;
+    --node-active: 38 92% 50%;
+    --node-completed: 160 84% 39%;
+    --node-error: 350 89% 60%;
+    --glow-active: 38 92% 50%;
+    --glow-completed: 160 84% 39%;
+    --glow-error: 350 89% 60%;
+
+    --glass-bg: 0 0% 100%;
+    --glass-border: 220 13% 91%;
+
+    --bg-gradient: linear-gradient(to bottom, #134e4a 0%, #155e75 50%, #0f172a 100%);
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 0 0% 7%;
+    --sidebar-primary: 174 55% 40%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 14% 96%;
+    --sidebar-accent-foreground: 220 9% 34%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 174 55% 40%;
+
+    --shadow-glass: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+    --shadow-soft: 0 10px 40px -10px rgba(0,0,0,0.06);
+  }
+
+  /* ===== DARK MODE ===== */
+  .dark {
     --background: 222 15% 6%;
     --foreground: 210 40% 96%;
     --card: 222 20% 8%;
@@ -23,9 +73,7 @@
     --border: 220 15% 16%;
     --input: 220 15% 16%;
     --ring: 174 55% 40%;
-    --radius: 0.75rem;
 
-    /* Pipeline specific */
     --node-pending: 240 4% 46%;
     --node-active: 38 92% 50%;
     --node-completed: 160 84% 39%;
@@ -37,6 +85,8 @@
     --glass-bg: 222 20% 6%;
     --glass-border: 0 0% 100%;
 
+    --bg-gradient: linear-gradient(to bottom, #0d3331 0%, #0e3f4f 50%, #0a1120 100%);
+
     --sidebar-background: 222 20% 8%;
     --sidebar-foreground: 210 40% 96%;
     --sidebar-primary: 174 55% 40%;
@@ -45,6 +95,9 @@
     --sidebar-accent-foreground: 210 40% 96%;
     --sidebar-border: 220 15% 16%;
     --sidebar-ring: 174 55% 40%;
+
+    --shadow-glass: 0 10px 40px rgba(0,0,0,0.5);
+    --shadow-soft: 0 8px 32px rgba(0,0,0,0.4);
   }
 }
 
@@ -64,14 +117,14 @@
     @apply backdrop-blur-xl border rounded-2xl;
     background: hsl(var(--glass-bg) / 0.7);
     border-color: hsl(var(--glass-border) / 0.08);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    box-shadow: var(--shadow-glass);
   }
 
   .glass-panel-dense {
     @apply backdrop-blur-2xl border rounded-2xl;
     background: hsl(var(--glass-bg) / 0.85);
     border-color: hsl(var(--glass-border) / 0.06);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    box-shadow: var(--shadow-soft);
   }
 }
 
@@ -139,7 +192,6 @@
   margin: 0 !important;
   border-radius: 0 !important;
 }
-
 
 /* Port handles */
 .react-flow__handle {
