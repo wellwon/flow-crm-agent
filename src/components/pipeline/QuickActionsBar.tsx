@@ -12,8 +12,8 @@ const actions = [
 
 export function QuickActionsBar() {
   return (
-    <div className="matte-glass px-4 py-2 flex items-center gap-1 overflow-x-auto relative">
-      <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-primary via-node-active to-primary" />
+    <div className="matte-glass relative max-w-full overflow-x-auto overflow-y-hidden px-4 py-2 flex items-center gap-1">
+      <div className="pointer-events-none absolute top-0 left-2 right-2 h-[2px] bg-gradient-to-r from-primary via-node-active to-primary" />
       {actions.map(a => (
         <button
           key={a.label}
