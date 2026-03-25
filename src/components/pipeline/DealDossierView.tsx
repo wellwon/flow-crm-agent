@@ -1,10 +1,12 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Building2, User, Phone, Mail, MapPin, FileText, Bot, Clock,
   CheckCircle, AlertTriangle, TrendingUp, Shield, ExternalLink,
   Calendar, Package, DollarSign, Users, Activity, Zap, Eye,
   ChevronRight, Paperclip, MessageSquare, Star, CircleDot,
+  Send, ListChecks, Target, Flag, ArrowRight, Sparkles,
+  CircleAlert, UserCheck, Mic,
 } from 'lucide-react';
 
 /* ─── Mock dossier data ─── */
@@ -101,322 +103,605 @@ const dossierData = {
     { level: 'ok' as const, text: 'Контрагент — бюджетное учреждение, платит стабильно' },
     { level: 'warning' as const, text: 'Конкурент GE может дать цену ниже на аукционе' },
   ],
+  tasks: [
+    { id: 1, title: 'Утвердить черновик ТЗ', assignee: 'Алексей М.', deadline: '28 мар', priority: 'high' as const, status: 'active' as const, blocker: true },
+    { id: 2, title: 'Собрать 3 КП для НМЦК', assignee: 'Алексей М.', deadline: '30 мар', priority: 'high' as const, status: 'pending' as const, blocker: false },
+    { id: 3, title: 'Уточнить комплектацию датчиков', assignee: 'Дмитрий В.', deadline: '27 мар', priority: 'medium' as const, status: 'active' as const, blocker: false },
+    { id: 4, title: 'Согласовать логистику доставки', assignee: 'Ирина С.', deadline: '5 апр', priority: 'low' as const, status: 'pending' as const, blocker: false },
+    { id: 5, title: 'Проверить лицензию на мед. деятельность', assignee: 'JARVIS', deadline: '26 мар', priority: 'medium' as const, status: 'completed' as const, blocker: false },
+    { id: 6, title: 'Подготовить сравнительную таблицу DC-80 vs GE', assignee: 'JARVIS', deadline: '27 мар', priority: 'medium' as const, status: 'active' as const, blocker: false },
+  ],
+  team: [
+    { name: 'Алексей М.', role: 'Менеджер сделки', avatar: 'АМ', tasks: 3, done: 1, zone: 'Переговоры, документация' },
+    { name: 'Дмитрий В.', role: 'Продуктовый специалист', avatar: 'ДВ', tasks: 2, done: 1, zone: 'Техническая часть, демо' },
+    { name: 'Ирина С.', role: 'Логист', avatar: 'ИС', tasks: 1, done: 0, zone: 'Доставка, монтаж' },
+    { name: 'JARVIS', role: 'AI-ассистент', avatar: '🤖', tasks: 4, done: 2, zone: 'Документы, аналитика, мониторинг' },
+  ],
+  nextActions: [
+    { action: 'Утвердить ТЗ и отправить на согласование заказчику', urgency: 'urgent' as const, who: 'Алексей М.' },
+    { action: 'Запросить КП у 3 поставщиков для расчёта НМЦК', urgency: 'soon' as const, who: 'Алексей М.' },
+    { action: 'Позвонить Петровой — уточнить требования по датчикам для кардиологии', urgency: 'soon' as const, who: 'Дмитрий В.' },
+    { action: 'Подготовить презентацию для демо DC-80', urgency: 'planned' as const, who: 'Дмитрий В.' },
+  ],
 };
+
+/* ─── JARVIS chat messages ─── */
+const initialMessages: ChatMessage[] = [
+  { id: 1, role: 'system', text: 'Контекст сделки загружен. Я знаю всё о ЦРБ Коломна и DC-80.' },
+  { id: 2, role: 'assistant', text: '👋 Привет! Я слежу за этой сделкой. Вот что важно сейчас:\n\n🟡 **ТЗ ждёт утверждения** — это блокер для НМЦК.\n\n📋 Черновик я сгенерировал вчера, на основе тендерной документации. Проверь секцию «Требования к датчикам» — Петрова хотела кардиологический пакет.\n\n💡 Хочешь, подготовлю сравнительную таблицу DC-80 vs GE Voluson для переговоров?', ts: '14:30' },
+  { id: 3, role: 'user', text: 'Да, подготовь сравнение. И напомни, когда дедлайн по НМЦК?', ts: '14:32' },
+  { id: 4, role: 'assistant', text: '📊 **Сравнение готово** — добавил в документы как «Сравнение_DC80_vs_GE.pdf».\n\nПо НМЦК:\n• Дедлайн расчёта: **30 марта**\n• Нужны **3 коммерческих предложения** от разных поставщиков\n• Сейчас есть 0 из 3 КП\n\n⚠️ Если ТЗ не утвердишь до **28 марта**, НМЦК не успеем.\n\nМогу автоматически запросить КП у проверенных поставщиков из базы?', ts: '14:33' },
+  { id: 5, role: 'user', text: 'Запроси КП автоматически', ts: '14:35' },
+  { id: 6, role: 'assistant', text: '✅ Отправил запросы на КП трём поставщикам:\n\n1. **МедТехСнаб** (Москва) — ответ ожидаем до 27 мар\n2. **Альфа-Мед** (СПб) — до 28 мар\n3. **ДиагностПро** (Казань) — до 27 мар\n\nБуду мониторить ответы и обновлю досье автоматически. 🔔 Уведомлю, как только получу первое КП.', ts: '14:35' },
+];
+
+interface ChatMessage {
+  id: number;
+  role: 'user' | 'assistant' | 'system';
+  text: string;
+  ts?: string;
+}
 
 function fmt(n: number) {
   return new Intl.NumberFormat('ru-RU').format(n) + ' ₽';
 }
 
-const container = { hidden: {}, show: { transition: { staggerChildren: 0.05 } } };
-const item = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.4 } } };
+const container = { hidden: {}, show: { transition: { staggerChildren: 0.04 } } };
+const item = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.35 } } };
 
 export function DealDossierView() {
   const d = dossierData;
 
   return (
-    <motion.div variants={container} initial="hidden" animate="show" className="max-w-5xl mx-auto space-y-5 pb-8">
-      {/* ═══ HERO HEADER ═══ */}
-      <motion.div variants={item} className="matte-glass p-6 relative overflow-hidden">
-        {/* Accent strip */}
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-node-active to-primary rounded-t-[14px]" />
-
-        <div className="flex items-start justify-between gap-4 mb-4">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-[10px] font-mono text-muted-foreground bg-muted px-2 py-0.5 rounded">Сделка #{d.deal.id}</span>
-              <span className="text-[10px] font-mono text-muted-foreground">{d.deal.law}</span>
-            </div>
-            <h1 className="text-xl font-bold text-foreground mb-0.5">
-              🏥 {d.deal.title} — {d.deal.customer}
-            </h1>
-            <p className="text-lg font-semibold text-primary font-mono">{fmt(d.deal.amount)}</p>
-          </div>
-          <div className="text-right shrink-0">
-            <div className="text-[10px] text-muted-foreground mb-1">Дедлайн</div>
-            <div className="text-sm font-semibold text-foreground flex items-center gap-1.5">
-              <Calendar className="w-3.5 h-3.5 text-node-active" />
-              {d.deal.deadline}
-            </div>
-          </div>
-        </div>
-
-        {/* Stage progress */}
-        <div className="flex gap-1 mb-3">
-          {d.stages.map((s, i) => (
-            <div key={i} className="flex-1">
-              <div className={`h-2 rounded-full ${s.done ? 'bg-primary' : 'bg-muted'} transition-all`} />
-              <div className="text-[9px] text-center mt-1 text-muted-foreground font-mono">{s.name}</div>
-            </div>
-          ))}
-        </div>
-
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="text-xs text-muted-foreground">Прогресс:</div>
-            <div className="w-48 h-2 bg-muted rounded-full overflow-hidden">
-              <div className="h-full bg-primary rounded-full transition-all" style={{ width: `${d.deal.progress}%` }} />
-            </div>
-            <span className="text-xs font-mono font-semibold text-foreground">{d.deal.progress}%</span>
-          </div>
-          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            <User className="w-3.5 h-3.5" />
-            {d.deal.manager}
-          </div>
-        </div>
-      </motion.div>
-
-      {/* ═══ TWO COLUMN: COUNTERPARTY + EQUIPMENT ═══ */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        {/* Counterparty */}
-        <motion.div variants={item} className="matte-glass p-5">
-          <SectionTitle icon={Building2} color="text-primary">Контрагент</SectionTitle>
-          <div className="space-y-3">
+    <div className="flex gap-5 h-full">
+      {/* ═══ LEFT: DOSSIER CONTENT ═══ */}
+      <motion.div variants={container} initial="hidden" animate="show" className="flex-1 min-w-0 space-y-5 pb-8 overflow-y-auto pr-1">
+        {/* HERO HEADER */}
+        <motion.div variants={item} className="matte-glass p-6 relative overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-node-active to-primary rounded-t-[14px]" />
+          <div className="flex items-start justify-between gap-4 mb-4">
             <div>
-              <div className="text-sm font-semibold text-foreground">{d.counterparty.name}</div>
-              <div className="text-[11px] text-muted-foreground">{d.counterparty.fullName}</div>
-            </div>
-            <div className="flex flex-wrap gap-x-4 gap-y-1 text-[11px]">
-              <span className="text-muted-foreground">ИНН: <span className="text-foreground font-mono">{d.counterparty.inn}</span></span>
-              <span className="text-muted-foreground">ОГРН: <span className="text-foreground font-mono">{d.counterparty.ogrn}</span></span>
-            </div>
-            <div className="flex items-start gap-1.5 text-[11px] text-muted-foreground">
-              <MapPin className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-              {d.counterparty.address}
-            </div>
-
-            {/* Contacts */}
-            <div className="border-t border-border pt-3 mt-3">
-              <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider mb-2">👤 Контакты</div>
-              <div className="space-y-2">
-                {d.counterparty.contacts.map((c, i) => (
-                  <div key={i} className="flex items-center gap-3 p-2 rounded-[10px] bg-muted/40 border border-border/50">
-                    <div className="w-8 h-8 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
-                      <User className="w-4 h-4 text-primary" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-semibold text-foreground">{c.name}</span>
-                        <span className={`text-[8px] font-mono px-1.5 py-0.5 rounded ${
-                          c.role === 'ЛПР' ? 'bg-node-active/15 text-node-active' : 'bg-muted text-muted-foreground'
-                        }`}>{c.role}</span>
-                      </div>
-                      <div className="text-[10px] text-muted-foreground">{c.position}</div>
-                    </div>
-                    <div className="text-right shrink-0 space-y-0.5">
-                      <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                        <Phone className="w-3 h-3" />{c.phone}
-                      </div>
-                      <div className="flex items-center gap-1 text-[10px] text-primary">
-                        <Mail className="w-3 h-3" />{c.email}
-                      </div>
-                    </div>
-                  </div>
-                ))}
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-[10px] font-mono text-muted-foreground bg-muted px-2 py-0.5 rounded">Сделка #{d.deal.id}</span>
+                <span className="text-[10px] font-mono text-muted-foreground">{d.deal.law}</span>
               </div>
+              <h1 className="text-xl font-bold text-foreground mb-0.5">🏥 {d.deal.title} — {d.deal.customer}</h1>
+              <p className="text-lg font-semibold text-primary font-mono">{fmt(d.deal.amount)}</p>
+            </div>
+            <div className="text-right shrink-0">
+              <div className="text-[10px] text-muted-foreground mb-1">Дедлайн</div>
+              <div className="text-sm font-semibold text-foreground flex items-center gap-1.5">
+                <Calendar className="w-3.5 h-3.5 text-node-active" />{d.deal.deadline}
+              </div>
+            </div>
+          </div>
+          <div className="flex gap-1 mb-3">
+            {d.stages.map((s, i) => (
+              <div key={i} className="flex-1">
+                <div className={`h-2 rounded-full ${s.done ? 'bg-primary' : 'bg-muted'} transition-all`} />
+                <div className="text-[9px] text-center mt-1 text-muted-foreground font-mono">{s.name}</div>
+              </div>
+            ))}
+          </div>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="text-xs text-muted-foreground">Прогресс:</div>
+              <div className="w-48 h-2 bg-muted rounded-full overflow-hidden">
+                <div className="h-full bg-primary rounded-full transition-all" style={{ width: `${d.deal.progress}%` }} />
+              </div>
+              <span className="text-xs font-mono font-semibold text-foreground">{d.deal.progress}%</span>
+            </div>
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <User className="w-3.5 h-3.5" />{d.deal.manager}
             </div>
           </div>
         </motion.div>
 
-        {/* Equipment */}
-        <motion.div variants={item} className="matte-glass p-5">
-          <SectionTitle icon={Package} color="text-primary">Оборудование</SectionTitle>
-          <div className="space-y-3">
-            <div>
-              <div className="text-sm font-semibold text-foreground">{d.equipment.name}</div>
-              <div className="text-[11px] text-muted-foreground">{d.equipment.description}</div>
-            </div>
-            <div className="grid grid-cols-2 gap-2 text-[11px]">
-              <InfoPill label="РУ" value={d.equipment.ru} />
-              <InfoPill label="Действует до" value={d.equipment.ruExpiry} />
-              <InfoPill label="КТРУ" value={d.equipment.ktru} />
-              <InfoPill label="ОКПД2" value={d.equipment.okpd2} />
-              <InfoPill label="НКМИ" value={d.equipment.nkmi} />
-              <InfoPill label="Класс риска" value={d.equipment.riskClass} />
-            </div>
-
-            <div className="border-t border-border pt-3">
-              <div className="text-xs text-foreground font-semibold mb-1">
-                Цена: {fmt(d.equipment.priceUnit)} × {d.equipment.quantity} = {fmt(d.equipment.priceUnit * d.equipment.quantity)}
-              </div>
-              <div className="text-[10px] text-muted-foreground">(среднерыночная)</div>
-            </div>
-
-            <div className="border-t border-border pt-3">
-              <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider mb-2">Конкуренты</div>
-              <div className="space-y-1">
-                {d.equipment.competitors.map((c, i) => (
-                  <div key={i} className="flex items-center justify-between text-[11px] p-1.5 rounded-[8px] bg-muted/30">
-                    <span className="text-foreground">{c.name}</span>
-                    <span className="font-mono text-muted-foreground">{fmt(c.price)}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      </div>
-
-      {/* ═══ PIPELINE ═══ */}
-      <motion.div variants={item} className="matte-glass p-5">
-        <SectionTitle icon={Activity} color="text-primary">Пайплайн</SectionTitle>
-        <div className="relative pl-6 space-y-0.5">
-          <div className="absolute left-[9px] top-2 bottom-2 w-px bg-border" />
-          {d.pipeline.map((step, i) => {
-            const statusIcon = step.status === 'completed' ? (
-              <CheckCircle className="w-4 h-4 text-node-completed" />
-            ) : step.status === 'active' ? (
-              <CircleDot className="w-4 h-4 text-node-active animate-pulse" />
-            ) : step.status === 'pending' ? (
-              <Clock className="w-4 h-4 text-muted-foreground/50" />
-            ) : (
-              <div className="w-4 h-4 rounded-full border-2 border-muted-foreground/20" />
-            );
-
-            return (
-              <div key={i} className="relative flex items-start gap-3 py-1.5">
-                <div className="absolute left-[-18px] top-2.5 z-10 bg-card rounded-full">
-                  {statusIcon}
+        {/* ═══ NEXT ACTIONS (NEW) ═══ */}
+        <motion.div variants={item} className="matte-glass p-5 relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-1 h-full bg-node-active rounded-l-[14px]" />
+          <SectionTitle icon={ArrowRight} color="text-node-active">Что делать дальше</SectionTitle>
+          <div className="space-y-2">
+            {d.nextActions.map((na, i) => (
+              <div key={i} className="flex items-start gap-3 p-2.5 rounded-[10px] bg-muted/30 border border-border/50">
+                <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${
+                  na.urgency === 'urgent' ? 'bg-node-error animate-pulse' :
+                  na.urgency === 'soon' ? 'bg-node-active' : 'bg-muted-foreground/40'
+                }`} />
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-foreground">{na.action}</p>
+                  <span className="text-[10px] text-muted-foreground">{na.who}</span>
                 </div>
-                <div className="flex-1 flex items-center gap-2 min-w-0">
-                  <span className={`text-xs ${step.status === 'completed' ? 'text-foreground' : step.status === 'active' ? 'text-foreground font-semibold' : 'text-muted-foreground'}`}>
-                    {step.label}
-                  </span>
-                  {step.date && <span className="text-[10px] font-mono text-muted-foreground/70">{step.date}</span>}
-                  {step.assignee && <span className="text-[10px] text-muted-foreground">{step.assignee}</span>}
-                </div>
-                {step.warning && (
-                  <div className="flex items-center gap-1 text-[10px] text-node-active bg-node-active/10 px-2 py-0.5 rounded-full">
-                    <AlertTriangle className="w-3 h-3" />
-                    {step.warning}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </motion.div>
-
-      {/* ═══ TWO COLUMN: DOCUMENTS + FINANCES ═══ */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        {/* Documents */}
-        <motion.div variants={item} className="matte-glass p-5">
-          <SectionTitle icon={FileText} color="text-primary">Документы</SectionTitle>
-          <div className="space-y-1.5">
-            {d.documents.map((doc, i) => (
-              <div key={i} className="flex items-center gap-2.5 p-2 rounded-[10px] bg-muted/30 border border-border/50 hover:border-primary/30 transition-colors cursor-pointer group">
-                <Paperclip className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
-                <span className="text-xs text-foreground flex-1 truncate">{doc.name}</span>
-                <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded ${
-                  doc.status === 'sent' ? 'bg-node-completed/15 text-node-completed' :
-                  doc.status === 'ai-draft' ? 'bg-[hsl(265_80%_65%)/0.15] text-[hsl(265_80%_65%)]' :
+                <span className={`text-[8px] font-mono px-1.5 py-0.5 rounded shrink-0 ${
+                  na.urgency === 'urgent' ? 'bg-node-error/15 text-node-error' :
+                  na.urgency === 'soon' ? 'bg-node-active/15 text-node-active' :
                   'bg-muted text-muted-foreground'
                 }`}>
-                  {doc.status === 'sent' ? '✅ Отправлено' : doc.status === 'ai-draft' ? '🤖 AI-черновик' : '⏳ Не готов'}
+                  {na.urgency === 'urgent' ? 'СРОЧНО' : na.urgency === 'soon' ? 'СКОРО' : 'ПЛАН'}
                 </span>
-                {doc.date && <span className="text-[9px] font-mono text-muted-foreground/60">{doc.date}</span>}
               </div>
             ))}
           </div>
         </motion.div>
 
-        {/* Finances */}
+        {/* ═══ TASKS (NEW) ═══ */}
         <motion.div variants={item} className="matte-glass p-5">
-          <SectionTitle icon={DollarSign} color="text-primary">Финансы</SectionTitle>
-          <div className="space-y-2.5">
-            <FinRow label="Бюджет заказчика" value={fmt(d.finances.budget)} />
-            <FinRow label={`Наша цена (${d.equipment.quantity} шт)`} value={fmt(d.finances.ourPrice)} />
-            <FinRow label="Маржа" value={`~${fmt(d.finances.margin)} (${d.finances.marginPct}%)`} accent />
-            <div className="border-t border-border pt-2" />
-            <FinRow label="НМЦК (оценка)" value={fmt(d.finances.nmck)} />
-            <FinRow label="Снижение на аукционе" value={`~${d.finances.auctionReduction}`} muted />
+          <SectionTitle icon={ListChecks} color="text-primary">
+            Задачи
+            <span className="text-[9px] font-mono text-muted-foreground/60 ml-2">
+              {d.tasks.filter(t => t.status === 'completed').length}/{d.tasks.length} выполнено
+            </span>
+          </SectionTitle>
+          <div className="space-y-1.5">
+            {d.tasks.map(task => (
+              <div key={task.id} className={`flex items-center gap-3 p-2.5 rounded-[10px] border transition-all ${
+                task.status === 'completed'
+                  ? 'bg-node-completed/5 border-node-completed/20'
+                  : task.blocker
+                    ? 'bg-node-error/5 border-node-error/20'
+                    : 'bg-muted/30 border-border/50'
+              }`}>
+                <div className="shrink-0">
+                  {task.status === 'completed' ? (
+                    <CheckCircle className="w-4 h-4 text-node-completed" />
+                  ) : task.status === 'active' ? (
+                    <CircleDot className="w-4 h-4 text-node-active" />
+                  ) : (
+                    <Clock className="w-4 h-4 text-muted-foreground/40" />
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className={`text-xs ${task.status === 'completed' ? 'text-muted-foreground line-through' : 'text-foreground'}`}>
+                      {task.title}
+                    </span>
+                    {task.blocker && (
+                      <span className="text-[8px] font-mono px-1.5 py-0.5 rounded bg-node-error/15 text-node-error">БЛОКЕР</span>
+                    )}
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 shrink-0">
+                  <div className="flex items-center gap-1">
+                    {task.assignee === 'JARVIS' ? (
+                      <Bot className="w-3 h-3 text-[hsl(265_80%_65%)]" />
+                    ) : (
+                      <User className="w-3 h-3 text-muted-foreground/60" />
+                    )}
+                    <span className="text-[10px] text-muted-foreground">{task.assignee}</span>
+                  </div>
+                  <span className="text-[10px] font-mono text-muted-foreground/60">{task.deadline}</span>
+                  <span className={`w-2 h-2 rounded-full ${
+                    task.priority === 'high' ? 'bg-node-error' :
+                    task.priority === 'medium' ? 'bg-node-active' : 'bg-muted-foreground/30'
+                  }`} />
+                </div>
+              </div>
+            ))}
           </div>
         </motion.div>
-      </div>
 
-      {/* ═══ SIMILAR TENDERS ═══ */}
-      <motion.div variants={item} className="matte-glass p-5">
-        <SectionTitle icon={Eye} color="text-primary">
-          Похожие тендеры
-          <span className="text-[9px] font-mono text-muted-foreground/60 ml-2">(найдены автоматически)</span>
-        </SectionTitle>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          {d.similarTenders.map((t, i) => (
-            <div key={i} className="p-3 rounded-[10px] bg-muted/30 border border-border/50 hover:border-primary/30 transition-colors cursor-pointer group">
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-xs font-semibold text-foreground group-hover:text-primary transition-colors">{t.title}</span>
-                <ExternalLink className="w-3 h-3 text-muted-foreground/40 group-hover:text-primary transition-colors" />
-              </div>
-              <div className="flex items-center justify-between text-[10px]">
-                <span className="font-mono text-muted-foreground">{fmt(t.amount)}</span>
-                <span className="text-muted-foreground">до {t.deadline}</span>
-              </div>
-              <div className="mt-2 flex items-center gap-1.5">
-                <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
-                  <div className="h-full bg-primary rounded-full" style={{ width: `${t.match}%` }} />
+        {/* ═══ TEAM (NEW) ═══ */}
+        <motion.div variants={item} className="matte-glass p-5">
+          <SectionTitle icon={Users} color="text-primary">Команда проекта</SectionTitle>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {d.team.map((member, i) => (
+              <div key={i} className="flex items-start gap-3 p-3 rounded-[10px] bg-muted/30 border border-border/50">
+                <div className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold shrink-0 ${
+                  member.name === 'JARVIS' ? 'bg-[hsl(265_80%_65%)/0.15]' : 'bg-primary/15 text-primary'
+                }`}>
+                  {member.name === 'JARVIS' ? '🤖' : member.avatar}
                 </div>
-                <span className="text-[9px] font-mono text-primary font-semibold">{t.match}%</span>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-semibold text-foreground">{member.name}</span>
+                    <span className="text-[8px] font-mono px-1.5 py-0.5 rounded bg-muted text-muted-foreground">{member.role}</span>
+                  </div>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">{member.zone}</p>
+                  <div className="flex items-center gap-2 mt-1.5">
+                    <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
+                      <div className="h-full bg-primary rounded-full transition-all" style={{ width: `${member.tasks > 0 ? (member.done / member.tasks) * 100 : 0}%` }} />
+                    </div>
+                    <span className="text-[9px] font-mono text-muted-foreground">{member.done}/{member.tasks}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* COUNTERPARTY + EQUIPMENT */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <motion.div variants={item} className="matte-glass p-5">
+            <SectionTitle icon={Building2} color="text-primary">Контрагент</SectionTitle>
+            <div className="space-y-3">
+              <div>
+                <div className="text-sm font-semibold text-foreground">{d.counterparty.name}</div>
+                <div className="text-[11px] text-muted-foreground">{d.counterparty.fullName}</div>
+              </div>
+              <div className="flex flex-wrap gap-x-4 gap-y-1 text-[11px]">
+                <span className="text-muted-foreground">ИНН: <span className="text-foreground font-mono">{d.counterparty.inn}</span></span>
+                <span className="text-muted-foreground">ОГРН: <span className="text-foreground font-mono">{d.counterparty.ogrn}</span></span>
+              </div>
+              <div className="flex items-start gap-1.5 text-[11px] text-muted-foreground">
+                <MapPin className="w-3.5 h-3.5 shrink-0 mt-0.5" />{d.counterparty.address}
+              </div>
+              <div className="border-t border-border pt-3 mt-3">
+                <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider mb-2">👤 Контакты</div>
+                <div className="space-y-2">
+                  {d.counterparty.contacts.map((c, i) => (
+                    <div key={i} className="flex items-center gap-3 p-2 rounded-[10px] bg-muted/40 border border-border/50">
+                      <div className="w-8 h-8 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
+                        <User className="w-4 h-4 text-primary" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-semibold text-foreground">{c.name}</span>
+                          <span className={`text-[8px] font-mono px-1.5 py-0.5 rounded ${
+                            c.role === 'ЛПР' ? 'bg-node-active/15 text-node-active' : 'bg-muted text-muted-foreground'
+                          }`}>{c.role}</span>
+                        </div>
+                        <div className="text-[10px] text-muted-foreground">{c.position}</div>
+                      </div>
+                      <div className="text-right shrink-0 space-y-0.5">
+                        <div className="flex items-center gap-1 text-[10px] text-muted-foreground"><Phone className="w-3 h-3" />{c.phone}</div>
+                        <div className="flex items-center gap-1 text-[10px] text-primary"><Mail className="w-3 h-3" />{c.email}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-          ))}
-        </div>
-      </motion.div>
+          </motion.div>
 
-      {/* ═══ TWO COLUMN: TIMELINE + RISKS ═══ */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        {/* Timeline */}
+          <motion.div variants={item} className="matte-glass p-5">
+            <SectionTitle icon={Package} color="text-primary">Оборудование</SectionTitle>
+            <div className="space-y-3">
+              <div>
+                <div className="text-sm font-semibold text-foreground">{d.equipment.name}</div>
+                <div className="text-[11px] text-muted-foreground">{d.equipment.description}</div>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-[11px]">
+                <InfoPill label="РУ" value={d.equipment.ru} />
+                <InfoPill label="Действует до" value={d.equipment.ruExpiry} />
+                <InfoPill label="КТРУ" value={d.equipment.ktru} />
+                <InfoPill label="ОКПД2" value={d.equipment.okpd2} />
+                <InfoPill label="НКМИ" value={d.equipment.nkmi} />
+                <InfoPill label="Класс риска" value={d.equipment.riskClass} />
+              </div>
+              <div className="border-t border-border pt-3">
+                <div className="text-xs text-foreground font-semibold mb-1">
+                  Цена: {fmt(d.equipment.priceUnit)} × {d.equipment.quantity} = {fmt(d.equipment.priceUnit * d.equipment.quantity)}
+                </div>
+                <div className="text-[10px] text-muted-foreground">(среднерыночная)</div>
+              </div>
+              <div className="border-t border-border pt-3">
+                <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider mb-2">Конкуренты</div>
+                <div className="space-y-1">
+                  {d.equipment.competitors.map((c, i) => (
+                    <div key={i} className="flex items-center justify-between text-[11px] p-1.5 rounded-[8px] bg-muted/30">
+                      <span className="text-foreground">{c.name}</span>
+                      <span className="font-mono text-muted-foreground">{fmt(c.price)}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* PIPELINE */}
         <motion.div variants={item} className="matte-glass p-5">
-          <SectionTitle icon={Clock} color="text-primary">Хронология</SectionTitle>
-          <div className="space-y-2.5">
-            {d.timeline.map((ev, i) => {
-              const IconEl = ev.icon === 'ai' ? Bot : ev.icon === 'system' ? Zap : MessageSquare;
-              const iconColor = ev.icon === 'ai' ? 'text-[hsl(265_80%_65%)]' : ev.icon === 'system' ? 'text-node-active' : 'text-primary';
+          <SectionTitle icon={Activity} color="text-primary">Пайплайн</SectionTitle>
+          <div className="relative pl-6 space-y-0.5">
+            <div className="absolute left-[9px] top-2 bottom-2 w-px bg-border" />
+            {d.pipeline.map((step, i) => {
+              const statusIcon = step.status === 'completed' ? (
+                <CheckCircle className="w-4 h-4 text-node-completed" />
+              ) : step.status === 'active' ? (
+                <CircleDot className="w-4 h-4 text-node-active animate-pulse" />
+              ) : step.status === 'pending' ? (
+                <Clock className="w-4 h-4 text-muted-foreground/50" />
+              ) : (
+                <div className="w-4 h-4 rounded-full border-2 border-muted-foreground/20" />
+              );
               return (
-                <div key={i} className="flex items-start gap-2.5">
-                  <IconEl className={`w-3.5 h-3.5 mt-0.5 shrink-0 ${iconColor}`} />
-                  <div className="flex-1">
-                    <p className="text-[11px] text-foreground/90">{ev.text}</p>
-                    <span className="text-[9px] font-mono text-muted-foreground/60">{ev.date}</span>
+                <div key={i} className="relative flex items-start gap-3 py-1.5">
+                  <div className="absolute left-[-18px] top-2.5 z-10 bg-card rounded-full">{statusIcon}</div>
+                  <div className="flex-1 flex items-center gap-2 min-w-0">
+                    <span className={`text-xs ${step.status === 'completed' ? 'text-foreground' : step.status === 'active' ? 'text-foreground font-semibold' : 'text-muted-foreground'}`}>
+                      {step.label}
+                    </span>
+                    {step.date && <span className="text-[10px] font-mono text-muted-foreground/70">{step.date}</span>}
+                    {step.assignee && <span className="text-[10px] text-muted-foreground">{step.assignee}</span>}
                   </div>
+                  {step.warning && (
+                    <div className="flex items-center gap-1 text-[10px] text-node-active bg-node-active/10 px-2 py-0.5 rounded-full">
+                      <AlertTriangle className="w-3 h-3" />{step.warning}
+                    </div>
+                  )}
                 </div>
               );
             })}
           </div>
         </motion.div>
 
-        {/* Risks */}
+        {/* DOCUMENTS + FINANCES */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <motion.div variants={item} className="matte-glass p-5">
+            <SectionTitle icon={FileText} color="text-primary">Документы</SectionTitle>
+            <div className="space-y-1.5">
+              {d.documents.map((doc, i) => (
+                <div key={i} className="flex items-center gap-2.5 p-2 rounded-[10px] bg-muted/30 border border-border/50 hover:border-primary/30 transition-colors cursor-pointer group">
+                  <Paperclip className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
+                  <span className="text-xs text-foreground flex-1 truncate">{doc.name}</span>
+                  <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded ${
+                    doc.status === 'sent' ? 'bg-node-completed/15 text-node-completed' :
+                    doc.status === 'ai-draft' ? 'bg-[hsl(265_80%_65%)/0.15] text-[hsl(265_80%_65%)]' :
+                    'bg-muted text-muted-foreground'
+                  }`}>
+                    {doc.status === 'sent' ? '✅ Отправлено' : doc.status === 'ai-draft' ? '🤖 AI-черновик' : '⏳ Не готов'}
+                  </span>
+                  {doc.date && <span className="text-[9px] font-mono text-muted-foreground/60">{doc.date}</span>}
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          <motion.div variants={item} className="matte-glass p-5">
+            <SectionTitle icon={DollarSign} color="text-primary">Финансы</SectionTitle>
+            <div className="space-y-2.5">
+              <FinRow label="Бюджет заказчика" value={fmt(d.finances.budget)} />
+              <FinRow label={`Наша цена (${d.equipment.quantity} шт)`} value={fmt(d.finances.ourPrice)} />
+              <FinRow label="Маржа" value={`~${fmt(d.finances.margin)} (${d.finances.marginPct}%)`} accent />
+              <div className="border-t border-border pt-2" />
+              <FinRow label="НМЦК (оценка)" value={fmt(d.finances.nmck)} />
+              <FinRow label="Снижение на аукционе" value={`~${d.finances.auctionReduction}`} muted />
+            </div>
+          </motion.div>
+        </div>
+
+        {/* SIMILAR TENDERS */}
         <motion.div variants={item} className="matte-glass p-5">
-          <SectionTitle icon={Shield} color="text-node-active">Риски и внимание</SectionTitle>
-          <div className="space-y-2">
-            {d.risks.map((r, i) => (
-              <div key={i} className={`flex items-start gap-2 p-2.5 rounded-[10px] border ${
-                r.level === 'warning' ? 'bg-node-active/5 border-node-active/20' : 'bg-node-completed/5 border-node-completed/20'
-              }`}>
-                <span className="text-sm mt-0.5">{r.level === 'warning' ? '🟡' : '🟢'}</span>
-                <span className="text-[11px] text-foreground/90">{r.text}</span>
+          <SectionTitle icon={Eye} color="text-primary">
+            Похожие тендеры
+            <span className="text-[9px] font-mono text-muted-foreground/60 ml-2">(найдены автоматически)</span>
+          </SectionTitle>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {d.similarTenders.map((t, i) => (
+              <div key={i} className="p-3 rounded-[10px] bg-muted/30 border border-border/50 hover:border-primary/30 transition-colors cursor-pointer group">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs font-semibold text-foreground group-hover:text-primary transition-colors">{t.title}</span>
+                  <ExternalLink className="w-3 h-3 text-muted-foreground/40 group-hover:text-primary transition-colors" />
+                </div>
+                <div className="flex items-center justify-between text-[10px]">
+                  <span className="font-mono text-muted-foreground">{fmt(t.amount)}</span>
+                  <span className="text-muted-foreground">до {t.deadline}</span>
+                </div>
+                <div className="mt-2 flex items-center gap-1.5">
+                  <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
+                    <div className="h-full bg-primary rounded-full" style={{ width: `${t.match}%` }} />
+                  </div>
+                  <span className="text-[9px] font-mono text-primary font-semibold">{t.match}%</span>
+                </div>
               </div>
             ))}
           </div>
         </motion.div>
-      </div>
 
-      {/* ═══ FOOTER ═══ */}
-      <motion.div variants={item} className="flex items-center justify-between px-2 text-[10px] text-muted-foreground/60">
-        <div className="flex items-center gap-4">
-          <span>Последнее обновление: {d.deal.lastUpdated}</span>
-          <span>Автор досье: <span className="text-[hsl(265_80%_65%)]">JARVIS</span></span>
-          <span>Ответственный: {d.deal.manager}</span>
+        {/* TIMELINE + RISKS */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <motion.div variants={item} className="matte-glass p-5">
+            <SectionTitle icon={Clock} color="text-primary">Хронология</SectionTitle>
+            <div className="space-y-2.5">
+              {d.timeline.map((ev, i) => {
+                const IconEl = ev.icon === 'ai' ? Bot : ev.icon === 'system' ? Zap : MessageSquare;
+                const iconColor = ev.icon === 'ai' ? 'text-[hsl(265_80%_65%)]' : ev.icon === 'system' ? 'text-node-active' : 'text-primary';
+                return (
+                  <div key={i} className="flex items-start gap-2.5">
+                    <IconEl className={`w-3.5 h-3.5 mt-0.5 shrink-0 ${iconColor}`} />
+                    <div className="flex-1">
+                      <p className="text-[11px] text-foreground/90">{ev.text}</p>
+                      <span className="text-[9px] font-mono text-muted-foreground/60">{ev.date}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </motion.div>
+
+          <motion.div variants={item} className="matte-glass p-5">
+            <SectionTitle icon={Shield} color="text-node-active">Риски и внимание</SectionTitle>
+            <div className="space-y-2">
+              {d.risks.map((r, i) => (
+                <div key={i} className={`flex items-start gap-2 p-2.5 rounded-[10px] border ${
+                  r.level === 'warning' ? 'bg-node-active/5 border-node-active/20' : 'bg-node-completed/5 border-node-completed/20'
+                }`}>
+                  <span className="text-sm mt-0.5">{r.level === 'warning' ? '🟡' : '🟢'}</span>
+                  <span className="text-[11px] text-foreground/90">{r.text}</span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
         </div>
-        <div className="flex items-center gap-3">
-          <button className="flex items-center gap-1 hover:text-primary transition-colors">
-            <MessageSquare className="w-3 h-3" />Чат
-          </button>
+
+        {/* FOOTER */}
+        <motion.div variants={item} className="flex items-center justify-between px-2 text-[10px] text-muted-foreground/60">
+          <div className="flex items-center gap-4">
+            <span>Обновлено: {d.deal.lastUpdated}</span>
+            <span>Автор: <span className="text-[hsl(265_80%_65%)]">JARVIS</span></span>
+            <span>Ответственный: {d.deal.manager}</span>
+          </div>
           <button className="flex items-center gap-1 hover:text-primary transition-colors">
             <FileText className="w-3 h-3" />Экспорт
           </button>
-        </div>
+        </motion.div>
       </motion.div>
-    </motion.div>
+
+      {/* ═══ RIGHT: JARVIS CHAT ═══ */}
+      <JarvisChat />
+    </div>
   );
+}
+
+/* ═══════════════════════════════════════ */
+/* ═══ JARVIS CHAT PANEL                ═══ */
+/* ═══════════════════════════════════════ */
+
+function JarvisChat() {
+  const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
+  const [input, setInput] = useState('');
+  const bottomRef = useRef<HTMLDivElement>(null);
+  const nextId = useRef(10);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  const handleSend = () => {
+    if (!input.trim()) return;
+    const userMsg: ChatMessage = { id: nextId.current++, role: 'user', text: input, ts: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }) };
+    setMessages(m => [...m, userMsg]);
+    setInput('');
+
+    // Simulate JARVIS response
+    setTimeout(() => {
+      const response: ChatMessage = {
+        id: nextId.current++,
+        role: 'assistant',
+        text: getJarvisResponse(input),
+        ts: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
+      };
+      setMessages(m => [...m, response]);
+    }, 1200);
+  };
+
+  const quickActions = [
+    { label: 'Статус сделки', prompt: 'Кратко: какой сейчас статус сделки?' },
+    { label: 'Что блокирует?', prompt: 'Что сейчас блокирует продвижение сделки?' },
+    { label: 'Подготовь к встрече', prompt: 'Подготовь меня к встрече по этой сделке' },
+    { label: 'Сгенерируй ТЗ', prompt: 'Сгенерируй обновлённое ТЗ' },
+  ];
+
+  return (
+    <div className="w-[380px] shrink-0 flex flex-col matte-glass overflow-hidden sticky top-0 h-[calc(100vh-160px)]">
+      {/* Header */}
+      <div className="px-4 py-3 border-b border-border flex items-center gap-2.5">
+        <div className="w-7 h-7 rounded-full bg-[hsl(265_80%_65%)/0.15] flex items-center justify-center">
+          <Bot className="w-4 h-4 text-[hsl(265_80%_65%)]" />
+        </div>
+        <div className="flex-1">
+          <div className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+            JARVIS
+            <span className="w-1.5 h-1.5 rounded-full bg-node-completed animate-pulse" />
+          </div>
+          <div className="text-[9px] text-muted-foreground">Контекст: {dossierData.deal.customer} • {dossierData.deal.id}</div>
+        </div>
+        <div className="flex items-center gap-1">
+          <Sparkles className="w-3.5 h-3.5 text-[hsl(265_80%_65%)]" />
+        </div>
+      </div>
+
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto px-3 py-3 space-y-3">
+        {messages.map(msg => (
+          <ChatBubble key={msg.id} message={msg} />
+        ))}
+        <div ref={bottomRef} />
+      </div>
+
+      {/* Quick actions */}
+      <div className="px-3 pb-2 flex flex-wrap gap-1.5">
+        {quickActions.map((qa, i) => (
+          <button
+            key={i}
+            onClick={() => { setInput(qa.prompt); }}
+            className="text-[9px] px-2 py-1 rounded-full bg-muted/50 text-muted-foreground hover:text-primary hover:bg-primary/10 border border-border/50 transition-all"
+          >
+            {qa.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Input */}
+      <div className="px-3 pb-3">
+        <div className="flex items-center gap-2 p-2 rounded-[10px] bg-muted/40 border border-border">
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+            placeholder="Спроси JARVIS..."
+            className="flex-1 bg-transparent text-xs text-foreground placeholder:text-muted-foreground/50 outline-none"
+          />
+          <button
+            onClick={handleSend}
+            disabled={!input.trim()}
+            className="p-1.5 rounded-[8px] bg-primary/15 hover:bg-primary/25 transition-colors disabled:opacity-30"
+          >
+            <Send className="w-3.5 h-3.5 text-primary" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ChatBubble({ message }: { message: ChatMessage }) {
+  if (message.role === 'system') {
+    return (
+      <div className="flex items-center gap-2 py-1.5">
+        <div className="flex-1 h-px bg-border" />
+        <span className="text-[8px] font-mono text-muted-foreground/50 shrink-0">{message.text}</span>
+        <div className="flex-1 h-px bg-border" />
+      </div>
+    );
+  }
+
+  const isUser = message.role === 'user';
+
+  return (
+    <div className={`flex gap-2 ${isUser ? 'flex-row-reverse' : ''}`}>
+      {!isUser && (
+        <div className="w-6 h-6 rounded-full bg-[hsl(265_80%_65%)/0.15] flex items-center justify-center shrink-0 mt-1">
+          <Bot className="w-3.5 h-3.5 text-[hsl(265_80%_65%)]" />
+        </div>
+      )}
+      <div className={`max-w-[85%] ${isUser ? 'ml-auto' : ''}`}>
+        <div className={`px-3 py-2 rounded-[12px] text-[11px] leading-relaxed ${
+          isUser
+            ? 'bg-primary text-primary-foreground rounded-br-sm'
+            : 'bg-muted/60 text-foreground border border-border/50 rounded-bl-sm'
+        }`}>
+          {message.text.split('\n').map((line, i) => (
+            <p key={i} className={i > 0 ? 'mt-1.5' : ''}>
+              {line.split('**').map((part, j) =>
+                j % 2 === 1 ? <strong key={j} className="font-semibold">{part}</strong> : part
+              )}
+            </p>
+          ))}
+        </div>
+        {message.ts && (
+          <div className={`text-[8px] font-mono text-muted-foreground/40 mt-0.5 ${isUser ? 'text-right' : ''}`}>
+            {message.ts}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function getJarvisResponse(input: string): string {
+  const lower = input.toLowerCase();
+  if (lower.includes('статус')) {
+    return '📊 **Текущий статус:**\n\n• Стадия: Подготовка (22%)\n• Активная задача: утверждение ТЗ\n• Блокер: ТЗ ждёт подписи\n• До дедлайна: 21 день\n\nОбщий прогноз: 🟡 средний риск. Если утвердишь ТЗ до 28-го, успеваем.';
+  }
+  if (lower.includes('блокир')) {
+    return '🚧 **Блокеры:**\n\n1. **ТЗ не утверждено** — без него нельзя считать НМЦК\n   → Действие: открой черновик, проверь секцию датчиков\n\n2. **Нет КП для НМЦК** — нужны 3 штуки\n   → Я уже отправил запросы, ожидаем ответы 27-28 мар\n\nОстальное не блокирует, но следи за конкурентом GE.';
+  }
+  if (lower.includes('встреч')) {
+    return '📋 **Подготовка к встрече:**\n\n**ЛПР:** Иванов И.И., зам. главврача\n**Техспец:** Петрова А.С., нач. УЗД\n\n**Ключевые моменты:**\n• Бюджет 6М утверждён\n• Конкурент GE — может дать ниже\n• Петрова хочет кардио-датчики — уточни\n• ТЗ готов, нужно согласовать\n\n💡 Рекомендую начать со сравнительной таблицы DC-80 vs GE — я уже подготовил.';
+  }
+  return '✨ Понял, работаю над этим. Обновлю досье когда будет готово.\n\nЧто-нибудь ещё по этой сделке?';
 }
 
 /* ─── Sub-components ─── */
