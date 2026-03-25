@@ -162,7 +162,7 @@ export function WorkspacePage() {
       {/* Layer 0: Gradient background */}
       <div
         className="fixed inset-0 z-0"
-        style={{ background: 'linear-gradient(to bottom, #0d3331 0%, #0e3f4f 50%, #0a1120 100%)' }}
+        style={{ background: 'var(--bg-gradient)' }}
       />
 
       {/* Layer 1: Content */}
