@@ -787,7 +787,7 @@ function AggregatedSidebar({ data, selectedDealId, onCollapse }: { data: Project
 /* ═══ JARVIS CHAT                        ═══ */
 /* ═══════════════════════════════════════════ */
 
-function JarvisChat() {
+function JarvisChat({ onCollapse }: { onCollapse: () => void }) {
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
   const [input, setInput] = useState('');
   const bottomRef = useRef<HTMLDivElement>(null);
