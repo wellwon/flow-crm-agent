@@ -6,6 +6,7 @@ import {
   useReactFlow, ReactFlowProvider,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
+import { AnimatePresence } from 'framer-motion';
 
 import { HoloNode } from './HoloNode';
 import { StickyNote } from './StickyNote';
@@ -13,6 +14,7 @@ import { GlowingEdge } from './GlowingEdge';
 import { TopToolbar } from './TopToolbar';
 import { NodeDrawer } from './NodeDrawer';
 import { JarvisCommandBar } from './JarvisCommandBar';
+import { JarvisChatSidebar } from './JarvisChatSidebar';
 import { MorningBriefing } from './MorningBriefing';
 import { ListView } from './ListView';
 import { KanbanView } from './KanbanView';
@@ -218,139 +220,148 @@ function PipelinePageInner() {
             onTogglePhases={() => setPhasesVisible(v => !v)}
           />
 
-          {/* Body */}
-          <div className="flex-1 flex overflow-hidden relative">
-            {/* Sidebar palette — only in graph view */}
-            {activeView === 'graph' && (
-              <NodePalette
-                onAddNode={addNode}
-                onAddSticky={addSticky}
-                interactionMode={interactionMode}
-                onInteractionModeChange={setInteractionMode}
-              />
-            )}
+          {/* Body: JARVIS chat left | content center | node drawer right */}
+          <div className="flex-1 flex overflow-hidden">
+            {/* Left: JARVIS Chat */}
+            <JarvisChatSidebar />
 
-            {/* Main content area */}
-            <main className="flex-1 overflow-hidden relative">
+            {/* Center content area */}
+            <div className="flex-1 flex overflow-hidden relative">
+              {/* Sidebar palette — only in graph view */}
               {activeView === 'graph' && (
-                <>
-                  <ReactFlow
-                    className="w-full h-full"
-                    style={{ backgroundColor: 'hsl(var(--card))' }}
-                    nodes={nodes}
-                    edges={edges}
-                    onNodesChange={onNodesChange}
-                    onEdgesChange={onEdgesChange}
-                    onNodeClick={onNodeClick}
-                    onPaneClick={onPaneClick}
-                    onPaneContextMenu={onPaneContextMenu}
-                    onEdgeContextMenu={onEdgeContextMenu}
-                    onEdgeClick={onEdgeClick}
-                    onDragOver={onDragOver}
-                    onDrop={onDrop}
-                    nodeTypes={nodeTypes}
-                    edgeTypes={edgeTypes}
-                    panOnDrag={interactionMode === 'hand' ? [0] : [1, 2]}
-                    selectionOnDrag={interactionMode === 'select'}
-                    selectionMode={SelectionMode.Partial}
-                    selectNodesOnDrag={interactionMode === 'select'}
-                    fitView
-                    fitViewOptions={{ padding: 0.2 }}
-                    proOptions={{ hideAttribution: true }}
-                    minZoom={0.15}
-                    maxZoom={2}
-                    deleteKeyCode={['Backspace', 'Delete']}
-                  >
-                    <Background variant={BackgroundVariant.Dots} gap={24} size={1} color="hsl(var(--muted-foreground) / 0.15)" />
-                    <MiniMap
-                      pannable
-                      zoomable
-                      nodeColor={(n) => {
-                        if (n.type === 'stickyNote') return 'hsl(48 96% 70%)';
-                        const d = n.data as unknown as PipelineNodeData;
-                        if (d.status === 'completed') return 'hsl(160 84% 39%)';
-                        if (d.status === 'active') return 'hsl(38 92% 50%)';
-                        if (d.status === 'error') return 'hsl(350 89% 60%)';
-                        if (d.status === 'waiting') return 'hsl(174 55% 40%)';
-                        return 'hsl(240 4% 46%)';
-                      }}
-                      style={{
-                        width: 200,
-                        height: 140,
-                        background: 'hsl(var(--card))',
-                      }}
-                      maskColor="hsl(var(--muted) / 0.5)"
-                    />
-                    {phasesVisible && <PhaseBackground nodes={nodes} />}
-                  </ReactFlow>
+                <NodePalette
+                  onAddNode={addNode}
+                  onAddSticky={addSticky}
+                  interactionMode={interactionMode}
+                  onInteractionModeChange={setInteractionMode}
+                />
+              )}
 
-                  {/* Zoom controls */}
-                  <div className="absolute z-20 bottom-4 right-4 flex items-center gap-1 matte-glass px-2 py-1.5">
-                    <button
-                      onClick={() => zoomOut()}
-                      className="w-7 h-7 flex items-center justify-center rounded-[8px] text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors text-lg font-bold"
-                      title="Отдалить"
+              {/* Main content area */}
+              <main className="flex-1 overflow-hidden relative">
+                {activeView === 'graph' && (
+                  <>
+                    <ReactFlow
+                      className="w-full h-full"
+                      style={{ backgroundColor: 'hsl(var(--card))' }}
+                      nodes={nodes}
+                      edges={edges}
+                      onNodesChange={onNodesChange}
+                      onEdgesChange={onEdgesChange}
+                      onNodeClick={onNodeClick}
+                      onPaneClick={onPaneClick}
+                      onPaneContextMenu={onPaneContextMenu}
+                      onEdgeContextMenu={onEdgeContextMenu}
+                      onEdgeClick={onEdgeClick}
+                      onDragOver={onDragOver}
+                      onDrop={onDrop}
+                      nodeTypes={nodeTypes}
+                      edgeTypes={edgeTypes}
+                      panOnDrag={interactionMode === 'hand' ? [0] : [1, 2]}
+                      selectionOnDrag={interactionMode === 'select'}
+                      selectionMode={SelectionMode.Partial}
+                      selectNodesOnDrag={interactionMode === 'select'}
+                      fitView
+                      fitViewOptions={{ padding: 0.2 }}
+                      proOptions={{ hideAttribution: true }}
+                      minZoom={0.15}
+                      maxZoom={2}
+                      deleteKeyCode={['Backspace', 'Delete']}
                     >
-                      −
-                    </button>
-                    <button
-                      onClick={() => fitView({ padding: 0.2 })}
-                      className="w-7 h-7 flex items-center justify-center rounded-[8px] text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
-                      title="Вместить всё"
-                    >
-                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="1" y="1" width="12" height="12" rx="2" /><path d="M4 7h6M7 4v6" /></svg>
-                    </button>
-                    <button
-                      onClick={() => zoomIn()}
-                      className="w-7 h-7 flex items-center justify-center rounded-[8px] text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors text-lg font-bold"
-                      title="Приблизить"
-                    >
-                      +
-                    </button>
+                      <Background variant={BackgroundVariant.Dots} gap={24} size={1} color="hsl(var(--muted-foreground) / 0.15)" />
+                      <MiniMap
+                        pannable
+                        zoomable
+                        nodeColor={(n) => {
+                          if (n.type === 'stickyNote') return 'hsl(48 96% 70%)';
+                          const d = n.data as unknown as PipelineNodeData;
+                          if (d.status === 'completed') return 'hsl(160 84% 39%)';
+                          if (d.status === 'active') return 'hsl(38 92% 50%)';
+                          if (d.status === 'error') return 'hsl(350 89% 60%)';
+                          if (d.status === 'waiting') return 'hsl(174 55% 40%)';
+                          return 'hsl(240 4% 46%)';
+                        }}
+                        style={{
+                          width: 200,
+                          height: 140,
+                          background: 'hsl(var(--card))',
+                        }}
+                        maskColor="hsl(var(--muted) / 0.5)"
+                      />
+                      {phasesVisible && <PhaseBackground nodes={nodes} />}
+                    </ReactFlow>
+
+                    {/* Zoom controls */}
+                    <div className="absolute z-20 bottom-4 right-4 flex items-center gap-1 matte-glass px-2 py-1.5">
+                      <button
+                        onClick={() => zoomOut()}
+                        className="w-7 h-7 flex items-center justify-center rounded-[8px] text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors text-lg font-bold"
+                        title="Отдалить"
+                      >
+                        −
+                      </button>
+                      <button
+                        onClick={() => fitView({ padding: 0.2 })}
+                        className="w-7 h-7 flex items-center justify-center rounded-[8px] text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+                        title="Вместить всё"
+                      >
+                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="1" y="1" width="12" height="12" rx="2" /><path d="M4 7h6M7 4v6" /></svg>
+                      </button>
+                      <button
+                        onClick={() => zoomIn()}
+                        className="w-7 h-7 flex items-center justify-center rounded-[8px] text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors text-lg font-bold"
+                        title="Приблизить"
+                      >
+                        +
+                      </button>
+                    </div>
+
+                    <JarvisCommandBar />
+                  </>
+                )}
+
+                {activeView === 'list' && (
+                  <div className="h-full overflow-y-auto p-6">
+                    <ListView nodes={nodes} onNodeSelect={handleNodeSelect} />
                   </div>
+                )}
+                {activeView === 'kanban' && (
+                  <div className="h-full overflow-x-auto p-6">
+                    <KanbanView nodes={nodes} onNodeSelect={handleNodeSelect} onStatusChange={handleStatusChange} />
+                  </div>
+                )}
+                {activeView === 'timeline' && (
+                  <div className="h-full overflow-y-auto p-6">
+                    <TimelineView nodes={nodes} onNodeSelect={handleNodeSelect} />
+                  </div>
+                )}
+                {activeView === 'dashboard' && (
+                  <div className="h-full overflow-y-auto p-6">
+                    <DashboardView nodes={nodes} />
+                  </div>
+                )}
+                {activeView === 'dossier' && (
+                  <div className="h-full p-5">
+                    <DealDossierView />
+                  </div>
+                )}
+              </main>
+            </div>
 
-                  <JarvisCommandBar />
-                </>
-              )}
-
-              {activeView === 'list' && (
-                <div className="h-full overflow-y-auto p-6">
-                  <ListView nodes={nodes} onNodeSelect={handleNodeSelect} />
-                </div>
-              )}
-              {activeView === 'kanban' && (
-                <div className="h-full overflow-x-auto p-6">
-                  <KanbanView nodes={nodes} onNodeSelect={handleNodeSelect} onStatusChange={handleStatusChange} />
-                </div>
-              )}
-              {activeView === 'timeline' && (
-                <div className="h-full overflow-y-auto p-6">
-                  <TimelineView nodes={nodes} onNodeSelect={handleNodeSelect} />
-                </div>
-              )}
-              {activeView === 'dashboard' && (
-                <div className="h-full overflow-y-auto p-6">
-                  <DashboardView nodes={nodes} />
-                </div>
-              )}
-              {activeView === 'dossier' && (
-                <div className="h-full p-5">
-                  <DealDossierView />
-                </div>
-              )}
-            </main>
+            {/* Right: Node detail sidebar */}
+            <AnimatePresence>
+              <NodeDrawer
+                isOpen={!!selectedNode}
+                onClose={() => setSelectedNode(null)}
+                data={selectedNode?.data ?? null}
+                nodeId={selectedNode?.id ?? null}
+                onComplete={handleCompleteNode}
+                onDelete={handleDeleteNode}
+              />
+            </AnimatePresence>
           </div>
         </div>
       </div>
-
-      <NodeDrawer
-        isOpen={!!selectedNode}
-        onClose={() => setSelectedNode(null)}
-        data={selectedNode?.data ?? null}
-        nodeId={selectedNode?.id ?? null}
-        onComplete={handleCompleteNode}
-        onDelete={handleDeleteNode}
-      />
 
       <CanvasContextMenu
         position={contextMenu}
