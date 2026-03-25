@@ -210,10 +210,9 @@ function PipelinePageInner() {
   }, []);
 
   return (
-    <div className="w-screen h-screen bg-background relative overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none"
-        style={{ background: 'radial-gradient(ellipse at 50% 30%, hsl(200 60% 8%) 0%, hsl(222 15% 6%) 70%)' }}
-      />
+    <div className="w-screen h-screen relative overflow-hidden">
+      {/* Layer 0: Gradient background */}
+      <div className="fixed inset-0 z-0" style={{ background: 'var(--bg-gradient)' }} />
 
       <TopToolbar
         activeView={activeView}
