@@ -7,11 +7,6 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { AnimatePresence } from 'framer-motion';
-  useNodesState, useEdgesState, BackgroundVariant, SelectionMode,
-  type NodeMouseHandler, type EdgeMouseHandler,
-  useReactFlow, ReactFlowProvider,
-} from '@xyflow/react';
-import '@xyflow/react/dist/style.css';
 
 import { HoloNode } from './HoloNode';
 import { StickyNote } from './StickyNote';
@@ -19,6 +14,7 @@ import { GlowingEdge } from './GlowingEdge';
 import { TopToolbar } from './TopToolbar';
 import { NodeDrawer } from './NodeDrawer';
 import { JarvisCommandBar } from './JarvisCommandBar';
+import { JarvisChatSidebar } from './JarvisChatSidebar';
 import { MorningBriefing } from './MorningBriefing';
 import { ListView } from './ListView';
 import { KanbanView } from './KanbanView';
