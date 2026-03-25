@@ -3,7 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { ChevronRight, ArrowUpDown } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 
@@ -14,10 +14,10 @@ interface Props {
 
 export function DealsTableView({ deals, onOpenDeal }: Props) {
   return (
-    <div className="rounded-xl border border-border/30 bg-card/30 backdrop-blur-sm overflow-hidden">
+    <div className="glass-panel overflow-hidden">
       <Table>
         <TableHeader>
-          <TableRow className="border-border/30 hover:bg-transparent">
+          <TableRow className="border-border/20 hover:bg-transparent">
             <TableHead className="text-muted-foreground font-medium">Сделка</TableHead>
             <TableHead className="text-muted-foreground font-medium">Статус</TableHead>
             <TableHead className="text-muted-foreground font-medium text-right">Сумма</TableHead>
@@ -33,7 +33,7 @@ export function DealsTableView({ deals, onOpenDeal }: Props) {
             <TableRow
               key={deal.id}
               onClick={() => onOpenDeal(deal.id)}
-              className="border-border/20 cursor-pointer hover:bg-primary/5 transition-colors group"
+              className="border-border/10 cursor-pointer hover:bg-primary/5 transition-colors group"
             >
               <TableCell>
                 <div>
@@ -58,7 +58,7 @@ export function DealsTableView({ deals, onOpenDeal }: Props) {
               <TableCell>
                 <div className="flex items-center gap-2">
                   <Avatar className="w-6 h-6">
-                    <AvatarFallback className="text-[10px] bg-secondary text-foreground">
+                    <AvatarFallback className="text-[10px] bg-primary/10 text-primary border border-primary/20">
                       {deal.manager.avatar}
                     </AvatarFallback>
                   </Avatar>
@@ -72,7 +72,7 @@ export function DealsTableView({ deals, onOpenDeal }: Props) {
                 {deal.nextStep}
               </TableCell>
               <TableCell>
-                <ChevronRight className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                <ChevronRight className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 group-hover:text-primary transition-all" />
               </TableCell>
             </TableRow>
           ))}

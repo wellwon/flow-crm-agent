@@ -1,7 +1,7 @@
 import { Deal, dealStatusLabels, dealStatusColors } from '@/data/mockDeals';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { format, differenceInDays, isAfter } from 'date-fns';
+import { format, differenceInDays } from 'date-fns';
 import { ru } from 'date-fns/locale';
 
 interface Props {
@@ -18,11 +18,11 @@ export function DealsTimelineView({ deals, onOpenDeal }: Props) {
 
   return (
     <div className="relative max-w-4xl mx-auto">
-      {/* Vertical line */}
-      <div className="absolute left-[120px] top-0 bottom-0 w-px bg-border/30" />
+      {/* Vertical line with glow */}
+      <div className="absolute left-[120px] top-0 bottom-0 w-px bg-primary/20 shadow-[0_0_8px_hsl(var(--primary)/0.15)]" />
 
       <div className="space-y-1">
-        {sorted.map((deal, i) => {
+        {sorted.map((deal) => {
           const deadline = new Date(deal.deadline);
           const daysLeft = differenceInDays(deadline, today);
           const overdue = daysLeft < 0;
@@ -38,16 +38,20 @@ export function DealsTimelineView({ deals, onOpenDeal }: Props) {
                 <div className="text-sm font-medium text-foreground">
                   {format(deadline, 'd MMM', { locale: ru })}
                 </div>
-                <div className={`text-[10px] ${overdue ? 'text-red-400' : 'text-muted-foreground'}`}>
+                <div className={`text-[10px] ${overdue ? 'text-node-error' : 'text-muted-foreground'}`}>
                   {overdue ? `просрочено ${Math.abs(daysLeft)}д` : `через ${daysLeft}д`}
                 </div>
               </div>
 
               {/* Dot on the line */}
-              <div className="relative z-10 w-3 h-3 rounded-full border-2 border-primary bg-background group-hover:bg-primary transition-colors flex-shrink-0" />
+              <div className={`relative z-10 w-3 h-3 rounded-full border-2 border-primary bg-background flex-shrink-0 transition-all ${
+                overdue 
+                  ? 'border-node-error shadow-[0_0_8px_hsl(var(--node-error)/0.4)]' 
+                  : 'group-hover:bg-primary group-hover:shadow-[0_0_12px_hsl(var(--primary)/0.4)]'
+              }`} />
 
               {/* Card */}
-              <div className="flex-1 rounded-lg border border-border/30 bg-card/40 backdrop-blur-sm p-3 flex items-center gap-4 group-hover:border-primary/30 transition-colors">
+              <div className="flex-1 glass-panel p-3 flex items-center gap-4 group-hover:border-primary/30 group-hover:shadow-[0_0_16px_hsl(var(--primary)/0.08)] transition-all">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
                     <span className="font-medium text-sm text-foreground group-hover:text-primary transition-colors truncate">
@@ -65,7 +69,7 @@ export function DealsTimelineView({ deals, onOpenDeal }: Props) {
                 </span>
 
                 <Avatar className="w-6 h-6 flex-shrink-0">
-                  <AvatarFallback className="text-[10px] bg-secondary text-foreground">
+                  <AvatarFallback className="text-[10px] bg-primary/10 text-primary border border-primary/20">
                     {deal.manager.avatar}
                   </AvatarFallback>
                 </Avatar>

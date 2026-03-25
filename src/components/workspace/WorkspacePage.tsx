@@ -20,7 +20,6 @@ const views: { id: ViewMode; label: string; icon: React.ElementType }[] = [
   { id: 'timeline', label: 'Timeline', icon: CalendarDays },
 ];
 
-// Extract unique values from deals
 const allRegions = [...new Set(mockDeals.map((d) => d.region))].sort();
 const allManagers = [...new Set(mockDeals.map((d) => d.manager.name))].sort();
 const allCategories = [...new Set(mockDeals.map((d) => d.category))].sort();
@@ -55,10 +54,10 @@ function FilterDropdown({ icon: Icon, label, options, selected, onChange, displa
     <Popover>
       <PopoverTrigger asChild>
         <button
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm border transition-all ${
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm border transition-all backdrop-blur-sm ${
             activeCount > 0
-              ? 'border-primary/40 bg-primary/10 text-primary'
-              : 'border-border/30 bg-secondary/30 text-muted-foreground hover:text-foreground hover:bg-secondary/50'
+              ? 'border-primary/40 bg-primary/10 text-primary shadow-[0_0_12px_hsl(var(--primary)/0.15)]'
+              : 'border-border/20 bg-card/30 text-muted-foreground hover:text-foreground hover:bg-card/50 hover:border-border/40'
           }`}
         >
           <Icon className="w-3.5 h-3.5" />
@@ -71,12 +70,12 @@ function FilterDropdown({ icon: Icon, label, options, selected, onChange, displa
           <ChevronDown className="w-3 h-3 opacity-50" />
         </button>
       </PopoverTrigger>
-      <PopoverContent align="start" className="w-52 p-2 bg-card border-border/50">
+      <PopoverContent align="start" className="w-52 p-2 glass-panel-dense border-border/20">
         <div className="space-y-0.5 max-h-[240px] overflow-y-auto">
           {options.map((opt) => (
             <label
               key={opt}
-              className="flex items-center gap-2.5 px-2 py-1.5 rounded-md hover:bg-secondary/50 cursor-pointer text-sm"
+              className="flex items-center gap-2.5 px-2 py-1.5 rounded-md hover:bg-primary/5 cursor-pointer text-sm transition-colors"
             >
               <Checkbox
                 checked={selected.includes(opt)}
@@ -90,7 +89,7 @@ function FilterDropdown({ icon: Icon, label, options, selected, onChange, displa
         {activeCount > 0 && (
           <button
             onClick={() => onChange([])}
-            className="w-full mt-1.5 pt-1.5 border-t border-border/30 text-xs text-muted-foreground hover:text-foreground text-center py-1"
+            className="w-full mt-1.5 pt-1.5 border-t border-border/20 text-xs text-muted-foreground hover:text-primary text-center py-1 transition-colors"
           >
             Сбросить
           </button>
@@ -132,20 +131,20 @@ export function WorkspacePage() {
     setFilterPriority([]);
   };
 
-  // Summary stats (based on filtered)
   const totalAmount = filtered.reduce((s, d) => s + d.amount, 0);
   const activeDeals = filtered.filter((d) => !['won', 'lost'].includes(d.status)).length;
   const wonDeals = filtered.filter((d) => d.status === 'won').length;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Header */}
-      <header className="border-b border-border/50 bg-card/50 backdrop-blur-sm">
+      {/* Header — glass panel */}
+      <header className="glass-panel-dense border-0 border-b border-border/20 rounded-none">
         <div className="px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <h1 className="text-xl font-semibold text-foreground tracking-tight">
               WellWon
             </h1>
+            <div className="w-px h-5 bg-border/30" />
             <span className="text-muted-foreground text-sm hidden md:inline">
               Управление сделками
             </span>
@@ -157,10 +156,10 @@ export function WorkspacePage() {
                 placeholder="Поиск сделок..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-9 w-64 bg-secondary/50 border-border/30 h-9"
+                className="pl-9 w-64 bg-card/30 border-border/20 h-9 backdrop-blur-sm focus:border-primary/40 focus:bg-card/50 transition-all"
               />
             </div>
-            <Button size="sm" className="gap-1.5 h-9">
+            <Button size="sm" className="gap-1.5 h-9 shadow-[0_0_16px_hsl(var(--primary)/0.2)]">
               <Plus className="w-4 h-4" />
               <span className="hidden sm:inline">Новая сделка</span>
             </Button>
@@ -210,7 +209,7 @@ export function WorkspacePage() {
           {totalFilters > 0 && (
             <button
               onClick={clearAll}
-              className="flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs text-muted-foreground hover:text-foreground transition-colors"
+              className="flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs text-muted-foreground hover:text-primary transition-colors"
             >
               <X className="w-3 h-3" />
               Сбросить всё ({totalFilters})
@@ -221,35 +220,28 @@ export function WorkspacePage() {
         {/* Stats + View Switcher */}
         <div className="px-6 pb-3 flex items-center justify-between">
           <div className="flex items-center gap-6 text-sm">
-            <div className="flex items-center gap-2">
-              <span className="text-muted-foreground">Найдено:</span>
-              <span className="font-medium text-foreground">{filtered.length}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-muted-foreground">Активных:</span>
-              <span className="font-medium text-foreground">{activeDeals}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-muted-foreground">Выиграно:</span>
-              <span className="font-medium text-node-completed">{wonDeals}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-muted-foreground">Воронка:</span>
-              <span className="font-medium text-foreground">
-                {(totalAmount / 1_000_000).toFixed(0)}M ₽
-              </span>
-            </div>
+            {[
+              { label: 'Найдено', value: filtered.length, color: 'text-foreground' },
+              { label: 'Активных', value: activeDeals, color: 'text-foreground' },
+              { label: 'Выиграно', value: wonDeals, color: 'text-node-completed' },
+              { label: 'Воронка', value: `${(totalAmount / 1_000_000).toFixed(0)}M ₽`, color: 'text-foreground' },
+            ].map((stat) => (
+              <div key={stat.label} className="flex items-center gap-2">
+                <span className="text-muted-foreground">{stat.label}:</span>
+                <span className={`font-medium ${stat.color}`}>{stat.value}</span>
+              </div>
+            ))}
           </div>
 
-          <div className="flex items-center gap-1 bg-secondary/50 rounded-lg p-1 border border-border/30">
+          <div className="flex items-center gap-0.5 glass-panel p-1 rounded-xl border-border/20">
             {views.map((v) => (
               <button
                 key={v.id}
                 onClick={() => setView(v.id)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm transition-all ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm transition-all ${
                   view === v.id
-                    ? 'bg-primary/15 text-primary shadow-sm'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
+                    ? 'bg-primary/15 text-primary shadow-[0_0_12px_hsl(var(--primary)/0.15)]'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-card/30'
                 }`}
               >
                 <v.icon className="w-4 h-4" />
