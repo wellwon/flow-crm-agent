@@ -41,7 +41,7 @@ export function TopToolbar({ activeView = 'graph', onViewChange, onBriefingOpen,
         </div>
 
         {/* View switcher */}
-        <div className="flex items-center gap-1 bg-muted/30 rounded-[10px] p-0.5 border border-border">
+        <div className="flex items-center gap-1 bg-white/5 rounded-[10px] p-0.5 border border-white/10">
           {views.map(v => (
             <button
               key={v.id}
