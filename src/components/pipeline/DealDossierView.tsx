@@ -409,7 +409,7 @@ export function DealDossierView() {
                 <div className="w-4 h-4 rounded-full border-2 border-muted-foreground/20" />
               );
               return (
-                <div key={i} className="relative flex items-start gap-3 py-1.5">
+                <div key={i} className={`relative flex items-start gap-3 py-1.5 cursor-pointer rounded-[8px] px-2 -mx-2 transition-colors ${selectedStep === i ? 'bg-primary/10' : 'hover:bg-muted/30'}`} onClick={() => setSelectedStep(i)}>
                   <div className="absolute left-[-18px] top-2.5 z-10 bg-card rounded-full">{statusIcon}</div>
                   <div className="flex-1 flex items-center gap-2 min-w-0">
                     <span className={`text-xs ${step.status === 'completed' ? 'text-foreground' : step.status === 'active' ? 'text-foreground font-semibold' : 'text-muted-foreground'}`}>
