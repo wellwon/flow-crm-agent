@@ -59,24 +59,24 @@
   .dark {
     --glass-opacity: 0.92;
 
-    --background: 214 58% 9%;          /* #0a1625 */
-    --foreground: 210 40% 98%;         /* #f8fafc */
-    --card: 214 58% 9%;                /* #0a1625 → #09202f for main */
-    --card-foreground: 210 40% 98%;    /* #f8fafc */
-    --popover: 214 58% 9%;
+    --background: 204 50% 7%;            /* #091a24 */
+    --foreground: 210 40% 98%;           /* #f8fafc */
+    --card: 204 50% 7%;                  /* #091a24 */
+    --card-foreground: 210 40% 98%;      /* #f8fafc */
+    --popover: 204 45% 10%;
     --popover-foreground: 210 40% 98%;
-    --primary: 174 55% 55%;            /* #4ecdc4 */
-    --primary-foreground: 214 58% 9%;  /* #0a1625 */
-    --secondary: 215 41% 18%;          /* #1a2940 */
+    --primary: 174 55% 55%;              /* #4ecdc4 */
+    --primary-foreground: 204 50% 7%;    /* #091a24 */
+    --secondary: 200 40% 14%;            /* #162c3a */
     --secondary-foreground: 210 40% 98%;
-    --muted: 215 41% 18%;              /* #1a2940 */
-    --muted-foreground: 215 25% 63%;   /* #94a3b8 */
-    --accent: 174 55% 55%;             /* #4ecdc4 */
-    --accent-foreground: 214 58% 9%;
+    --muted: 200 40% 14%;               /* #162c3a */
+    --muted-foreground: 200 20% 60%;     /* #8aa3b4 */
+    --accent: 174 55% 55%;              /* #4ecdc4 */
+    --accent-foreground: 204 50% 7%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 210 40% 98%;
-    --border: 215 41% 18%;             /* #1a2940 */
-    --input: 215 41% 18%;
+    --border: 200 35% 16%;              /* #1a3040 */
+    --input: 200 35% 16%;
     --ring: 174 55% 55%;
 
     --node-pending: 240 4% 46%;
@@ -87,18 +87,18 @@
     --glow-completed: 160 84% 39%;
     --glow-error: 350 89% 60%;
 
-    --glass-bg: 214 50% 7%;
+    --glass-bg: 204 45% 6%;
     --glass-border: 0 0% 100%;
 
-    --bg-gradient: linear-gradient(to bottom, #0d3331 0%, #0e3f4f 50%, #0a1120 100%);
+    --bg-gradient: linear-gradient(to bottom, #0d3331 0%, #0e3f4f 50%, #071520 100%);
 
-    --sidebar-background: 214 58% 9%;
+    --sidebar-background: 204 50% 7%;
     --sidebar-foreground: 210 40% 98%;
     --sidebar-primary: 174 55% 55%;
     --sidebar-primary-foreground: 210 40% 98%;
-    --sidebar-accent: 215 41% 18%;
+    --sidebar-accent: 200 40% 14%;
     --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 215 41% 18%;
+    --sidebar-border: 200 35% 16%;
     --sidebar-ring: 174 55% 55%;
 
     --shadow-glass: 0 10px 40px rgba(0,0,0,0.5);
@@ -127,8 +127,8 @@
   }
 
   .dark .matte-glass {
-    background: hsl(215 41% 14%);
-    border-color: hsl(0 0% 100% / 0.05);
+    background: hsl(200 38% 11%);
+    border-color: hsl(200 30% 18% / 0.6);
   }
 
   .main-content-panel {
@@ -142,8 +142,8 @@
   }
 
   .dark .main-content-panel {
-    background: #09202f;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    background: #0a1e2c;
+    border: 1px solid rgba(78, 205, 196, 0.06);
   }
 }
 
