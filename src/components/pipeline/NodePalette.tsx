@@ -108,13 +108,13 @@ export function NodePalette({
         </button>
 
         {/* Interaction tools */}
-        <div className="px-1.5 py-2 border-b border-border">
+        <div className="px-1.5 py-2 border-b border-white/10">
           <div className="flex gap-0.5">
             <button
               onClick={() => onInteractionModeChange?.('select')}
               title="Выделение"
               className={`flex-1 flex items-center justify-center py-2 rounded-lg transition-all ${
-                interactionMode === 'select' ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:bg-muted/30 hover:text-foreground'
+                interactionMode === 'select' ? 'bg-primary/20 text-primary' : 'text-slate-400 hover:bg-white/10 hover:text-white'
               }`}
             >
               <MousePointer2 className="w-4 h-4" />
@@ -123,7 +123,7 @@ export function NodePalette({
               onClick={() => onInteractionModeChange?.('hand')}
               title="Рука"
               className={`flex-1 flex items-center justify-center py-2 rounded-lg transition-all ${
-                interactionMode === 'hand' ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:bg-muted/30 hover:text-foreground'
+                interactionMode === 'hand' ? 'bg-primary/20 text-primary' : 'text-slate-400 hover:bg-white/10 hover:text-white'
               }`}
             >
               <Hand className="w-4 h-4" />
