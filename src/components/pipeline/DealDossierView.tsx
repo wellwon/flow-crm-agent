@@ -587,7 +587,7 @@ function JarvisChat() {
   ];
 
   return (
-    <div className="w-[380px] shrink-0 flex flex-col matte-glass overflow-hidden sticky top-0 h-[calc(100vh-160px)]">
+    <div className="w-[456px] shrink-0 flex flex-col matte-glass overflow-hidden sticky top-0 h-[calc(100vh-160px)]">
       {/* Header */}
       <div className="px-4 py-3 border-b border-border flex items-center gap-2.5">
         <div className="w-7 h-7 rounded-full bg-[hsl(265_80%_65%)/0.15] flex items-center justify-center">
