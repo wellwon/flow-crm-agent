@@ -16,15 +16,15 @@ export function MorningBriefing({ isOpen, onClose }: MorningBriefingProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="absolute inset-0 z-30 flex items-center justify-center p-8"
+          className="fixed inset-0 z-50 flex items-center justify-center p-8"
         >
-          <div className="absolute inset-0 bg-background/60 backdrop-blur-sm" onClick={onClose} />
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={onClose} />
           <motion.div
-            initial={{ scale: 0.95, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.95, opacity: 0 }}
+            initial={{ scale: 0.95, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.95, opacity: 0, y: 20 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="relative glass-panel-dense w-full max-w-3xl max-h-[85vh] overflow-hidden flex flex-col"
+            className="relative matte-glass w-full max-w-3xl max-h-[85vh] overflow-hidden flex flex-col shadow-2xl"
           >
             {/* Header */}
             <div className="p-5 border-b border-border/50 flex items-center justify-between">
