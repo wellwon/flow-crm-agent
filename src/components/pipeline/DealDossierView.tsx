@@ -508,41 +508,25 @@ export function DealDossierView() {
           </div>
         </motion.div>
 
-        {/* TIMELINE + RISKS */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-          <motion.div variants={item} className="matte-glass p-5">
-            <SectionTitle icon={Clock} color="text-primary">Хронология</SectionTitle>
-            <div className="space-y-2.5">
-              {d.timeline.map((ev, i) => {
-                const IconEl = ev.icon === 'ai' ? Bot : ev.icon === 'system' ? Zap : MessageSquare;
-                const iconColor = ev.icon === 'ai' ? 'text-[hsl(265_80%_65%)]' : ev.icon === 'system' ? 'text-node-active' : 'text-primary';
-                return (
-                  <div key={i} className="flex items-start gap-2.5">
-                    <IconEl className={`w-3.5 h-3.5 mt-0.5 shrink-0 ${iconColor}`} />
-                    <div className="flex-1">
-                      <p className="text-[11px] text-foreground/90">{ev.text}</p>
-                      <span className="text-[9px] font-mono text-muted-foreground/60">{ev.date}</span>
-                    </div>
+        {/* TIMELINE */}
+        <motion.div variants={item} className="matte-glass p-5">
+          <SectionTitle icon={Clock} color="text-primary">Хронология</SectionTitle>
+          <div className="space-y-2.5">
+            {d.timeline.map((ev, i) => {
+              const IconEl = ev.icon === 'ai' ? Bot : ev.icon === 'system' ? Zap : MessageSquare;
+              const iconColor = ev.icon === 'ai' ? 'text-[hsl(265_80%_65%)]' : ev.icon === 'system' ? 'text-node-active' : 'text-primary';
+              return (
+                <div key={i} className="flex items-start gap-2.5">
+                  <IconEl className={`w-3.5 h-3.5 mt-0.5 shrink-0 ${iconColor}`} />
+                  <div className="flex-1">
+                    <p className="text-[11px] text-foreground/90">{ev.text}</p>
+                    <span className="text-[9px] font-mono text-muted-foreground/60">{ev.date}</span>
                   </div>
-                );
-              })}
-            </div>
-          </motion.div>
-
-          <motion.div variants={item} className="matte-glass p-5">
-            <SectionTitle icon={Shield} color="text-node-active">Риски и внимание</SectionTitle>
-            <div className="space-y-2">
-              {d.risks.map((r, i) => (
-                <div key={i} className={`flex items-start gap-2 p-2.5 rounded-[10px] border ${
-                  r.level === 'warning' ? 'bg-node-active/5 border-node-active/20' : 'bg-node-completed/5 border-node-completed/20'
-                }`}>
-                  <span className="text-sm mt-0.5">{r.level === 'warning' ? '🟡' : '🟢'}</span>
-                  <span className="text-[11px] text-foreground/90">{r.text}</span>
                 </div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
+              );
+            })}
+          </div>
+        </motion.div>
 
         {/* FOOTER */}
         <motion.div variants={item} className="flex items-center justify-between px-2 text-[10px] text-muted-foreground/60">
