@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import {
@@ -9,6 +9,7 @@ import {
   CircleDot, Send, ListChecks, ArrowRight, Sparkles,
   Package, Activity, ArrowLeft, Truck, Wrench, Scale, Briefcase,
   TrendingUp, CreditCard, Banknote, UserCheck,
+  PanelLeftClose, PanelLeftOpen, PanelRightClose, PanelRightOpen,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { QuickActionsBar } from './QuickActionsBar';
