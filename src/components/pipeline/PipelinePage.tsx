@@ -297,7 +297,7 @@ function PipelinePageInner() {
           >
             <button
               onClick={() => zoomOut()}
-              className="w-8 h-8 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors text-lg font-bold"
+              className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors text-lg font-bold"
               title="Отдалить"
             >
               −
