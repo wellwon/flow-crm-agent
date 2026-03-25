@@ -334,7 +334,7 @@ function PipelinePageInner() {
                 </div>
               )}
               {activeView === 'dossier' && (
-                <div className="h-full overflow-y-auto p-6">
+                <div className="h-full p-5">
                   <DealDossierView />
                 </div>
               )}
