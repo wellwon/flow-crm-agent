@@ -151,6 +151,7 @@ const item = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transiti
 
 export function DealDossierView() {
   const d = dossierData;
+  const [selectedStep, setSelectedStep] = useState<number | null>(null);
 
   return (
     <div className="flex gap-5 h-full">
