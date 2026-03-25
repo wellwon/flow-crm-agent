@@ -221,6 +221,7 @@ function PipelinePageInner() {
             phasesVisible={phasesVisible}
             onTogglePhases={() => setPhasesVisible(v => !v)}
           />
+          <QuickActionsBar />
 
           {/* Body: JARVIS chat left | content center | node drawer right */}
           <div className="flex-1 flex overflow-hidden">
