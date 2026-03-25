@@ -28,7 +28,7 @@ export function TopToolbar({ activeView = 'graph', onViewChange, onBriefingOpen,
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate('/')}
-            className="flex items-center justify-center w-8 h-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
+            className="flex items-center justify-center w-8 h-8 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
             title="Назад к сделкам"
           >
             <ArrowLeft className="w-4 h-4" />
