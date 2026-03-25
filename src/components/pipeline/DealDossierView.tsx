@@ -163,7 +163,6 @@ export function DealDossierView() {
       <motion.div variants={container} initial="hidden" animate="show" className="flex-1 min-w-0 space-y-5 pb-8 overflow-y-auto pr-1">
         {/* HERO HEADER */}
         <motion.div variants={item} className="matte-glass p-6 relative overflow-hidden">
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-node-active to-primary rounded-t-[14px]" />
           <div className="flex items-start justify-between gap-4 mb-4">
             <div>
               <div className="flex items-center gap-2 mb-1">
