@@ -201,32 +201,48 @@ export function DealDossierView() {
           </div>
         </motion.div>
 
-        {/* ═══ NEXT ACTIONS (NEW) ═══ */}
-        <motion.div variants={item} className="matte-glass p-5 relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-1 h-full bg-node-active rounded-l-[14px]" />
-          <SectionTitle icon={ArrowRight} color="text-node-active">Что делать дальше</SectionTitle>
-          <div className="space-y-2">
-            {d.nextActions.map((na, i) => (
-              <div key={i} className="flex items-start gap-3 p-2.5 rounded-[10px] bg-muted/30 border border-border/50">
-                <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${
-                  na.urgency === 'urgent' ? 'bg-node-error animate-pulse' :
-                  na.urgency === 'soon' ? 'bg-node-active' : 'bg-muted-foreground/40'
-                }`} />
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs text-foreground">{na.action}</p>
-                  <span className="text-[10px] text-muted-foreground">{na.who}</span>
+        {/* ═══ NEXT ACTIONS + RISKS — side by side ═══ */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <motion.div variants={item} className="matte-glass p-5 relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-1 h-full bg-node-active rounded-l-[14px]" />
+            <SectionTitle icon={ArrowRight} color="text-node-active">Что делать дальше</SectionTitle>
+            <div className="space-y-2">
+              {d.nextActions.map((na, i) => (
+                <div key={i} className="flex items-start gap-3 p-2.5 rounded-[10px] bg-muted/30 border border-border/50">
+                  <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${
+                    na.urgency === 'urgent' ? 'bg-node-error animate-pulse' :
+                    na.urgency === 'soon' ? 'bg-node-active' : 'bg-muted-foreground/40'
+                  }`} />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-foreground">{na.action}</p>
+                    <span className="text-[10px] text-muted-foreground">{na.who}</span>
+                  </div>
+                  <span className={`text-[8px] font-mono px-1.5 py-0.5 rounded shrink-0 ${
+                    na.urgency === 'urgent' ? 'bg-node-error/15 text-node-error' :
+                    na.urgency === 'soon' ? 'bg-node-active/15 text-node-active' :
+                    'bg-muted text-muted-foreground'
+                  }`}>
+                    {na.urgency === 'urgent' ? 'СРОЧНО' : na.urgency === 'soon' ? 'СКОРО' : 'ПЛАН'}
+                  </span>
                 </div>
-                <span className={`text-[8px] font-mono px-1.5 py-0.5 rounded shrink-0 ${
-                  na.urgency === 'urgent' ? 'bg-node-error/15 text-node-error' :
-                  na.urgency === 'soon' ? 'bg-node-active/15 text-node-active' :
-                  'bg-muted text-muted-foreground'
+              ))}
+            </div>
+          </motion.div>
+
+          <motion.div variants={item} className="matte-glass p-5">
+            <SectionTitle icon={Shield} color="text-node-active">Риски и внимание</SectionTitle>
+            <div className="space-y-2">
+              {d.risks.map((r, i) => (
+                <div key={i} className={`flex items-start gap-2 p-2.5 rounded-[10px] border ${
+                  r.level === 'warning' ? 'bg-node-active/5 border-node-active/20' : 'bg-node-completed/5 border-node-completed/20'
                 }`}>
-                  {na.urgency === 'urgent' ? 'СРОЧНО' : na.urgency === 'soon' ? 'СКОРО' : 'ПЛАН'}
-                </span>
-              </div>
-            ))}
-          </div>
-        </motion.div>
+                  <span className="text-sm mt-0.5">{r.level === 'warning' ? '🟡' : '🟢'}</span>
+                  <span className="text-[11px] text-foreground/90">{r.text}</span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
 
         {/* ═══ TASKS (NEW) ═══ */}
         <motion.div variants={item} className="matte-glass p-5">
