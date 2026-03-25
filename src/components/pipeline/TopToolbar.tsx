@@ -24,32 +24,32 @@ export function TopToolbar({ activeView = 'graph', onViewChange, onBriefingOpen,
 
   return (
     <div className="absolute top-0 left-0 right-0 z-10 p-4">
-      <div className="glass-panel-dark px-5 py-3 flex items-center justify-between gap-4 flex-wrap">
+      <div className="pipeline-chrome px-5 py-3 flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate('/')}
-            className="flex items-center justify-center w-8 h-8 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+            className="flex items-center justify-center w-8 h-8 rounded-lg text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent/50 transition-colors"
             title="Назад к сделкам"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
-          <div className="w-px h-5 bg-white/10" />
+          <div className="w-px h-5 bg-sidebar-border" />
           <div className="w-2 h-2 rounded-full bg-node-active animate-pulse" />
-          <h1 className="text-sm font-semibold text-white">
+          <h1 className="text-sm font-semibold text-sidebar-foreground">
             ОБ Коломна — 3× УЗИ Mindray DC-70
           </h1>
         </div>
 
         {/* View switcher */}
-        <div className="flex items-center gap-1 bg-white/5 rounded-[10px] p-0.5 border border-white/10">
+        <div className="flex items-center gap-1 bg-sidebar-accent/30 rounded-[10px] p-0.5 border border-sidebar-border">
           {views.map(v => (
             <button
               key={v.id}
               onClick={() => onViewChange?.(v.id)}
               className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[11px] font-medium transition-all ${
                 activeView === v.id
-                  ? 'bg-primary/20 text-primary'
-                  : 'text-slate-400 hover:text-white hover:bg-white/10'
+                  ? 'bg-sidebar-primary/20 text-sidebar-primary'
+                  : 'text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent/50'
               }`}
             >
               <v.icon className="w-3.5 h-3.5" />
@@ -65,13 +65,13 @@ export function TopToolbar({ activeView = 'graph', onViewChange, onBriefingOpen,
               className={`group relative inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all duration-200 overflow-hidden ${
                 phasesVisible
                   ? 'text-[hsl(265_80%_75%)]'
-                  : 'text-muted-foreground hover:text-foreground'
+                  : 'text-sidebar-foreground/60 hover:text-sidebar-foreground'
               }`}
             >
               <span className={`absolute inset-0 rounded-lg transition-opacity duration-200 ${
                 phasesVisible
                   ? 'opacity-100 bg-[hsl(265_80%_65%)/0.1] shadow-[inset_0_0_0_1px_hsl(265_80%_65%/0.25),0_0_12px_-4px_hsl(265_80%_65%/0.3)]'
-                  : 'opacity-0 group-hover:opacity-100 bg-muted/20 shadow-[inset_0_0_0_1px_hsl(var(--border)/0.2)]'
+                  : 'opacity-0 group-hover:opacity-100 bg-sidebar-accent/20 shadow-[inset_0_0_0_1px_hsl(var(--sidebar-border)/0.2)]'
               }`} />
               <Layers className="w-3.5 h-3.5 relative z-10" />
               <span className="relative z-10">Фазы</span>
@@ -80,9 +80,9 @@ export function TopToolbar({ activeView = 'graph', onViewChange, onBriefingOpen,
           {onTemplateOpen && (
             <button
               onClick={onTemplateOpen}
-              className="group relative inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium text-primary/80 hover:text-primary transition-all duration-200 overflow-hidden"
+              className="group relative inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium text-sidebar-primary/80 hover:text-sidebar-primary transition-all duration-200 overflow-hidden"
             >
-              <span className="absolute inset-0 rounded-lg bg-primary/5 shadow-[inset_0_0_0_1px_hsl(var(--primary)/0.15)] group-hover:bg-primary/10 group-hover:shadow-[inset_0_0_0_1px_hsl(var(--primary)/0.3),0_0_12px_-4px_hsl(var(--primary)/0.25)] transition-all duration-200" />
+              <span className="absolute inset-0 rounded-lg bg-sidebar-primary/5 shadow-[inset_0_0_0_1px_hsl(var(--sidebar-primary)/0.15)] group-hover:bg-sidebar-primary/10 group-hover:shadow-[inset_0_0_0_1px_hsl(var(--sidebar-primary)/0.3),0_0_12px_-4px_hsl(var(--sidebar-primary)/0.25)] transition-all duration-200" />
               <Plus className="w-3.5 h-3.5 relative z-10" />
               <span className="relative z-10">Шаблон</span>
             </button>

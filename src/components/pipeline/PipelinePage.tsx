@@ -271,47 +271,37 @@ function PipelinePageInner() {
                 if (d.status === 'waiting') return 'hsl(174 55% 40%)';
                 return 'hsl(240 4% 46%)';
               }}
-              className="!border !border-white/10 !rounded-t-2xl !rounded-b-none"
               style={{
                 width: 200,
-                height: 120,
-                background: 'hsl(214 50% 7% / 0.9)',
+                height: 140,
+                background: 'hsl(var(--card) / 0.9)',
                 backdropFilter: 'blur(24px)',
               }}
-              maskColor="hsl(214 50% 7% / 0.5)"
+              maskColor="hsl(var(--muted) / 0.5)"
             />
             {/* Phase swim lanes */}
             {phasesVisible && <PhaseBackground nodes={nodes} />}
           </ReactFlow>
 
-          {/* Zoom controls — visually attached below minimap */}
-          <div
-            className="absolute z-20 flex items-center justify-between border border-white/10 border-t-0 rounded-b-2xl px-2 py-1.5"
-            style={{
-              bottom: 16,
-              right: 16,
-              width: 200,
-              background: 'hsl(214 50% 7% / 0.9)',
-              backdropFilter: 'blur(24px)',
-            }}
-          >
+          {/* Zoom controls */}
+          <div className="absolute z-20 bottom-4 right-4 flex items-center gap-1 pipeline-chrome px-2 py-1.5 !rounded-xl">
             <button
               onClick={() => zoomOut()}
-              className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors text-lg font-bold"
+              className="w-7 h-7 flex items-center justify-center rounded-lg text-sidebar-foreground/50 hover:text-sidebar-foreground hover:bg-sidebar-accent/40 transition-colors text-lg font-bold"
               title="Отдалить"
             >
               −
             </button>
             <button
               onClick={() => fitView({ padding: 0.2 })}
-              className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+              className="w-7 h-7 flex items-center justify-center rounded-lg text-sidebar-foreground/50 hover:text-sidebar-foreground hover:bg-sidebar-accent/40 transition-colors"
               title="Вместить всё"
             >
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="1" y="1" width="12" height="12" rx="2" /><path d="M4 7h6M7 4v6" /></svg>
             </button>
             <button
               onClick={() => zoomIn()}
-              className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors text-lg font-bold"
+              className="w-7 h-7 flex items-center justify-center rounded-lg text-sidebar-foreground/50 hover:text-sidebar-foreground hover:bg-sidebar-accent/40 transition-colors text-lg font-bold"
               title="Приблизить"
             >
               +
