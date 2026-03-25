@@ -22,6 +22,7 @@ const views: { id: ViewMode; label: string; icon: React.ElementType }[] = [
   { id: 'kanban', label: 'Kanban', icon: Kanban },
   { id: 'grid', label: 'Карточки', icon: LayoutGrid },
   { id: 'timeline', label: 'Timeline', icon: CalendarDays },
+  { id: 'health', label: 'Health', icon: Activity },
   { id: 'jarvis', label: 'JARVIS', icon: Brain },
 ];
 
