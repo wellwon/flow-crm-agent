@@ -77,7 +77,7 @@ export function TopToolbar({ activeView = 'graph', onViewChange, onBriefingOpen,
           {onTemplateOpen && (
             <button
               onClick={onTemplateOpen}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-[10px] text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-[10px] text-xs font-medium text-muted-foreground hover:text-primary hover:bg-primary/10 active:bg-primary/20 transition-all"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Шаблон</span>
