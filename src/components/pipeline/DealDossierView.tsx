@@ -154,7 +154,10 @@ export function DealDossierView() {
 
   return (
     <div className="flex gap-5 h-full">
-      {/* ═══ LEFT: DOSSIER CONTENT ═══ */}
+      {/* ═══ LEFT: JARVIS CHAT ═══ */}
+      <JarvisChat />
+
+      {/* ═══ CENTER: DOSSIER CONTENT ═══ */}
       <motion.div variants={container} initial="hidden" animate="show" className="flex-1 min-w-0 space-y-5 pb-8 overflow-y-auto pr-1">
         {/* HERO HEADER */}
         <motion.div variants={item} className="matte-glass p-6 relative overflow-hidden">
