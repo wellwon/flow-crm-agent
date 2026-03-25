@@ -66,7 +66,7 @@ export function MorningBriefing({ isOpen, onClose }: MorningBriefingProps) {
                     { task: 'Ревью документов от Сергея', time: '~20 мин', draft: false },
                     { task: 'Заполнить отчёт по встрече с ЦРБ', time: '~15 мин', draft: true },
                   ].map((item, i) => (
-                    <div key={i} className="flex items-center gap-3 p-2.5 rounded-lg bg-background/40 border border-border/20 hover:border-primary/20 transition-colors cursor-pointer group">
+                    <div key={i} className="flex items-center gap-3 p-2.5 rounded-lg bg-muted border border-border hover:border-primary/30 transition-colors cursor-pointer group">
                       <span className="text-[11px] text-foreground flex-1">{item.task}</span>
                       {item.draft && <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[hsl(265_80%_65%)/0.15] text-[hsl(265_80%_65%)]">Черновик</span>}
                       <span className="text-[10px] text-muted-foreground font-mono">{item.time}</span>
