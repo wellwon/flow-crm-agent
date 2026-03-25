@@ -160,7 +160,7 @@ function BriefingCard({ title, items, actions }: { title: string; items: string[
 
 function TeamRow({ name, status, detail }: { name: string; status: 'ok' | 'warning' | 'blocked'; detail: string }) {
   return (
-    <div className="flex items-center gap-3 p-2 rounded-lg bg-background/40 border border-border/20">
+    <div className="flex items-center gap-3 p-2 rounded-lg bg-muted border border-border">
       <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-semibold ${
         status === 'ok' ? 'bg-node-completed/20 text-node-completed' :
         status === 'warning' ? 'bg-node-active/20 text-node-active' :
