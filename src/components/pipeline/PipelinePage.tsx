@@ -270,17 +270,17 @@ function PipelinePageInner() {
                 if (d.status === 'waiting') return 'hsl(174 55% 40%)';
                 return 'hsl(240 4% 46%)';
               }}
-              className="!border !border-border/30 !rounded-t-2xl !rounded-b-none"
+              className="!border !border-border !rounded-t-2xl !rounded-b-none"
               style={{
                 width: 200,
                 height: 120,
                 margin: 0,
                 bottom: 44,
                 right: 16,
-                background: 'hsl(222 20% 6% / 0.85)',
+                background: 'hsl(var(--card) / 0.85)',
                 backdropFilter: 'blur(24px)',
               }}
-              maskColor="hsl(222 15% 6% / 0.6)"
+              maskColor="hsl(var(--background) / 0.6)"
             />
             {/* Phase swim lanes */}
             {phasesVisible && <PhaseBackground nodes={nodes} />}
