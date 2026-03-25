@@ -14,17 +14,17 @@ interface Props {
 
 export function DealsTableView({ deals, onOpenDeal }: Props) {
   return (
-    <div className="rounded-xl overflow-hidden border border-border/30">
+    <div className="rounded-[14px] overflow-hidden border border-border">
       <Table>
         <TableHeader>
-          <TableRow className="border-border/20 hover:bg-transparent bg-muted/20">
-            <TableHead className="text-muted-foreground font-medium text-xs">Сделка</TableHead>
-            <TableHead className="text-muted-foreground font-medium text-xs">Статус</TableHead>
-            <TableHead className="text-muted-foreground font-medium text-xs text-right">Сумма</TableHead>
-            <TableHead className="text-muted-foreground font-medium text-xs">Прогресс</TableHead>
-            <TableHead className="text-muted-foreground font-medium text-xs">Менеджер</TableHead>
-            <TableHead className="text-muted-foreground font-medium text-xs">Дедлайн</TableHead>
-            <TableHead className="text-muted-foreground font-medium text-xs">Следующий шаг</TableHead>
+          <TableRow className="border-border hover:bg-transparent bg-muted/30">
+            <TableHead className="text-muted-foreground font-medium text-[12px]">Сделка</TableHead>
+            <TableHead className="text-muted-foreground font-medium text-[12px]">Статус</TableHead>
+            <TableHead className="text-muted-foreground font-medium text-[12px] text-right">Сумма</TableHead>
+            <TableHead className="text-muted-foreground font-medium text-[12px]">Прогресс</TableHead>
+            <TableHead className="text-muted-foreground font-medium text-[12px]">Менеджер</TableHead>
+            <TableHead className="text-muted-foreground font-medium text-[12px]">Дедлайн</TableHead>
+            <TableHead className="text-muted-foreground font-medium text-[12px]">Следующий шаг</TableHead>
             <TableHead className="w-10" />
           </TableRow>
         </TableHeader>
@@ -33,26 +33,26 @@ export function DealsTableView({ deals, onOpenDeal }: Props) {
             <TableRow
               key={deal.id}
               onClick={() => onOpenDeal(deal.id)}
-              className="border-border/10 cursor-pointer hover:bg-muted/20 transition-colors group"
+              className="border-border cursor-pointer hover:bg-muted/20 transition-colors group"
             >
               <TableCell>
                 <div>
-                  <div className="font-medium text-foreground text-sm">{deal.title}</div>
-                  <div className="text-xs text-muted-foreground">{deal.company}</div>
+                  <div className="font-medium text-foreground text-[13px]">{deal.title}</div>
+                  <div className="text-[12px] text-muted-foreground">{deal.company}</div>
                 </div>
               </TableCell>
               <TableCell>
-                <Badge variant="outline" className={`text-xs border ${dealStatusColors[deal.status]}`}>
+                <Badge variant="outline" className={`text-[11px] border rounded-full ${dealStatusColors[deal.status]}`}>
                   {dealStatusLabels[deal.status]}
                 </Badge>
               </TableCell>
-              <TableCell className="text-right font-mono text-sm">
+              <TableCell className="text-right font-mono text-[13px]">
                 {(deal.amount / 1_000_000).toFixed(1)}M ₽
               </TableCell>
               <TableCell>
                 <div className="flex items-center gap-2 min-w-[120px]">
                   <Progress value={deal.progress} className="h-1.5 flex-1" />
-                  <span className="text-xs text-muted-foreground w-8">{deal.progress}%</span>
+                  <span className="text-[12px] text-muted-foreground w-8">{deal.progress}%</span>
                 </div>
               </TableCell>
               <TableCell>
@@ -62,13 +62,13 @@ export function DealsTableView({ deals, onOpenDeal }: Props) {
                       {deal.manager.avatar}
                     </AvatarFallback>
                   </Avatar>
-                  <span className="text-sm">{deal.manager.name}</span>
+                  <span className="text-[13px]">{deal.manager.name}</span>
                 </div>
               </TableCell>
-              <TableCell className="text-sm text-muted-foreground">
+              <TableCell className="text-[13px] text-muted-foreground">
                 {format(new Date(deal.deadline), 'd MMM', { locale: ru })}
               </TableCell>
-              <TableCell className="text-sm text-muted-foreground max-w-[180px] truncate">
+              <TableCell className="text-[13px] text-muted-foreground max-w-[180px] truncate">
                 {deal.nextStep}
               </TableCell>
               <TableCell>
