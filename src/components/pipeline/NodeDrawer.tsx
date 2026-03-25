@@ -118,10 +118,8 @@ export function NodeDrawer({ isOpen, onClose, data, nodeId, onComplete, onDelete
                 </button>
               </div>
             )}
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+        </div>
+      </motion.div>
   );
 }
 
