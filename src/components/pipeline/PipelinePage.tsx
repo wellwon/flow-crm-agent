@@ -286,12 +286,12 @@ function PipelinePageInner() {
 
           {/* Zoom controls — visually attached below minimap */}
           <div
-            className="absolute z-20 flex items-center justify-between border border-t-0 border-border rounded-b-2xl px-2 py-1.5"
+            className="absolute z-20 flex items-center justify-between border border-white/10 border-t-0 rounded-b-2xl px-2 py-1.5"
             style={{
               bottom: 16,
               right: 16,
               width: 200,
-              background: 'hsl(var(--card) / 0.85)',
+              background: 'hsl(214 50% 7% / 0.9)',
               backdropFilter: 'blur(24px)',
             }}
           >
