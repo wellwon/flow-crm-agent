@@ -540,8 +540,8 @@ export function DealDossierView() {
         </motion.div>
       </motion.div>
 
-      {/* ═══ RIGHT: JARVIS CHAT ═══ */}
-      <JarvisChat />
+      {/* ═══ RIGHT: INFO SIDEBAR ═══ */}
+      <DossierInfoSidebar data={d} />
     </div>
   );
 }
