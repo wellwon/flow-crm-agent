@@ -86,7 +86,7 @@ export function MorningBriefing({ isOpen, onClose }: MorningBriefingProps) {
                     { eq: 'Рентген', city: 'Казань', amount: '2.8М ₽', deadline: '10 апр' },
                     { eq: 'МРТ', city: 'С-Пб', amount: '12М ₽', deadline: '20 апр' },
                   ].map((t, i) => (
-                    <div key={i} className="flex items-center gap-3 p-2 rounded-lg bg-background/40 border border-border/20">
+                    <div key={i} className="flex items-center gap-3 p-2 rounded-lg bg-muted border border-border">
                       <span className="text-[11px] text-foreground">{t.eq} — {t.city}</span>
                       <span className="text-[10px] font-mono text-node-completed ml-auto">{t.amount}</span>
                       <span className="text-[10px] font-mono text-muted-foreground">→ {t.deadline}</span>
