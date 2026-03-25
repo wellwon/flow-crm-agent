@@ -1,4 +1,4 @@
-import { LayoutGrid, List, Columns3, GanttChart, Sun, Plus, Layers, BarChart3, ArrowLeft } from 'lucide-react';
+import { LayoutGrid, List, Columns3, GanttChart, Sun, Plus, Layers, BarChart3, ArrowLeft, FileText } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import type { ViewMode } from '@/types/pipeline';
 
