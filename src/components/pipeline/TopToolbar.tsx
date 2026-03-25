@@ -33,9 +33,9 @@ export function TopToolbar({ activeView = 'graph', onViewChange, onBriefingOpen,
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
-          <div className="w-px h-5 bg-border" />
+          <div className="w-px h-5 bg-white/10" />
           <div className="w-2 h-2 rounded-full bg-node-active animate-pulse" />
-          <h1 className="text-sm font-semibold text-foreground">
+          <h1 className="text-sm font-semibold text-white">
             ОБ Коломна — 3× УЗИ Mindray DC-70
           </h1>
         </div>
