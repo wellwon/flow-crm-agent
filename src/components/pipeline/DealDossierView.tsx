@@ -616,7 +616,7 @@ function TimelineList({ entries }: { entries: TimelineEntry[] }) {
 /* ═══ AGGREGATED SIDEBAR                 ═══ */
 /* ═══════════════════════════════════════════ */
 
-function AggregatedSidebar({ data, selectedDealId }: { data: ProjectData; selectedDealId: string | null }) {
+function AggregatedSidebar({ data, selectedDealId, onCollapse }: { data: ProjectData; selectedDealId: string | null; onCollapse: () => void }) {
   const [tab, setTab] = useState<'tasks' | 'timeline'>('tasks');
 
   const allTasks: (ProjectTask & { source: string })[] = [
@@ -637,9 +637,16 @@ function AggregatedSidebar({ data, selectedDealId }: { data: ProjectData; select
     : allTimeline;
 
   return (
-    <div className="w-[456px] shrink-0 flex flex-col matte-glass overflow-hidden sticky top-0 h-[calc(100vh-160px)]">
-      {/* Tabs */}
+    <div className="w-full flex flex-col matte-glass overflow-hidden sticky top-0 h-[calc(100vh-160px)]">
+      {/* Header with collapse */}
       <div className="px-3 pt-3 pb-0 flex gap-1">
+        <button
+          onClick={onCollapse}
+          className="w-8 h-8 rounded-[8px] flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors shrink-0"
+          title="Свернуть"
+        >
+          <PanelRightClose className="w-4 h-4" />
+        </button>
         <button
           onClick={() => setTab('tasks')}
           className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-t-[10px] text-[11px] font-semibold transition-colors ${
