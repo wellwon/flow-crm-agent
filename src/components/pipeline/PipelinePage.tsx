@@ -49,7 +49,7 @@ function PipelinePageInner() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [selectedNode, setSelectedNode] = useState<{ id: string; data: PipelineNodeData } | null>(null);
-  const [activeView, setActiveView] = useState<ViewMode>('graph');
+  const [activeView, setActiveView] = useState<ViewMode>('dossier');
   const [briefingOpen, setBriefingOpen] = useState(false);
   const [templateOpen, setTemplateOpen] = useState(false);
   const [phasesVisible, setPhasesVisible] = useState(true);
