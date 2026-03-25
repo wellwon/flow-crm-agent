@@ -49,7 +49,7 @@ export function TopToolbar({ activeView = 'graph', onViewChange, onBriefingOpen,
               className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[11px] font-medium transition-all ${
                 activeView === v.id
                   ? 'bg-primary/20 text-primary'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/30'
+                  : 'text-slate-400 hover:text-white hover:bg-white/10'
               }`}
             >
               <v.icon className="w-3.5 h-3.5" />
