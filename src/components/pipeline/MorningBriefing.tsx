@@ -112,7 +112,7 @@ export function MorningBriefing({ isOpen, onClose }: MorningBriefingProps) {
             </div>
 
             {/* Footer */}
-            <div className="p-4 border-t border-border/50 flex items-center gap-3">
+            <div className="p-4 border-t border-border flex items-center gap-3">
               <button className="flex-1 py-2.5 rounded-xl bg-node-completed text-primary-foreground text-xs font-semibold hover:brightness-110 transition-all">
                 Принять план дня
               </button>
