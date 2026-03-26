@@ -14,6 +14,7 @@ import { GlowingEdge } from './GlowingEdge';
 import { TopToolbar } from './TopToolbar';
 import { NodeDrawer } from './NodeDrawer';
 import { JarvisCommandBar } from './JarvisCommandBar';
+import { MediaFilesPanel } from './MediaFilesPanel';
 
 
 import { MorningBriefing } from './MorningBriefing';
