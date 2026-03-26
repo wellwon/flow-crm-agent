@@ -22,7 +22,7 @@ const views: { id: ViewMode; label: string; icon: React.ElementType }[] = [
   { id: 'timeline', label: 'Timeline', icon: GanttChart },
 ];
 
-export function TopToolbar({ activeView = 'graph', onViewChange, onBriefingOpen, onTemplateOpen, phasesVisible = true, onTogglePhases }: TopToolbarProps) {
+export function TopToolbar({ activeView = 'graph', onViewChange, onBriefingOpen, onTemplateOpen, phasesVisible = true, onTogglePhases, onMediaPanelToggle, mediaPanelOpen }: TopToolbarProps) {
   const navigate = useNavigate();
 
   return (
