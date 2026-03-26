@@ -873,7 +873,7 @@ function JarvisChat({ onCollapse }: { onCollapse: () => void }) {
   const currentMessages = activeTab === 'jarvis' ? messages : chatMessages;
 
   return (
-    <div className="w-full flex flex-col matte-glass overflow-hidden sticky top-0 h-[calc(100vh-160px)] rounded-tl-none">
+    <div className="w-full flex flex-col bg-card border border-border border-l-0 overflow-hidden h-full rounded-[14px] rounded-l-none">
       {/* ─ Tab strip ─ */}
       <div className="relative px-1 py-1.5 flex items-center gap-0.5 border-b border-border">
         <div className="pointer-events-none absolute bottom-0 left-2 right-2 h-[2px] bg-gradient-to-r from-primary via-node-active to-primary opacity-40" />
