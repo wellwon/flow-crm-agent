@@ -10,7 +10,6 @@ import {
   CircleDot, Send, ListChecks, ArrowRight, Sparkles,
   Package, Activity, ArrowLeft, Truck, Wrench, Scale, Briefcase,
   TrendingUp, CreditCard, Banknote, UserCheck,
-  PanelLeftClose, PanelLeftOpen, PanelRightClose, PanelRightOpen,
 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { mockDeals } from '@/data/mockDeals';
