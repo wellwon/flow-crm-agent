@@ -94,6 +94,32 @@ export function TopToolbar({ activeView = 'graph', onViewChange, onBriefingOpen,
               <span>Брифинг</span>
             </button>
           )}
+
+          {/* Utility icons */}
+          <div className="w-px h-5 bg-border mx-1" />
+          <button
+            className="w-8 h-8 rounded-[10px] flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+            title="Добавить контакт"
+          >
+            <UserPlus className="w-4 h-4" />
+          </button>
+          <button
+            className="w-8 h-8 rounded-[10px] flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+            title="Поиск"
+          >
+            <Search className="w-4 h-4" />
+          </button>
+          <button
+            onClick={onMediaPanelToggle}
+            className={`w-8 h-8 rounded-[10px] flex items-center justify-center transition-colors ${
+              mediaPanelOpen
+                ? 'text-primary bg-primary/15'
+                : 'text-muted-foreground hover:text-primary hover:bg-primary/10'
+            }`}
+            title="Медиа и файлы"
+          >
+            <SquareStack className="w-4 h-4" />
+          </button>
         </div>
       </div>
     </header>
