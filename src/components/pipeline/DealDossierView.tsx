@@ -106,8 +106,9 @@ function CollapsedPanel({ side, onExpand, icon: Icon, label }: {
   side: 'left' | 'right'; onExpand: () => void; icon: React.ElementType; label: string;
 }) {
   const ExpandIcon = side === 'left' ? PanelLeftOpen : PanelRightOpen;
+  const rounding = side === 'left' ? 'rounded-l-none' : 'rounded-r-none';
   return (
-    <div className={`h-[calc(100vh-160px)] matte-glass flex flex-col items-center py-3 gap-3 ${side === 'left' ? 'rounded-tl-none' : 'rounded-tr-none'}`}>
+    <div className={`h-full bg-card border border-border flex flex-col items-center py-3 gap-3 rounded-[14px] ${rounding}`}>
       <button
         onClick={onExpand}
         className="w-8 h-8 rounded-[8px] flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
