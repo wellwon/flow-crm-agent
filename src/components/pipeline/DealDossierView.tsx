@@ -117,7 +117,7 @@ function CollapsedPanel({ side, onExpand, icon: Icon, label }: {
 }) {
   const ExpandIcon = side === 'left' ? PanelLeftOpen : PanelRightOpen;
   return (
-    <div className="h-[calc(100vh-160px)] matte-glass flex flex-col items-center py-3 gap-3">
+    <div className={`h-[calc(100vh-160px)] matte-glass flex flex-col items-center py-3 gap-3 ${side === 'left' ? 'rounded-tl-none' : 'rounded-tr-none'}`}>
       <button
         onClick={onExpand}
         className="w-8 h-8 rounded-[8px] flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
