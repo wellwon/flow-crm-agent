@@ -15,7 +15,7 @@ import { TopToolbar } from './TopToolbar';
 import { NodeDrawer } from './NodeDrawer';
 import { JarvisCommandBar } from './JarvisCommandBar';
 import { MediaFilesPanel } from './MediaFilesPanel';
-
+import { JarvisChatSidebar } from './JarvisChatSidebar';
 
 import { MorningBriefing } from './MorningBriefing';
 import { ListView } from './ListView';
