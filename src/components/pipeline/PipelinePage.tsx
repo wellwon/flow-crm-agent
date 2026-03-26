@@ -226,8 +226,13 @@ function PipelinePageInner() {
             mediaPanelOpen={mediaPanelOpen}
           />
 
-          {/* Body: JARVIS chat left | content center | node drawer right */}
-          <div className="flex-1 flex overflow-hidden">
+          {/* Body: left panel | content center | right panel */}
+          <div className="flex-1 flex gap-2 overflow-hidden">
+            {/* LEFT: JarvisChatSidebar — only in dossier view */}
+            {activeView === 'dossier' && (
+              <JarvisChatSidebar isOpen={leftPanelOpen} onToggle={() => setLeftPanelOpen(v => !v)} />
+            )}
+
             {/* Main content area */}
             <div className="flex-1 flex overflow-hidden relative">
               {/* Sidebar palette — only in graph view */}
@@ -363,7 +368,7 @@ function PipelinePageInner() {
               />
             </AnimatePresence>
 
-            {/* Media/Files panel */}
+            {/* RIGHT: Media/Files panel */}
             {mediaPanelOpen && (
               <MediaFilesPanel onClose={() => setMediaPanelOpen(false)} />
             )}
