@@ -46,21 +46,16 @@ const item = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transiti
 function useResponsivePanels() {
   const isNarrow = typeof window !== 'undefined' && window.innerWidth < 1600;
   const [leftOpen, setLeftOpen] = useState(!isNarrow);
-  const [rightOpen, setRightOpen] = useState(!isNarrow);
 
   useEffect(() => {
     const onResize = () => {
-      const narrow = window.innerWidth < 1600;
-      if (narrow) {
-        setLeftOpen(false);
-        setRightOpen(false);
-      }
+      if (window.innerWidth < 1600) setLeftOpen(false);
     };
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
   }, []);
 
-  return { leftOpen, setLeftOpen, rightOpen, setRightOpen };
+  return { leftOpen, setLeftOpen };
 }
 
 export function DealDossierView() {
