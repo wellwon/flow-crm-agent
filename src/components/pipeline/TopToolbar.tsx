@@ -1,4 +1,4 @@
-import { LayoutGrid, List, Columns3, GanttChart, Sun, Plus, Layers, BarChart3, ArrowLeft, FileText } from 'lucide-react';
+import { LayoutGrid, List, Columns3, GanttChart, Sun, Plus, Layers, BarChart3, ArrowLeft, FileText, UserPlus, Search, SquareStack } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import type { ViewMode } from '@/types/pipeline';
 
@@ -9,6 +9,8 @@ interface TopToolbarProps {
   onTemplateOpen?: () => void;
   phasesVisible?: boolean;
   onTogglePhases?: () => void;
+  onMediaPanelToggle?: () => void;
+  mediaPanelOpen?: boolean;
 }
 
 const views: { id: ViewMode; label: string; icon: React.ElementType }[] = [
