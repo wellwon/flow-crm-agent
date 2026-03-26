@@ -118,7 +118,7 @@ export function TopToolbar({ activeView = 'graph', onViewChange, onBriefingOpen,
             }`}
             title="Медиа и файлы"
           >
-            <SquareStack className="w-4 h-4" />
+            <PanelRight className="w-4 h-4" />
           </button>
         </div>
       </div>
