@@ -152,7 +152,7 @@ function ChatContent({ messages, input, setInput, send, showQuickActions }: {
 /* ─── Collapsed strip ─── */
 function CollapsedStrip({ onExpand }: { onExpand: () => void }) {
   return (
-    <div className="h-full w-[44px] matte-glass rounded-tl-none flex flex-col items-center py-3 gap-3">
+    <div className="h-full w-[44px] matte-glass rounded-tl-none rounded-br-none flex flex-col items-center py-3 gap-3">
       <button onClick={onExpand}
         className="w-8 h-8 rounded-[8px] flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors">
         <PanelLeftOpen className="w-4 h-4" />
