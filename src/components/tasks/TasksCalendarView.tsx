@@ -77,8 +77,8 @@ export function TasksCalendarView({ tasks }: Props) {
               <div className="flex flex-col gap-0.5 overflow-hidden flex-1">
                 {dayTasks.slice(0, 3).map(t => (
                   <div key={t.id} className={`flex items-center gap-1 px-1.5 py-0.5 rounded-[6px] text-[10px] truncate ${
-                    t.status === 'completed' ? 'bg-node-completed/10 text-node-completed line-through'
-                    : isPast && t.status !== 'completed' ? 'bg-node-error/10 text-node-error'
+                    (t.status as string) === 'completed' ? 'bg-node-completed/10 text-node-completed line-through'
+                    : isPast && (t.status as string) !== 'completed' ? 'bg-node-error/10 text-node-error'
                     : 'bg-muted/50 text-foreground'
                   }`}>
                     {t.blocker && <AlertTriangle className="w-2.5 h-2.5 flex-shrink-0" />}
