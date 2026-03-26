@@ -66,7 +66,7 @@ function useResponsivePanels() {
 export function DealDossierView() {
   const d = projectData;
   const [selectedDealId, setSelectedDealId] = useState<string | null>(null);
-  const { leftOpen, setLeftOpen, rightOpen, setRightOpen } = useResponsivePanels();
+  const { leftOpen, setLeftOpen } = useResponsivePanels();
 
   const selectedDeal = selectedDealId ? d.deals.find(dl => dl.id === selectedDealId) ?? null : null;
 
@@ -108,15 +108,6 @@ export function DealDossierView() {
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
-
-      {/* ═══ RIGHT: AGGREGATED SIDEBAR (collapsible) ═══ */}
-      <div className={`shrink-0 flex flex-col transition-all duration-300 ease-in-out ${rightOpen ? 'w-[340px] 2xl:w-[400px]' : 'w-[44px]'}`}>
-        {rightOpen ? (
-          <AggregatedSidebar data={d} selectedDealId={selectedDealId} onCollapse={() => setRightOpen(false)} />
-        ) : (
-          <CollapsedPanel side="right" onExpand={() => setRightOpen(true)} icon={ListChecks} label="Задачи" />
-        )}
       </div>
     </div>
   );
