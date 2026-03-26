@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 import {
   Building2, User, Phone, Mail, MapPin, FileText, Bot, Clock,
@@ -11,6 +12,8 @@ import {
   TrendingUp, CreditCard, Banknote, UserCheck,
   PanelLeftClose, PanelLeftOpen, PanelRightClose, PanelRightOpen,
 } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { mockDeals } from '@/data/mockDeals';
 import { Badge } from '@/components/ui/badge';
 import { QuickActionsBar } from './QuickActionsBar';
 import {
