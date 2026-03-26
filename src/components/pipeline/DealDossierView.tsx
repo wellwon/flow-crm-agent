@@ -46,27 +46,22 @@ const item = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transiti
 function useResponsivePanels() {
   const isNarrow = typeof window !== 'undefined' && window.innerWidth < 1600;
   const [leftOpen, setLeftOpen] = useState(!isNarrow);
-  const [rightOpen, setRightOpen] = useState(!isNarrow);
 
   useEffect(() => {
     const onResize = () => {
-      const narrow = window.innerWidth < 1600;
-      if (narrow) {
-        setLeftOpen(false);
-        setRightOpen(false);
-      }
+      if (window.innerWidth < 1600) setLeftOpen(false);
     };
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
   }, []);
 
-  return { leftOpen, setLeftOpen, rightOpen, setRightOpen };
+  return { leftOpen, setLeftOpen };
 }
 
 export function DealDossierView() {
   const d = projectData;
   const [selectedDealId, setSelectedDealId] = useState<string | null>(null);
-  const { leftOpen, setLeftOpen, rightOpen, setRightOpen } = useResponsivePanels();
+  const { leftOpen, setLeftOpen } = useResponsivePanels();
 
   const selectedDeal = selectedDealId ? d.deals.find(dl => dl.id === selectedDealId) ?? null : null;
 
@@ -108,15 +103,6 @@ export function DealDossierView() {
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
-
-      {/* ═══ RIGHT: AGGREGATED SIDEBAR (collapsible) ═══ */}
-      <div className={`shrink-0 flex flex-col transition-all duration-300 ease-in-out ${rightOpen ? 'w-[340px] 2xl:w-[400px]' : 'w-[44px]'}`}>
-        {rightOpen ? (
-          <AggregatedSidebar data={d} selectedDealId={selectedDealId} onCollapse={() => setRightOpen(false)} />
-        ) : (
-          <CollapsedPanel side="right" onExpand={() => setRightOpen(true)} icon={ListChecks} label="Задачи" />
-        )}
       </div>
     </div>
   );
