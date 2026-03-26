@@ -1,6 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
-import { Bot, Send, Sparkles, FileText, AlertTriangle, TrendingUp } from 'lucide-react';
+import { Bot, Send, Sparkles, FileText, AlertTriangle, TrendingUp, Clock, MessageSquare } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { mockDeals } from '@/data/mockDeals';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+
+type SidebarTab = 'jarvis' | 'chat' | 'timeline';
 
 interface Message {
   id: string;
@@ -9,7 +14,7 @@ interface Message {
   time: string;
 }
 
-const initialMessages: Message[] = [
+const initialJarvisMessages: Message[] = [
   {
     id: '1',
     role: 'jarvis',
@@ -21,6 +26,15 @@ const initialMessages: Message[] = [
     role: 'jarvis',
     text: '⚠️ Напоминаю: ТЗ ждёт одобрения уже 2 дня. Это блокирует расчёт НМЦК.',
     time: '09:01',
+  },
+];
+
+const initialChatMessages: Message[] = [
+  {
+    id: 'c1',
+    role: 'jarvis',
+    text: '💬 Командный чат по проекту. Здесь можно обсуждать задачи с коллегами.',
+    time: '09:00',
   },
 ];
 
@@ -40,48 +54,91 @@ function getJarvisReply(input: string): string {
   return '🤖 Понял. Анализирую данные по сделке... Могу помочь с документами, рисками или подготовкой к встрече.';
 }
 
-export function JarvisChatSidebar() {
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
-  const [input, setInput] = useState('');
+const tabs: { key: SidebarTab; label: string; icon: typeof Bot }[] = [
+  { key: 'jarvis', label: 'JARVIS', icon: Bot },
+  { key: 'chat', label: 'Чат', icon: MessageSquare },
+  { key: 'timeline', label: 'Таймлайн', icon: Clock },
+];
+
+/* ─── Mini Timeline (embedded) ─── */
+function MiniTimeline() {
+  const navigate = useNavigate();
+  const now = new Date();
+  const start = new Date(now);
+  start.setDate(start.getDate() - 15);
+  const end = new Date(now);
+  end.setDate(end.getDate() + 75);
+  const totalMs = end.getTime() - start.getTime();
+
+  const deals = mockDeals
+    .filter(d => d.status !== 'won' && d.status !== 'lost')
+    .map(d => {
+      const dl = new Date(d.deadline);
+      const pct = ((dl.getTime() - start.getTime()) / totalMs) * 100;
+      return { ...d, deadlineDate: dl, pct: Math.max(0, Math.min(100, pct)), isOverdue: dl < now };
+    })
+    .sort((a, b) => a.deadlineDate.getTime() - b.deadlineDate.getTime());
+
+  return (
+    <TooltipProvider delayDuration={200}>
+      <div className="flex-1 overflow-y-auto p-3 space-y-2">
+        <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider mb-2">
+          Ближайшие дедлайны
+        </p>
+        {deals.map(deal => (
+          <Tooltip key={deal.id}>
+            <TooltipTrigger asChild>
+              <button
+                onClick={() => navigate(`/project/${deal.id}`)}
+                className="w-full text-left p-2.5 rounded-xl bg-muted/50 hover:bg-muted transition-colors group"
+              >
+                <div className="flex items-center gap-2 mb-1">
+                  <div className={`w-2 h-2 rounded-full shrink-0 ${deal.isOverdue ? 'bg-destructive animate-pulse' : 'bg-primary'}`} />
+                  <span className="text-[11px] font-medium text-foreground truncate">{deal.title}</span>
+                </div>
+                <div className="flex items-center justify-between pl-4">
+                  <span className="text-[10px] text-muted-foreground">{deal.company}</span>
+                  <span className={`text-[10px] font-medium ${deal.isOverdue ? 'text-destructive' : 'text-primary'}`}>
+                    {deal.deadlineDate.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })}
+                  </span>
+                </div>
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="right" className="bg-card border-border rounded-[10px] p-3 max-w-[200px]">
+              <p className="text-[11px] text-muted-foreground">
+                {(deal.amount / 1_000_000).toFixed(1)}M ₽
+              </p>
+              {deal.isOverdue && <p className="text-[10px] text-destructive mt-1 font-medium">⚠ Просрочен</p>}
+            </TooltipContent>
+          </Tooltip>
+        ))}
+      </div>
+    </TooltipProvider>
+  );
+}
+
+/* ─── Chat content (messages + input) ─── */
+function ChatContent({
+  messages,
+  input,
+  setInput,
+  send,
+  showQuickActions,
+}: {
+  messages: Message[];
+  input: string;
+  setInput: (v: string) => void;
+  send: (t: string) => void;
+  showQuickActions: boolean;
+}) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
   }, [messages]);
 
-  const send = (text: string) => {
-    if (!text.trim()) return;
-    const now = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-    const userMsg: Message = { id: Date.now().toString(), role: 'user', text: text.trim(), time: now };
-    setMessages(prev => [...prev, userMsg]);
-    setInput('');
-
-    setTimeout(() => {
-      const reply: Message = {
-        id: (Date.now() + 1).toString(),
-        role: 'jarvis',
-        text: getJarvisReply(text),
-        time: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
-      };
-      setMessages(prev => [...prev, reply]);
-    }, 600);
-  };
-
   return (
-    <div className="w-[300px] flex-shrink-0 border-r border-border bg-card flex flex-col h-full">
-      {/* Header */}
-      <div className="px-4 py-3 border-b border-border flex items-center gap-2">
-        <div className="w-6 h-6 rounded-full bg-primary/15 flex items-center justify-center">
-          <Bot className="w-3.5 h-3.5 text-primary" />
-        </div>
-        <div>
-          <span className="text-xs font-semibold text-foreground">JARVIS</span>
-          <span className="text-[9px] text-muted-foreground ml-1.5 font-mono">онлайн</span>
-        </div>
-        <div className="ml-auto w-1.5 h-1.5 rounded-full bg-node-completed animate-pulse" />
-      </div>
-
-      {/* Messages */}
+    <>
       <div ref={scrollRef} className="flex-1 overflow-y-auto p-3 space-y-3">
         <AnimatePresence initial={false}>
           {messages.map(msg => (
@@ -110,21 +167,21 @@ export function JarvisChatSidebar() {
         </AnimatePresence>
       </div>
 
-      {/* Quick actions */}
-      <div className="px-3 py-2 flex flex-wrap gap-1.5 border-t border-border">
-        {quickActions.map(a => (
-          <button
-            key={a.label}
-            onClick={() => send(a.label)}
-            className="flex items-center gap-1 px-2 py-1 rounded-lg bg-muted text-[10px] font-medium text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors"
-          >
-            <a.icon className="w-3 h-3" />
-            {a.label}
-          </button>
-        ))}
-      </div>
+      {showQuickActions && (
+        <div className="px-3 py-2 flex flex-wrap gap-1.5 border-t border-border">
+          {quickActions.map(a => (
+            <button
+              key={a.label}
+              onClick={() => send(a.label)}
+              className="flex items-center gap-1 px-2 py-1 rounded-lg bg-muted text-[10px] font-medium text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors"
+            >
+              <a.icon className="w-3 h-3" />
+              {a.label}
+            </button>
+          ))}
+        </div>
+      )}
 
-      {/* Input */}
       <div className="px-3 py-2.5 border-t border-border">
         <form
           onSubmit={e => { e.preventDefault(); send(input); }}
@@ -133,7 +190,7 @@ export function JarvisChatSidebar() {
           <input
             value={input}
             onChange={e => setInput(e.target.value)}
-            placeholder="Спросить JARVIS..."
+            placeholder={showQuickActions ? 'Спросить JARVIS...' : 'Написать сообщение...'}
             className="flex-1 bg-transparent text-xs text-foreground placeholder:text-muted-foreground outline-none"
           />
           <button
@@ -145,6 +202,83 @@ export function JarvisChatSidebar() {
           </button>
         </form>
       </div>
+    </>
+  );
+}
+
+/* ─── Main sidebar ─── */
+export function JarvisChatSidebar() {
+  const [activeTab, setActiveTab] = useState<SidebarTab>('jarvis');
+  const [jarvisMessages, setJarvisMessages] = useState<Message[]>(initialJarvisMessages);
+  const [chatMessages, setChatMessages] = useState<Message[]>(initialChatMessages);
+  const [jarvisInput, setJarvisInput] = useState('');
+  const [chatInput, setChatInput] = useState('');
+
+  const sendJarvis = (text: string) => {
+    if (!text.trim()) return;
+    const now = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+    setJarvisMessages(prev => [...prev, { id: Date.now().toString(), role: 'user', text: text.trim(), time: now }]);
+    setJarvisInput('');
+    setTimeout(() => {
+      setJarvisMessages(prev => [...prev, {
+        id: (Date.now() + 1).toString(),
+        role: 'jarvis',
+        text: getJarvisReply(text),
+        time: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
+      }]);
+    }, 600);
+  };
+
+  const sendChat = (text: string) => {
+    if (!text.trim()) return;
+    const now = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+    setChatMessages(prev => [...prev, { id: Date.now().toString(), role: 'user', text: text.trim(), time: now }]);
+    setChatInput('');
+  };
+
+  return (
+    <div className="w-[300px] flex-shrink-0 border-r border-border bg-card flex flex-col h-full">
+      {/* Tab strip */}
+      <div className="matte-glass relative px-1 py-1.5 flex items-center gap-0.5 border-b border-border">
+        <div className="pointer-events-none absolute bottom-0 left-2 right-2 h-[2px] bg-gradient-to-r from-primary via-node-active to-primary opacity-40" />
+        {tabs.map(tab => (
+          <button
+            key={tab.key}
+            onClick={() => setActiveTab(tab.key)}
+            className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-[8px] text-[11px] font-medium transition-all ${
+              activeTab === tab.key
+                ? 'bg-primary/15 text-primary'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+            }`}
+          >
+            <tab.icon className="w-3.5 h-3.5" />
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Tab content */}
+      {activeTab === 'jarvis' && (
+        <ChatContent
+          messages={jarvisMessages}
+          input={jarvisInput}
+          setInput={setJarvisInput}
+          send={sendJarvis}
+          showQuickActions
+        />
+      )}
+
+      {activeTab === 'chat' && (
+        <ChatContent
+          messages={chatMessages}
+          input={chatInput}
+          setInput={setChatInput}
+          send={sendChat}
+          showQuickActions={false}
+        />
+      )}
+
+      {activeTab === 'timeline' && <MiniTimeline />}
     </div>
   );
 }
