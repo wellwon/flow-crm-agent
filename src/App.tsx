@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, MemoryRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -10,20 +10,27 @@ import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
 
+const appRoutes = (
+  <Routes>
+    <Route path="/" element={<Index />} />
+    <Route path="/tasks" element={<TasksPage />} />
+    <Route path="/project/:id" element={<ProjectPage />} />
+    {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+    <Route path="*" element={<NotFound />} />
+  </Routes>
+);
+
+const isStandaloneRuntime =
+  typeof window !== "undefined" &&
+  (((window as Window & { __LOVABLE_STANDALONE__?: boolean }).__LOVABLE_STANDALONE__ ?? false) ||
+    window.location.protocol === "file:");
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/tasks" element={<TasksPage />} />
-          <Route path="/project/:id" element={<ProjectPage />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      {isStandaloneRuntime ? <MemoryRouter initialEntries={["/project/1"]}>{appRoutes}</MemoryRouter> : <BrowserRouter>{appRoutes}</BrowserRouter>}
     </TooltipProvider>
   </QueryClientProvider>
 );
