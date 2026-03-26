@@ -361,6 +361,11 @@ function PipelinePageInner() {
                 onDelete={handleDeleteNode}
               />
             </AnimatePresence>
+
+            {/* Media/Files panel */}
+            {mediaPanelOpen && (
+              <MediaFilesPanel onClose={() => setMediaPanelOpen(false)} />
+            )}
           </div>
         </div>
       </div>
