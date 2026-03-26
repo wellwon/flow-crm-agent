@@ -117,7 +117,7 @@ function CollapsedPanel({ side, onExpand, icon: Icon, label }: {
 }) {
   const ExpandIcon = side === 'left' ? PanelLeftOpen : PanelRightOpen;
   return (
-    <div className="h-[calc(100vh-160px)] matte-glass flex flex-col items-center py-3 gap-3">
+    <div className={`h-[calc(100vh-160px)] matte-glass flex flex-col items-center py-3 gap-3 ${side === 'left' ? 'rounded-tl-none' : 'rounded-tr-none'}`}>
       <button
         onClick={onExpand}
         className="w-8 h-8 rounded-[8px] flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
@@ -882,7 +882,7 @@ function JarvisChat({ onCollapse }: { onCollapse: () => void }) {
   const currentMessages = activeTab === 'jarvis' ? messages : chatMessages;
 
   return (
-    <div className="w-full flex flex-col matte-glass overflow-hidden sticky top-0 h-[calc(100vh-160px)]">
+    <div className="w-full flex flex-col matte-glass overflow-hidden sticky top-0 h-[calc(100vh-160px)] rounded-tl-none">
       {/* ─ Tab strip ─ */}
       <div className="relative px-1 py-1.5 flex items-center gap-0.5 border-b border-border">
         <div className="pointer-events-none absolute bottom-0 left-2 right-2 h-[2px] bg-gradient-to-r from-primary via-node-active to-primary opacity-40" />
