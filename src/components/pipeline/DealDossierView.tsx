@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
@@ -10,7 +10,6 @@ import {
   CircleDot, Send, ListChecks, ArrowRight, Sparkles,
   Package, Activity, ArrowLeft, Truck, Wrench, Scale, Briefcase,
   TrendingUp, CreditCard, Banknote, UserCheck,
-  PanelLeftClose, PanelLeftOpen, PanelRightClose, PanelRightOpen,
 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { mockDeals } from '@/data/mockDeals';
@@ -22,116 +21,45 @@ import {
   type ProjectDocument, type TimelineEntry,
 } from '@/data/mockProjectData';
 
-/* ─── JARVIS chat messages ─── */
-interface ChatMessage {
-  id: number;
-  role: 'user' | 'assistant' | 'system';
-  text: string;
-  ts?: string;
-}
-
-const initialMessages: ChatMessage[] = [
-  { id: 1, role: 'system', text: 'Контекст проекта загружен. Я знаю всё о ЦРБ Коломна.' },
-  { id: 2, role: 'assistant', text: '👋 Привет! Я слежу за проектом **ЦРБ Коломна**. Сейчас активно 7 сделок.\n\n🟡 **Главное:** завтра аукцион по рентгену (D-54), а ТЗ по УЗИ (D-52) ждёт утверждения.\n\n📦 Поставка мониторов N22 идёт по графику.\n\n💡 Что хочешь обсудить — проект в целом или конкретную сделку?', ts: '14:30' },
-];
-
 const container = { hidden: {}, show: { transition: { staggerChildren: 0.04 } } };
 const item = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.35 } } };
-
-/* ═══════════════════════════════════════════ */
-/* ═══ MAIN COMPONENT                      ═══ */
-/* ═══════════════════════════════════════════ */
-
-/* ═══ Hook: responsive panel state ═══ */
-function useResponsivePanels() {
-  const isNarrow = typeof window !== 'undefined' && window.innerWidth < 1600;
-  const [leftOpen, setLeftOpen] = useState(!isNarrow);
-
-  useEffect(() => {
-    const onResize = () => {
-      if (window.innerWidth < 1600) setLeftOpen(false);
-    };
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
-  }, []);
-
-  return { leftOpen, setLeftOpen };
-}
 
 export function DealDossierView() {
   const d = projectData;
   const [selectedDealId, setSelectedDealId] = useState<string | null>(null);
-  const { leftOpen, setLeftOpen } = useResponsivePanels();
-
   const selectedDeal = selectedDealId ? d.deals.find(dl => dl.id === selectedDealId) ?? null : null;
 
   return (
-    <div className="flex gap-0 h-full">
-      {/* ═══ LEFT: JARVIS CHAT (collapsible) ═══ */}
-      <div className={`shrink-0 flex flex-col transition-all duration-300 ease-in-out ${leftOpen ? 'w-[340px] 2xl:w-[400px]' : 'w-[44px]'}`}>
-        {leftOpen ? (
-          <JarvisChat onCollapse={() => setLeftOpen(false)} />
+    <div className="h-full">
+      <AnimatePresence mode="wait">
+        {selectedDeal ? (
+          <motion.div
+            key={`deal-${selectedDeal.id}`}
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -40 }}
+            transition={{ duration: 0.3 }}
+            className="h-full pb-8 overflow-y-auto pr-1"
+          >
+            <DealScreen deal={selectedDeal} onBack={() => setSelectedDealId(null)} />
+          </motion.div>
         ) : (
-          <CollapsedPanel side="left" onExpand={() => setLeftOpen(true)} icon={Bot} label="JARVIS" />
+          <motion.div
+            key="project"
+            initial={{ opacity: 0, x: -40 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 40 }}
+            transition={{ duration: 0.3 }}
+            className="h-full pb-8 overflow-y-auto pr-1"
+          >
+            <ProjectScreen data={d} onSelectDeal={setSelectedDealId} />
+          </motion.div>
         )}
-      </div>
-
-      {/* ═══ CENTER: CONTENT ═══ */}
-      <div className="flex-1 min-w-0 mx-2">
-        <AnimatePresence mode="wait">
-          {selectedDeal ? (
-            <motion.div
-              key={`deal-${selectedDeal.id}`}
-              initial={{ opacity: 0, x: 40 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -40 }}
-              transition={{ duration: 0.3 }}
-              className="h-full pb-8 overflow-y-auto pr-1"
-            >
-              <DealScreen deal={selectedDeal} onBack={() => setSelectedDealId(null)} />
-            </motion.div>
-          ) : (
-            <motion.div
-              key="project"
-              initial={{ opacity: 0, x: -40 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 40 }}
-              transition={{ duration: 0.3 }}
-              className="h-full pb-8 overflow-y-auto pr-1"
-            >
-              <ProjectScreen data={d} onSelectDeal={setSelectedDealId} />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+      </AnimatePresence>
     </div>
   );
 }
 
-/* ═══════════════════════════════════════════ */
-/* ═══ COLLAPSED PANEL STRIP              ═══ */
-/* ═══════════════════════════════════════════ */
-
-function CollapsedPanel({ side, onExpand, icon: Icon, label }: {
-  side: 'left' | 'right'; onExpand: () => void; icon: React.ElementType; label: string;
-}) {
-  const ExpandIcon = side === 'left' ? PanelLeftOpen : PanelRightOpen;
-  return (
-    <div className={`h-[calc(100vh-160px)] matte-glass flex flex-col items-center py-3 gap-3 ${side === 'left' ? 'rounded-tl-none' : 'rounded-tr-none'}`}>
-      <button
-        onClick={onExpand}
-        className="w-8 h-8 rounded-[8px] flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
-        title={`Открыть ${label}`}
-      >
-        <ExpandIcon className="w-4 h-4" />
-      </button>
-      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-        <Icon className="w-4 h-4 text-primary" />
-      </div>
-      <span className="text-[9px] text-muted-foreground font-mono [writing-mode:vertical-lr] rotate-180 mt-2">{label}</span>
-    </div>
-  );
-}
 
 /* ═══════════════════════════════════════════ */
 /* ═══ PROJECT SCREEN                      ═══ */
@@ -601,428 +529,9 @@ function TimelineList({ entries }: { entries: TimelineEntry[] }) {
   );
 }
 
-/* ═══════════════════════════════════════════ */
-/* ═══ AGGREGATED SIDEBAR                 ═══ */
-/* ═══════════════════════════════════════════ */
-
-function AggregatedSidebar({ data, selectedDealId, onCollapse }: { data: ProjectData; selectedDealId: string | null; onCollapse: () => void }) {
-  const [tab, setTab] = useState<'tasks' | 'timeline'>('tasks');
-
-  const allTasks: (ProjectTask & { source: string })[] = [
-    ...data.tasks.map(t => ({ ...t, source: 'Проект' })),
-    ...data.deals.flatMap(deal => deal.tasks.map(t => ({ ...t, source: deal.id + ' ' + deal.title.slice(0, 20) }))),
-  ];
-
-  const allTimeline: (TimelineEntry & { source: string })[] = [
-    ...data.timeline.map(t => ({ ...t, source: 'Проект' })),
-    ...data.deals.flatMap(deal => deal.timeline.map(t => ({ ...t, source: deal.id }))),
-  ].sort((a, b) => b.date.localeCompare(a.date));
-
-  const filteredTasks = selectedDealId
-    ? allTasks.filter(t => t.dealId === selectedDealId || t.dealId === null)
-    : allTasks;
-  const filteredTimeline = selectedDealId
-    ? allTimeline.filter(t => t.dealId === selectedDealId || t.dealId === null)
-    : allTimeline;
-
-  return (
-    <div className="w-full flex flex-col matte-glass overflow-hidden sticky top-0 h-[calc(100vh-160px)]">
-      {/* Header with collapse */}
-      <div className="px-3 pt-3 pb-0 flex gap-1">
-        <button
-          onClick={onCollapse}
-          className="w-8 h-8 rounded-[8px] flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors shrink-0"
-          title="Свернуть"
-        >
-          <PanelRightClose className="w-4 h-4" />
-        </button>
-        <button
-          onClick={() => setTab('tasks')}
-          className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-t-[10px] text-[11px] font-semibold transition-colors ${
-            tab === 'tasks' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:text-foreground'
-          }`}
-        >
-          <ListChecks className="w-3.5 h-3.5" />
-          Все задачи
-          <span className="text-[9px] font-mono text-muted-foreground/60 ml-0.5">
-            {filteredTasks.filter(t => t.status === 'completed').length}/{filteredTasks.length}
-          </span>
-        </button>
-        <button
-          onClick={() => setTab('timeline')}
-          className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-t-[10px] text-[11px] font-semibold transition-colors ${
-            tab === 'timeline' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:text-foreground'
-          }`}
-        >
-          <Clock className="w-3.5 h-3.5" />
-          Хронология
-        </button>
-      </div>
-
-      {/* Filter indicator */}
-      {selectedDealId && (
-        <div className="mx-3 mt-2 px-2.5 py-1.5 rounded-[8px] bg-primary/10 border border-primary/20 flex items-center gap-2">
-          <Eye className="w-3 h-3 text-primary" />
-          <span className="text-[10px] text-primary">Фильтр: {selectedDealId} + проект</span>
-        </div>
-      )}
-
-      <div className="flex-1 overflow-y-auto">
-        <AnimatePresence mode="wait">
-          {tab === 'tasks' ? (
-            <motion.div key="tasks" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} className="px-3 py-3 space-y-3">
-              <div>
-                <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider mb-2 px-1">Активные и ожидающие</div>
-                <div className="space-y-1.5">
-                  {filteredTasks.filter(t => t.status !== 'completed').map(task => (
-                    <div key={`${task.dealId}-${task.id}`} className={`flex items-start gap-3 p-3 rounded-[10px] border transition-all ${
-                      task.blocker ? 'bg-node-error/5 border-node-error/20' : 'bg-muted/30 border-border/50'
-                    }`}>
-                      <div className="shrink-0 mt-0.5">
-                        {task.status === 'active' ? (
-                          <CircleDot className="w-4 h-4 text-node-active" />
-                        ) : (
-                          <Clock className="w-4 h-4 text-muted-foreground/40" />
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-xs text-foreground">{task.title}</span>
-                          {task.blocker && (
-                            <span className="text-[8px] font-mono px-1.5 py-0.5 rounded bg-node-error/15 text-node-error">БЛОКЕР</span>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-3 mt-1.5 flex-wrap">
-                          <div className="flex items-center gap-1">
-                            {task.assignee === 'JARVIS' ? (
-                              <Bot className="w-3 h-3 text-[hsl(265_80%_65%)]" />
-                            ) : (
-                              <User className="w-3 h-3 text-muted-foreground/60" />
-                            )}
-                            <span className="text-[10px] text-muted-foreground">{task.assignee}</span>
-                          </div>
-                          <span className="text-[10px] font-mono text-muted-foreground/60">{task.deadline}</span>
-                          <span className={`text-[8px] font-mono px-1.5 py-0.5 rounded ${
-                            task.dealId ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'
-                          }`}>
-                            {task.dealId || 'Проект'}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider mb-2 px-1">Выполнено</div>
-                <div className="space-y-1.5">
-                  {filteredTasks.filter(t => t.status === 'completed').map(task => (
-                    <div key={`${task.dealId}-${task.id}`} className="flex items-center gap-3 p-2.5 rounded-[10px] bg-node-completed/5 border border-node-completed/20">
-                      <CheckCircle className="w-3.5 h-3.5 text-node-completed shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <span className="text-[11px] text-muted-foreground line-through">{task.title}</span>
-                        <div className="flex items-center gap-2 mt-0.5">
-                          <span className="text-[9px] text-muted-foreground/60">{task.assignee}</span>
-                          <span className={`text-[8px] font-mono px-1 py-0.5 rounded ${
-                            task.dealId ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'
-                          }`}>
-                            {task.dealId || 'Проект'}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-          ) : (
-            <motion.div key="timeline" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }} className="px-3 py-3">
-              <div className="relative pl-5 space-y-0">
-                <div className="absolute left-[7px] top-2 bottom-2 w-px bg-border" />
-                {filteredTimeline.map((ev, i) => {
-                  const IconEl = ev.icon === 'ai' ? Bot : ev.icon === 'system' ? Zap : MessageSquare;
-                  const iconColor = ev.icon === 'ai' ? 'text-[hsl(265_80%_65%)]' : ev.icon === 'system' ? 'text-node-active' : 'text-primary';
-                  const bgColor = ev.icon === 'ai' ? 'bg-[hsl(265_80%_65%)/0.1]' : ev.icon === 'system' ? 'bg-node-active/10' : 'bg-primary/10';
-                  return (
-                    <div key={i} className="relative flex items-start gap-3 py-2">
-                      <div className={`absolute left-[-13px] top-3 z-10 w-5 h-5 rounded-full ${bgColor} flex items-center justify-center`}>
-                        <IconEl className={`w-3 h-3 ${iconColor}`} />
-                      </div>
-                      <div className="flex-1 p-2.5 rounded-[10px] bg-muted/30 border border-border/50">
-                        <p className="text-[11px] text-foreground/90 leading-relaxed">{ev.text}</p>
-                        <div className="flex items-center gap-2 mt-1">
-                          <span className="text-[9px] font-mono text-muted-foreground/50">{ev.date}</span>
-                          <span className={`text-[8px] font-mono px-1 py-0.5 rounded ${
-                            ev.dealId ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'
-                          }`}>
-                            {ev.dealId || 'Проект'}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    </div>
-  );
-}
-
-/* ═══════════════════════════════════════════ */
-/* ═══ JARVIS CHAT                        ═══ */
-/* ═══════════════════════════════════════════ */
-
-type LeftTab = 'jarvis' | 'chat' | 'timeline';
-
-const leftTabs: { key: LeftTab; label: string; icon: typeof Bot }[] = [
-  { key: 'jarvis', label: 'JARVIS', icon: Bot },
-  { key: 'chat', label: 'Чат', icon: MessageSquare },
-  { key: 'timeline', label: 'Таймлайн', icon: Clock },
-];
-
-const initialChatMsgs: ChatMessage[] = [
-  { id: 100, role: 'system', text: 'Командный чат по проекту' },
-  { id: 101, role: 'assistant', text: '💬 Здесь можно обсуждать задачи с коллегами по проекту.', ts: '09:00' },
-];
-
-/* ─── Mini Timeline ─── */
-function MiniTimelinePanel() {
-  const navigate = useNavigate();
-  const now = new Date();
-  const deals = mockDeals
-    .filter(d => d.status !== 'won' && d.status !== 'lost')
-    .map(d => {
-      const dl = new Date(d.deadline);
-      return { ...d, deadlineDate: dl, isOverdue: dl < now };
-    })
-    .sort((a, b) => a.deadlineDate.getTime() - b.deadlineDate.getTime());
-
-  return (
-    <TooltipProvider delayDuration={200}>
-      <div className="flex-1 overflow-y-auto p-3 space-y-2">
-        <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider mb-2">
-          Ближайшие дедлайны
-        </p>
-        {deals.map(deal => (
-          <Tooltip key={deal.id}>
-            <TooltipTrigger asChild>
-              <button
-                onClick={() => navigate(`/project/${deal.id}`)}
-                className="w-full text-left p-2.5 rounded-xl bg-muted/50 hover:bg-muted transition-colors"
-              >
-                <div className="flex items-center gap-2 mb-1">
-                  <div className={`w-2 h-2 rounded-full shrink-0 ${deal.isOverdue ? 'bg-destructive animate-pulse' : 'bg-primary'}`} />
-                  <span className="text-[11px] font-medium text-foreground truncate">{deal.title}</span>
-                </div>
-                <div className="flex items-center justify-between pl-4">
-                  <span className="text-[10px] text-muted-foreground">{deal.company}</span>
-                  <span className={`text-[10px] font-medium ${deal.isOverdue ? 'text-destructive' : 'text-primary'}`}>
-                    {deal.deadlineDate.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })}
-                  </span>
-                </div>
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="right" className="bg-card border-border rounded-[10px] p-3 max-w-[200px]">
-              <p className="text-[11px] text-muted-foreground">
-                {(deal.amount / 1_000_000).toFixed(1)}M ₽
-              </p>
-              {deal.isOverdue && <p className="text-[10px] text-destructive mt-1 font-medium">⚠ Просрочен</p>}
-            </TooltipContent>
-          </Tooltip>
-        ))}
-      </div>
-    </TooltipProvider>
-  );
-}
-
-function JarvisChat({ onCollapse }: { onCollapse: () => void }) {
-  const [activeTab, setActiveTab] = useState<LeftTab>('jarvis');
-  const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
-  const [chatMessages, setChatMessages] = useState<ChatMessage[]>(initialChatMsgs);
-  const [input, setInput] = useState('');
-  const bottomRef = useRef<HTMLDivElement>(null);
-  const nextId = useRef(10);
-
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, chatMessages]);
-
-  const handleSend = () => {
-    if (!input.trim()) return;
-    const ts = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-    if (activeTab === 'jarvis') {
-      const userMsg: ChatMessage = { id: nextId.current++, role: 'user', text: input, ts };
-      setMessages(m => [...m, userMsg]);
-      setInput('');
-      setTimeout(() => {
-        const response: ChatMessage = {
-          id: nextId.current++, role: 'assistant',
-          text: getJarvisResponse(input),
-          ts: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
-        };
-        setMessages(m => [...m, response]);
-      }, 1200);
-    } else {
-      setChatMessages(m => [...m, { id: nextId.current++, role: 'user', text: input, ts }]);
-      setInput('');
-    }
-  };
-
-  const quickActions = [
-    { label: 'Обзор проекта', prompt: 'Кратко: какой сейчас статус проекта в целом?' },
-    { label: 'Сделки', prompt: 'Какие сделки сейчас в работе?' },
-    { label: 'Блокеры', prompt: 'Что сейчас блокирует?' },
-    { label: 'Приоритеты', prompt: 'Какие приоритеты на эту неделю?' },
-  ];
-
-  const currentMessages = activeTab === 'jarvis' ? messages : chatMessages;
-
-  return (
-    <div className="w-full flex flex-col matte-glass overflow-hidden sticky top-0 h-[calc(100vh-160px)] rounded-tl-none">
-      {/* ─ Tab strip ─ */}
-      <div className="relative px-1 py-1.5 flex items-center gap-0.5 border-b border-border">
-        <div className="pointer-events-none absolute bottom-0 left-2 right-2 h-[2px] bg-gradient-to-r from-primary via-node-active to-primary opacity-40" />
-        <button
-          onClick={onCollapse}
-          className="w-7 h-7 rounded-[8px] flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors shrink-0"
-          title="Свернуть"
-        >
-          <PanelLeftClose className="w-3.5 h-3.5" />
-        </button>
-        {leftTabs.map(tab => (
-          <button
-            key={tab.key}
-            onClick={() => setActiveTab(tab.key)}
-            className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-[8px] text-[11px] font-medium transition-all ${
-              activeTab === tab.key
-                ? 'bg-primary/15 text-primary'
-                : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
-            }`}
-          >
-            <tab.icon className="w-3.5 h-3.5" />
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
-      {/* ─ Context line (jarvis only) ─ */}
-      {activeTab === 'jarvis' && (
-        <div className="px-4 py-2 border-b border-border flex items-center gap-2">
-          <div className="w-6 h-6 rounded-full bg-[hsl(265_80%_65%)/0.15] flex items-center justify-center">
-            <Bot className="w-3.5 h-3.5 text-[hsl(265_80%_65%)]" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-[10px] font-semibold text-foreground flex items-center gap-1.5">
-              JARVIS
-              <span className="w-1.5 h-1.5 rounded-full bg-node-completed animate-pulse" />
-            </div>
-            <div className="text-[8px] text-muted-foreground truncate">Контекст: {projectData.project.customer} • {projectData.project.id}</div>
-          </div>
-          <Sparkles className="w-3 h-3 text-[hsl(265_80%_65%)]" />
-        </div>
-      )}
-
-      {/* ─ Tab content ─ */}
-      {activeTab === 'timeline' ? (
-        <MiniTimelinePanel />
-      ) : (
-        <>
-          <div className="flex-1 overflow-y-auto px-3 py-3 space-y-3">
-            {currentMessages.map(msg => (
-              <ChatBubble key={msg.id} message={msg} />
-            ))}
-            <div ref={bottomRef} />
-          </div>
-
-          {activeTab === 'jarvis' && (
-            <div className="px-3 pb-2 flex flex-wrap gap-1.5">
-              {quickActions.map((qa, i) => (
-                <button key={i} onClick={() => setInput(qa.prompt)}
-                  className="text-[9px] px-2 py-1 rounded-full bg-muted/50 text-muted-foreground hover:text-primary hover:bg-primary/10 border border-border/50 transition-all">
-                  {qa.label}
-                </button>
-              ))}
-            </div>
-          )}
-
-          <div className="px-3 pb-3">
-            <div className="flex items-center gap-2 p-2 rounded-[10px] bg-muted/40 border border-border">
-              <input type="text" value={input} onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                placeholder={activeTab === 'jarvis' ? 'Спроси JARVIS...' : 'Написать в чат...'}
-                className="flex-1 bg-transparent text-xs text-foreground placeholder:text-muted-foreground/50 outline-none" />
-              <button onClick={handleSend} disabled={!input.trim()}
-                className="p-1.5 rounded-[8px] bg-primary/15 hover:bg-primary/25 transition-colors disabled:opacity-30">
-                <Send className="w-3.5 h-3.5 text-primary" />
-              </button>
-            </div>
-          </div>
-        </>
-      )}
-    </div>
-  );
-}
-
-function ChatBubble({ message }: { message: ChatMessage }) {
-  if (message.role === 'system') {
-    return (
-      <div className="flex items-center gap-2 py-1.5">
-        <div className="flex-1 h-px bg-border" />
-        <span className="text-[8px] font-mono text-muted-foreground/50 shrink-0">{message.text}</span>
-        <div className="flex-1 h-px bg-border" />
-      </div>
-    );
-  }
-  const isUser = message.role === 'user';
-  return (
-    <div className={`flex gap-2 ${isUser ? 'flex-row-reverse' : ''}`}>
-      {!isUser && (
-        <div className="w-6 h-6 rounded-full bg-[hsl(265_80%_65%)/0.15] flex items-center justify-center shrink-0 mt-1">
-          <Bot className="w-3.5 h-3.5 text-[hsl(265_80%_65%)]" />
-        </div>
-      )}
-      <div className={`max-w-[85%] ${isUser ? 'ml-auto' : ''}`}>
-        <div className={`px-3 py-2 rounded-[12px] text-[11px] leading-relaxed ${
-          isUser ? 'bg-primary text-primary-foreground rounded-br-sm' : 'bg-muted/60 text-foreground border border-border/50 rounded-bl-sm'
-        }`}>
-          {message.text.split('\n').map((line, i) => (
-            <p key={i} className={i > 0 ? 'mt-1.5' : ''}>
-              {line.split('**').map((part, j) =>
-                j % 2 === 1 ? <strong key={j} className="font-semibold">{part}</strong> : part
-              )}
-            </p>
-          ))}
-        </div>
-        {message.ts && (
-          <div className={`text-[8px] font-mono text-muted-foreground/40 mt-0.5 ${isUser ? 'text-right' : ''}`}>{message.ts}</div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function getJarvisResponse(input: string): string {
-  const lower = input.toLowerCase();
-  if (lower.includes('статус') || lower.includes('обзор')) {
-    return '📊 **Проект ЦРБ Коломна:**\n\n• Всего сделок: 7\n• Активных: 4 (подготовка, подана, торги, исполнение)\n• Выиграна: 1 (эндоскопы HD-580)\n• Проиграна: 1 (ИВЛ SV800 — демпинг)\n• Общая сумма воронки: ~62M₽\n\n🟡 Главные риски: завтра аукцион по рентгену, ТЗ по УЗИ не утверждено.';
-  }
-  if (lower.includes('сделк')) {
-    return '📋 **Активные сделки:**\n\n1. **D-52** УЗИ DC-80 — подготовка (22%) ⚠️ ТЗ\n2. **D-53** КТ 520 Pro — заявка подана (45%)\n3. **D-54** Рентген DigiEye — торги завтра! (68%)\n4. **D-55** Эндоскоп HD-580 — выиграна, поставка (85%)\n5. **D-56** Мониторы N22 — исполнение (72%)\n6. **D-58** Наркоз EX-65 — ранняя подготовка (10%)\n\n❌ **D-57** ИВЛ SV800 — проиграна';
-  }
-  if (lower.includes('блокир')) {
-    return '🚧 **Блокеры:**\n\n1. **D-52:** ТЗ не утверждено → блокирует НМЦК\n2. **D-54:** Аукцион завтра → нужна стратегия\n3. **Проект:** Бюджетные рамки не согласованы\n\nРекомендую начать с ТЗ по D-52 — это критический путь.';
-  }
-  if (lower.includes('приоритет')) {
-    return '🎯 **Приоритеты на неделю:**\n\n1. 🔴 **Сегодня:** Подготовиться к аукциону D-54 (рентген)\n2. 🔴 **До 28 мар:** Утвердить ТЗ по D-52 (УЗИ)\n3. 🟡 **До 30 мар:** Собрать 3 КП для НМЦК D-52\n4. 🟢 **До 1 апр:** Контроль доставки мониторов D-56\n5. 🟢 **До 5 апр:** Согласовать бюджет проекта';
-  }
-  return '✨ Понял, работаю. Обновлю досье.\n\nЧто-нибудь ещё по проекту?';
-}
 
 /* ─── Sub-components ─── */
+
 
 function SectionTitle({ icon: Icon, color, children }: { icon: React.ElementType; color: string; children: React.ReactNode }) {
   return (

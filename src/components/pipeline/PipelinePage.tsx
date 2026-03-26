@@ -15,7 +15,7 @@ import { TopToolbar } from './TopToolbar';
 import { NodeDrawer } from './NodeDrawer';
 import { JarvisCommandBar } from './JarvisCommandBar';
 import { MediaFilesPanel } from './MediaFilesPanel';
-
+import { JarvisChatSidebar } from './JarvisChatSidebar';
 
 import { MorningBriefing } from './MorningBriefing';
 import { ListView } from './ListView';
@@ -59,6 +59,7 @@ function PipelinePageInner() {
   const [edgeMenu, setEdgeMenu] = useState<{ x: number; y: number; edgeId: string } | null>(null);
   const [interactionMode, setInteractionMode] = useState<InteractionMode>('select');
   const [mediaPanelOpen, setMediaPanelOpen] = useState(false);
+  const [leftPanelOpen, setLeftPanelOpen] = useState(true);
   const nextIdRef = useRef(200);
   const { screenToFlowPosition, setViewport, fitView, zoomIn, zoomOut, getNodes } = useReactFlow();
 
@@ -225,8 +226,13 @@ function PipelinePageInner() {
             mediaPanelOpen={mediaPanelOpen}
           />
 
-          {/* Body: JARVIS chat left | content center | node drawer right */}
-          <div className="flex-1 flex overflow-hidden">
+          {/* Body: left panel | content center | right panel */}
+          <div className="flex-1 flex gap-2 overflow-hidden">
+            {/* LEFT: JarvisChatSidebar — only in dossier view */}
+            {activeView === 'dossier' && (
+              <JarvisChatSidebar isOpen={leftPanelOpen} onToggle={() => setLeftPanelOpen(v => !v)} />
+            )}
+
             {/* Main content area */}
             <div className="flex-1 flex overflow-hidden relative">
               {/* Sidebar palette — only in graph view */}
@@ -362,7 +368,7 @@ function PipelinePageInner() {
               />
             </AnimatePresence>
 
-            {/* Media/Files panel */}
+            {/* RIGHT: Media/Files panel */}
             {mediaPanelOpen && (
               <MediaFilesPanel onClose={() => setMediaPanelOpen(false)} />
             )}
