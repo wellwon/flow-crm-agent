@@ -21,116 +21,45 @@ import {
   type ProjectDocument, type TimelineEntry,
 } from '@/data/mockProjectData';
 
-/* ─── JARVIS chat messages ─── */
-interface ChatMessage {
-  id: number;
-  role: 'user' | 'assistant' | 'system';
-  text: string;
-  ts?: string;
-}
-
-const initialMessages: ChatMessage[] = [
-  { id: 1, role: 'system', text: 'Контекст проекта загружен. Я знаю всё о ЦРБ Коломна.' },
-  { id: 2, role: 'assistant', text: '👋 Привет! Я слежу за проектом **ЦРБ Коломна**. Сейчас активно 7 сделок.\n\n🟡 **Главное:** завтра аукцион по рентгену (D-54), а ТЗ по УЗИ (D-52) ждёт утверждения.\n\n📦 Поставка мониторов N22 идёт по графику.\n\n💡 Что хочешь обсудить — проект в целом или конкретную сделку?', ts: '14:30' },
-];
-
 const container = { hidden: {}, show: { transition: { staggerChildren: 0.04 } } };
 const item = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.35 } } };
-
-/* ═══════════════════════════════════════════ */
-/* ═══ MAIN COMPONENT                      ═══ */
-/* ═══════════════════════════════════════════ */
-
-/* ═══ Hook: responsive panel state ═══ */
-function useResponsivePanels() {
-  const isNarrow = typeof window !== 'undefined' && window.innerWidth < 1600;
-  const [leftOpen, setLeftOpen] = useState(!isNarrow);
-
-  useEffect(() => {
-    const onResize = () => {
-      if (window.innerWidth < 1600) setLeftOpen(false);
-    };
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
-  }, []);
-
-  return { leftOpen, setLeftOpen };
-}
 
 export function DealDossierView() {
   const d = projectData;
   const [selectedDealId, setSelectedDealId] = useState<string | null>(null);
-  const { leftOpen, setLeftOpen } = useResponsivePanels();
-
   const selectedDeal = selectedDealId ? d.deals.find(dl => dl.id === selectedDealId) ?? null : null;
 
   return (
-    <div className="flex gap-0 h-full">
-      {/* ═══ LEFT: JARVIS CHAT (collapsible) ═══ */}
-      <div className={`shrink-0 flex flex-col transition-all duration-300 ease-in-out ${leftOpen ? 'w-[340px] 2xl:w-[400px]' : 'w-[44px]'}`}>
-        {leftOpen ? (
-          <JarvisChat onCollapse={() => setLeftOpen(false)} />
+    <div className="h-full">
+      <AnimatePresence mode="wait">
+        {selectedDeal ? (
+          <motion.div
+            key={`deal-${selectedDeal.id}`}
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -40 }}
+            transition={{ duration: 0.3 }}
+            className="h-full pb-8 overflow-y-auto pr-1"
+          >
+            <DealScreen deal={selectedDeal} onBack={() => setSelectedDealId(null)} />
+          </motion.div>
         ) : (
-          <CollapsedPanel side="left" onExpand={() => setLeftOpen(true)} icon={Bot} label="JARVIS" />
+          <motion.div
+            key="project"
+            initial={{ opacity: 0, x: -40 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 40 }}
+            transition={{ duration: 0.3 }}
+            className="h-full pb-8 overflow-y-auto pr-1"
+          >
+            <ProjectScreen data={d} onSelectDeal={setSelectedDealId} />
+          </motion.div>
         )}
-      </div>
-
-      {/* ═══ CENTER: CONTENT ═══ */}
-      <div className="flex-1 min-w-0 mx-2">
-        <AnimatePresence mode="wait">
-          {selectedDeal ? (
-            <motion.div
-              key={`deal-${selectedDeal.id}`}
-              initial={{ opacity: 0, x: 40 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -40 }}
-              transition={{ duration: 0.3 }}
-              className="h-full pb-8 overflow-y-auto pr-1"
-            >
-              <DealScreen deal={selectedDeal} onBack={() => setSelectedDealId(null)} />
-            </motion.div>
-          ) : (
-            <motion.div
-              key="project"
-              initial={{ opacity: 0, x: -40 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 40 }}
-              transition={{ duration: 0.3 }}
-              className="h-full pb-8 overflow-y-auto pr-1"
-            >
-              <ProjectScreen data={d} onSelectDeal={setSelectedDealId} />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+      </AnimatePresence>
     </div>
   );
 }
 
-/* ═══════════════════════════════════════════ */
-/* ═══ COLLAPSED PANEL STRIP              ═══ */
-/* ═══════════════════════════════════════════ */
-
-function CollapsedPanel({ side, onExpand, icon: Icon, label }: {
-  side: 'left' | 'right'; onExpand: () => void; icon: React.ElementType; label: string;
-}) {
-  const ExpandIcon = side === 'left' ? PanelLeftOpen : PanelRightOpen;
-  return (
-    <div className={`h-[calc(100vh-160px)] matte-glass flex flex-col items-center py-3 gap-3 ${side === 'left' ? 'rounded-tl-none' : 'rounded-tr-none'}`}>
-      <button
-        onClick={onExpand}
-        className="w-8 h-8 rounded-[8px] flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
-        title={`Открыть ${label}`}
-      >
-        <ExpandIcon className="w-4 h-4" />
-      </button>
-      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-        <Icon className="w-4 h-4 text-primary" />
-      </div>
-      <span className="text-[9px] text-muted-foreground font-mono [writing-mode:vertical-lr] rotate-180 mt-2">{label}</span>
-    </div>
-  );
-}
 
 /* ═══════════════════════════════════════════ */
 /* ═══ PROJECT SCREEN                      ═══ */
