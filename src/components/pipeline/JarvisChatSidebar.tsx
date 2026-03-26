@@ -201,7 +201,7 @@ export function JarvisChatSidebar({ isOpen, onToggle }: { isOpen: boolean; onTog
       animate={{ x: 0, opacity: 1 }}
       exit={{ x: -300, opacity: 0 }}
       transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-      className="w-[340px] 2xl:w-[380px] shrink-0 matte-glass rounded-tl-none border-r border-border flex flex-col h-full"
+      className="w-[340px] 2xl:w-[380px] shrink-0 matte-glass rounded-tl-none rounded-br-none border-r border-border flex flex-col h-full"
     >
       {/* Header */}
       <div className="px-3 py-2.5 border-b border-border flex items-center gap-2">
