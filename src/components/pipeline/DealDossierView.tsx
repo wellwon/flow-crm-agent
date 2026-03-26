@@ -790,29 +790,100 @@ function AggregatedSidebar({ data, selectedDealId, onCollapse }: { data: Project
 /* ═══ JARVIS CHAT                        ═══ */
 /* ═══════════════════════════════════════════ */
 
+type LeftTab = 'jarvis' | 'chat' | 'timeline';
+
+const leftTabs: { key: LeftTab; label: string; icon: typeof Bot }[] = [
+  { key: 'jarvis', label: 'JARVIS', icon: Bot },
+  { key: 'chat', label: 'Чат', icon: MessageSquare },
+  { key: 'timeline', label: 'Таймлайн', icon: Clock },
+];
+
+const initialChatMsgs: ChatMessage[] = [
+  { id: 100, role: 'system', text: 'Командный чат по проекту' },
+  { id: 101, role: 'assistant', text: '💬 Здесь можно обсуждать задачи с коллегами по проекту.', ts: '09:00' },
+];
+
+/* ─── Mini Timeline ─── */
+function MiniTimelinePanel() {
+  const navigate = useNavigate();
+  const now = new Date();
+  const deals = mockDeals
+    .filter(d => d.status !== 'won' && d.status !== 'lost')
+    .map(d => {
+      const dl = new Date(d.deadline);
+      return { ...d, deadlineDate: dl, isOverdue: dl < now };
+    })
+    .sort((a, b) => a.deadlineDate.getTime() - b.deadlineDate.getTime());
+
+  return (
+    <TooltipProvider delayDuration={200}>
+      <div className="flex-1 overflow-y-auto p-3 space-y-2">
+        <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider mb-2">
+          Ближайшие дедлайны
+        </p>
+        {deals.map(deal => (
+          <Tooltip key={deal.id}>
+            <TooltipTrigger asChild>
+              <button
+                onClick={() => navigate(`/project/${deal.id}`)}
+                className="w-full text-left p-2.5 rounded-xl bg-muted/50 hover:bg-muted transition-colors"
+              >
+                <div className="flex items-center gap-2 mb-1">
+                  <div className={`w-2 h-2 rounded-full shrink-0 ${deal.isOverdue ? 'bg-destructive animate-pulse' : 'bg-primary'}`} />
+                  <span className="text-[11px] font-medium text-foreground truncate">{deal.title}</span>
+                </div>
+                <div className="flex items-center justify-between pl-4">
+                  <span className="text-[10px] text-muted-foreground">{deal.company}</span>
+                  <span className={`text-[10px] font-medium ${deal.isOverdue ? 'text-destructive' : 'text-primary'}`}>
+                    {deal.deadlineDate.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })}
+                  </span>
+                </div>
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="right" className="bg-card border-border rounded-[10px] p-3 max-w-[200px]">
+              <p className="text-[11px] text-muted-foreground">
+                {(deal.amount / 1_000_000).toFixed(1)}M ₽
+              </p>
+              {deal.isOverdue && <p className="text-[10px] text-destructive mt-1 font-medium">⚠ Просрочен</p>}
+            </TooltipContent>
+          </Tooltip>
+        ))}
+      </div>
+    </TooltipProvider>
+  );
+}
+
 function JarvisChat({ onCollapse }: { onCollapse: () => void }) {
+  const [activeTab, setActiveTab] = useState<LeftTab>('jarvis');
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>(initialChatMsgs);
   const [input, setInput] = useState('');
   const bottomRef = useRef<HTMLDivElement>(null);
   const nextId = useRef(10);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  }, [messages, chatMessages]);
 
   const handleSend = () => {
     if (!input.trim()) return;
-    const userMsg: ChatMessage = { id: nextId.current++, role: 'user', text: input, ts: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }) };
-    setMessages(m => [...m, userMsg]);
-    setInput('');
-    setTimeout(() => {
-      const response: ChatMessage = {
-        id: nextId.current++, role: 'assistant',
-        text: getJarvisResponse(input),
-        ts: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
-      };
-      setMessages(m => [...m, response]);
-    }, 1200);
+    const ts = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+    if (activeTab === 'jarvis') {
+      const userMsg: ChatMessage = { id: nextId.current++, role: 'user', text: input, ts };
+      setMessages(m => [...m, userMsg]);
+      setInput('');
+      setTimeout(() => {
+        const response: ChatMessage = {
+          id: nextId.current++, role: 'assistant',
+          text: getJarvisResponse(input),
+          ts: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
+        };
+        setMessages(m => [...m, response]);
+      }, 1200);
+    } else {
+      setChatMessages(m => [...m, { id: nextId.current++, role: 'user', text: input, ts }]);
+      setInput('');
+    }
   };
 
   const quickActions = [
@@ -822,57 +893,90 @@ function JarvisChat({ onCollapse }: { onCollapse: () => void }) {
     { label: 'Приоритеты', prompt: 'Какие приоритеты на эту неделю?' },
   ];
 
+  const currentMessages = activeTab === 'jarvis' ? messages : chatMessages;
+
   return (
     <div className="w-full flex flex-col matte-glass overflow-hidden sticky top-0 h-[calc(100vh-160px)]">
-      <div className="px-4 py-3 border-b border-border flex items-center gap-2.5">
+      {/* ─ Tab strip ─ */}
+      <div className="relative px-1 py-1.5 flex items-center gap-0.5 border-b border-border">
+        <div className="pointer-events-none absolute bottom-0 left-2 right-2 h-[2px] bg-gradient-to-r from-primary via-node-active to-primary opacity-40" />
         <button
           onClick={onCollapse}
           className="w-7 h-7 rounded-[8px] flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors shrink-0"
-          title="Свернуть JARVIS"
+          title="Свернуть"
         >
-          <PanelLeftClose className="w-4 h-4" />
+          <PanelLeftClose className="w-3.5 h-3.5" />
         </button>
-        <div className="w-7 h-7 rounded-full bg-[hsl(265_80%_65%)/0.15] flex items-center justify-center">
-          <Bot className="w-4 h-4 text-[hsl(265_80%_65%)]" />
-        </div>
-        <div className="flex-1">
-          <div className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-            JARVIS
-            <span className="w-1.5 h-1.5 rounded-full bg-node-completed animate-pulse" />
+        {leftTabs.map(tab => (
+          <button
+            key={tab.key}
+            onClick={() => setActiveTab(tab.key)}
+            className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-[8px] text-[11px] font-medium transition-all ${
+              activeTab === tab.key
+                ? 'bg-primary/15 text-primary'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+            }`}
+          >
+            <tab.icon className="w-3.5 h-3.5" />
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* ─ Context line (jarvis only) ─ */}
+      {activeTab === 'jarvis' && (
+        <div className="px-4 py-2 border-b border-border flex items-center gap-2">
+          <div className="w-6 h-6 rounded-full bg-[hsl(265_80%_65%)/0.15] flex items-center justify-center">
+            <Bot className="w-3.5 h-3.5 text-[hsl(265_80%_65%)]" />
           </div>
-          <div className="text-[9px] text-muted-foreground">Контекст: {projectData.project.customer} • {projectData.project.id}</div>
+          <div className="flex-1 min-w-0">
+            <div className="text-[10px] font-semibold text-foreground flex items-center gap-1.5">
+              JARVIS
+              <span className="w-1.5 h-1.5 rounded-full bg-node-completed animate-pulse" />
+            </div>
+            <div className="text-[8px] text-muted-foreground truncate">Контекст: {projectData.project.customer} • {projectData.project.id}</div>
+          </div>
+          <Sparkles className="w-3 h-3 text-[hsl(265_80%_65%)]" />
         </div>
-        <Sparkles className="w-3.5 h-3.5 text-[hsl(265_80%_65%)]" />
-      </div>
+      )}
 
-      <div className="flex-1 overflow-y-auto px-3 py-3 space-y-3">
-        {messages.map(msg => (
-          <ChatBubble key={msg.id} message={msg} />
-        ))}
-        <div ref={bottomRef} />
-      </div>
+      {/* ─ Tab content ─ */}
+      {activeTab === 'timeline' ? (
+        <MiniTimelinePanel />
+      ) : (
+        <>
+          <div className="flex-1 overflow-y-auto px-3 py-3 space-y-3">
+            {currentMessages.map(msg => (
+              <ChatBubble key={msg.id} message={msg} />
+            ))}
+            <div ref={bottomRef} />
+          </div>
 
-      <div className="px-3 pb-2 flex flex-wrap gap-1.5">
-        {quickActions.map((qa, i) => (
-          <button key={i} onClick={() => setInput(qa.prompt)}
-            className="text-[9px] px-2 py-1 rounded-full bg-muted/50 text-muted-foreground hover:text-primary hover:bg-primary/10 border border-border/50 transition-all">
-            {qa.label}
-          </button>
-        ))}
-      </div>
+          {activeTab === 'jarvis' && (
+            <div className="px-3 pb-2 flex flex-wrap gap-1.5">
+              {quickActions.map((qa, i) => (
+                <button key={i} onClick={() => setInput(qa.prompt)}
+                  className="text-[9px] px-2 py-1 rounded-full bg-muted/50 text-muted-foreground hover:text-primary hover:bg-primary/10 border border-border/50 transition-all">
+                  {qa.label}
+                </button>
+              ))}
+            </div>
+          )}
 
-      <div className="px-3 pb-3">
-        <div className="flex items-center gap-2 p-2 rounded-[10px] bg-muted/40 border border-border">
-          <input type="text" value={input} onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-            placeholder="Спроси JARVIS..."
-            className="flex-1 bg-transparent text-xs text-foreground placeholder:text-muted-foreground/50 outline-none" />
-          <button onClick={handleSend} disabled={!input.trim()}
-            className="p-1.5 rounded-[8px] bg-primary/15 hover:bg-primary/25 transition-colors disabled:opacity-30">
-            <Send className="w-3.5 h-3.5 text-primary" />
-          </button>
-        </div>
-      </div>
+          <div className="px-3 pb-3">
+            <div className="flex items-center gap-2 p-2 rounded-[10px] bg-muted/40 border border-border">
+              <input type="text" value={input} onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                placeholder={activeTab === 'jarvis' ? 'Спроси JARVIS...' : 'Написать в чат...'}
+                className="flex-1 bg-transparent text-xs text-foreground placeholder:text-muted-foreground/50 outline-none" />
+              <button onClick={handleSend} disabled={!input.trim()}
+                className="p-1.5 rounded-[8px] bg-primary/15 hover:bg-primary/25 transition-colors disabled:opacity-30">
+                <Send className="w-3.5 h-3.5 text-primary" />
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
