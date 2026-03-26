@@ -15,6 +15,8 @@ import { TopToolbar } from './TopToolbar';
 import { NodeDrawer } from './NodeDrawer';
 import { JarvisCommandBar } from './JarvisCommandBar';
 import { MediaFilesPanel } from './MediaFilesPanel';
+import { JarvisChat, CollapsedPanel } from './DealDossierView';
+import { Bot, ListChecks } from 'lucide-react';
 
 
 import { MorningBriefing } from './MorningBriefing';
@@ -59,6 +61,7 @@ function PipelinePageInner() {
   const [edgeMenu, setEdgeMenu] = useState<{ x: number; y: number; edgeId: string } | null>(null);
   const [interactionMode, setInteractionMode] = useState<InteractionMode>('select');
   const [mediaPanelOpen, setMediaPanelOpen] = useState(false);
+  const [leftSidebarOpen, setLeftSidebarOpen] = useState(true);
   const nextIdRef = useRef(200);
   const { screenToFlowPosition, setViewport, fitView, zoomIn, zoomOut, getNodes } = useReactFlow();
 
@@ -211,9 +214,20 @@ function PipelinePageInner() {
       <div className="fixed inset-0 z-0" style={{ background: 'var(--bg-gradient)' }} />
 
       {/* Layer 1: Content */}
-      <div className="relative z-[1] h-screen flex flex-col p-3 gap-3 overflow-hidden">
+      <div className="relative z-[1] h-screen flex p-3 gap-0 overflow-hidden">
+        {/* ═══ LEFT SIDEBAR — flush to left edge ═══ */}
+        {activeView === 'dossier' && (
+          <div className={`shrink-0 flex flex-col transition-all duration-300 ease-in-out ${leftSidebarOpen ? 'w-[340px] 2xl:w-[380px]' : 'w-[44px]'}`}>
+            {leftSidebarOpen ? (
+              <JarvisChat onCollapse={() => setLeftSidebarOpen(false)} />
+            ) : (
+              <CollapsedPanel side="left" onExpand={() => setLeftSidebarOpen(true)} icon={Bot} label="JARVIS" />
+            )}
+          </div>
+        )}
+
+        {/* ═══ CENTER: main-content-panel ═══ */}
         <div className="flex-1 flex flex-col main-content-panel overflow-hidden">
-          {/* Header — same style as WorkspacePage */}
           <TopToolbar
             activeView={activeView}
             onViewChange={setActiveView}
@@ -225,11 +239,8 @@ function PipelinePageInner() {
             mediaPanelOpen={mediaPanelOpen}
           />
 
-          {/* Body: JARVIS chat left | content center | node drawer right */}
           <div className="flex-1 flex overflow-hidden">
-            {/* Main content area */}
             <div className="flex-1 flex overflow-hidden relative">
-              {/* Sidebar palette — only in graph view */}
               {activeView === 'graph' && (
                 <NodePalette
                   onAddNode={addNode}
@@ -239,7 +250,6 @@ function PipelinePageInner() {
                 />
               )}
 
-              {/* Main content area */}
               <main className="flex-1 overflow-hidden relative">
                 {activeView === 'graph' && (
                   <>
@@ -293,29 +303,12 @@ function PipelinePageInner() {
                       {phasesVisible && <PhaseBackground nodes={nodes} />}
                     </ReactFlow>
 
-                    {/* Zoom controls */}
                     <div className="absolute z-20 bottom-4 right-4 flex items-center gap-1 matte-glass px-2 py-1.5">
-                      <button
-                        onClick={() => zoomOut()}
-                        className="w-7 h-7 flex items-center justify-center rounded-[8px] text-muted-foreground hover:text-primary hover:bg-primary/10 active:bg-primary/20 transition-colors text-lg font-bold"
-                        title="Отдалить"
-                      >
-                        −
-                      </button>
-                      <button
-                        onClick={() => fitView({ padding: 0.2 })}
-                        className="w-7 h-7 flex items-center justify-center rounded-[8px] text-muted-foreground hover:text-primary hover:bg-primary/10 active:bg-primary/20 transition-colors"
-                        title="Вместить всё"
-                      >
+                      <button onClick={() => zoomOut()} className="w-7 h-7 flex items-center justify-center rounded-[8px] text-muted-foreground hover:text-primary hover:bg-primary/10 active:bg-primary/20 transition-colors text-lg font-bold" title="Отдалить">−</button>
+                      <button onClick={() => fitView({ padding: 0.2 })} className="w-7 h-7 flex items-center justify-center rounded-[8px] text-muted-foreground hover:text-primary hover:bg-primary/10 active:bg-primary/20 transition-colors" title="Вместить всё">
                         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="1" y="1" width="12" height="12" rx="2" /><path d="M4 7h6M7 4v6" /></svg>
                       </button>
-                      <button
-                        onClick={() => zoomIn()}
-                        className="w-7 h-7 flex items-center justify-center rounded-[8px] text-muted-foreground hover:text-primary hover:bg-primary/10 active:bg-primary/20 transition-colors text-lg font-bold"
-                        title="Приблизить"
-                      >
-                        +
-                      </button>
+                      <button onClick={() => zoomIn()} className="w-7 h-7 flex items-center justify-center rounded-[8px] text-muted-foreground hover:text-primary hover:bg-primary/10 active:bg-primary/20 transition-colors text-lg font-bold" title="Приблизить">+</button>
                     </div>
 
                     <JarvisCommandBar />
@@ -350,7 +343,6 @@ function PipelinePageInner() {
               </main>
             </div>
 
-            {/* Right: Node detail sidebar */}
             <AnimatePresence>
               <NodeDrawer
                 isOpen={!!selectedNode}
@@ -361,13 +353,13 @@ function PipelinePageInner() {
                 onDelete={handleDeleteNode}
               />
             </AnimatePresence>
-
-            {/* Media/Files panel */}
-            {mediaPanelOpen && (
-              <MediaFilesPanel onClose={() => setMediaPanelOpen(false)} />
-            )}
           </div>
         </div>
+
+        {/* ═══ RIGHT SIDEBAR — flush to right edge ═══ */}
+        {mediaPanelOpen && (
+          <MediaFilesPanel onClose={() => setMediaPanelOpen(false)} />
+        )}
       </div>
 
       <CanvasContextMenu

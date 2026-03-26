@@ -61,52 +61,42 @@ function useResponsivePanels() {
 export function DealDossierView() {
   const d = projectData;
   const [selectedDealId, setSelectedDealId] = useState<string | null>(null);
-  const { leftOpen, setLeftOpen } = useResponsivePanels();
 
   const selectedDeal = selectedDealId ? d.deals.find(dl => dl.id === selectedDealId) ?? null : null;
 
   return (
-    <div className="flex gap-0 h-full">
-      {/* ═══ LEFT: JARVIS CHAT (collapsible) ═══ */}
-      <div className={`shrink-0 flex flex-col transition-all duration-300 ease-in-out ${leftOpen ? 'w-[340px] 2xl:w-[400px]' : 'w-[44px]'}`}>
-        {leftOpen ? (
-          <JarvisChat onCollapse={() => setLeftOpen(false)} />
+    <div className="h-full">
+      <AnimatePresence mode="wait">
+        {selectedDeal ? (
+          <motion.div
+            key={`deal-${selectedDeal.id}`}
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -40 }}
+            transition={{ duration: 0.3 }}
+            className="h-full pb-8 overflow-y-auto pr-1"
+          >
+            <DealScreen deal={selectedDeal} onBack={() => setSelectedDealId(null)} />
+          </motion.div>
         ) : (
-          <CollapsedPanel side="left" onExpand={() => setLeftOpen(true)} icon={Bot} label="JARVIS" />
+          <motion.div
+            key="project"
+            initial={{ opacity: 0, x: -40 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 40 }}
+            transition={{ duration: 0.3 }}
+            className="h-full pb-8 overflow-y-auto pr-1"
+          >
+            <ProjectScreen data={d} onSelectDeal={setSelectedDealId} />
+          </motion.div>
         )}
-      </div>
-
-      {/* ═══ CENTER: CONTENT ═══ */}
-      <div className="flex-1 min-w-0 mx-2">
-        <AnimatePresence mode="wait">
-          {selectedDeal ? (
-            <motion.div
-              key={`deal-${selectedDeal.id}`}
-              initial={{ opacity: 0, x: 40 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -40 }}
-              transition={{ duration: 0.3 }}
-              className="h-full pb-8 overflow-y-auto pr-1"
-            >
-              <DealScreen deal={selectedDeal} onBack={() => setSelectedDealId(null)} />
-            </motion.div>
-          ) : (
-            <motion.div
-              key="project"
-              initial={{ opacity: 0, x: -40 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 40 }}
-              transition={{ duration: 0.3 }}
-              className="h-full pb-8 overflow-y-auto pr-1"
-            >
-              <ProjectScreen data={d} onSelectDeal={setSelectedDealId} />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+      </AnimatePresence>
     </div>
   );
 }
+
+/* ═══ Exported sidebar components ═══ */
+export { JarvisChat, CollapsedPanel };
 
 /* ═══════════════════════════════════════════ */
 /* ═══ COLLAPSED PANEL STRIP              ═══ */
@@ -116,8 +106,9 @@ function CollapsedPanel({ side, onExpand, icon: Icon, label }: {
   side: 'left' | 'right'; onExpand: () => void; icon: React.ElementType; label: string;
 }) {
   const ExpandIcon = side === 'left' ? PanelLeftOpen : PanelRightOpen;
+  const rounding = side === 'left' ? 'rounded-l-none' : 'rounded-r-none';
   return (
-    <div className={`h-[calc(100vh-160px)] matte-glass flex flex-col items-center py-3 gap-3 ${side === 'left' ? 'rounded-tl-none' : 'rounded-tr-none'}`}>
+    <div className={`h-full bg-card border border-border flex flex-col items-center py-3 gap-3 rounded-[14px] ${rounding}`}>
       <button
         onClick={onExpand}
         className="w-8 h-8 rounded-[8px] flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
@@ -882,7 +873,7 @@ function JarvisChat({ onCollapse }: { onCollapse: () => void }) {
   const currentMessages = activeTab === 'jarvis' ? messages : chatMessages;
 
   return (
-    <div className="w-full flex flex-col matte-glass overflow-hidden sticky top-0 h-[calc(100vh-160px)] rounded-tl-none">
+    <div className="w-full flex flex-col bg-card border border-border border-l-0 overflow-hidden h-full rounded-[14px] rounded-l-none">
       {/* ─ Tab strip ─ */}
       <div className="relative px-1 py-1.5 flex items-center gap-0.5 border-b border-border">
         <div className="pointer-events-none absolute bottom-0 left-2 right-2 h-[2px] bg-gradient-to-r from-primary via-node-active to-primary opacity-40" />
