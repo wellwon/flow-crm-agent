@@ -15,6 +15,8 @@ import { TopToolbar } from './TopToolbar';
 import { NodeDrawer } from './NodeDrawer';
 import { JarvisCommandBar } from './JarvisCommandBar';
 import { MediaFilesPanel } from './MediaFilesPanel';
+import { JarvisChat, CollapsedPanel } from './DealDossierView';
+import { Bot, ListChecks } from 'lucide-react';
 
 
 import { MorningBriefing } from './MorningBriefing';
