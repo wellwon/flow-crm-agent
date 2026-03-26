@@ -182,6 +182,14 @@ export function WorkspacePage() {
                   WellWon
                 </h1>
                 <div className="w-px h-5 bg-border" />
+                <button
+                  onClick={() => navigate('/tasks')}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-[10px] text-[13px] font-medium text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all"
+                >
+                  <CheckSquare className="w-4 h-4" />
+                  <span className="hidden md:inline">Задачи</span>
+                </button>
+                <div className="w-px h-5 bg-border" />
                 <span className="text-muted-foreground text-[13px] hidden md:inline">
                   Управление сделками
                 </span>
