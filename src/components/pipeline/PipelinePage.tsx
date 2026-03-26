@@ -14,6 +14,7 @@ import { GlowingEdge } from './GlowingEdge';
 import { TopToolbar } from './TopToolbar';
 import { NodeDrawer } from './NodeDrawer';
 import { JarvisCommandBar } from './JarvisCommandBar';
+import { MediaFilesPanel } from './MediaFilesPanel';
 
 
 import { MorningBriefing } from './MorningBriefing';
@@ -57,6 +58,7 @@ function PipelinePageInner() {
   const [contextMenu, setContextMenu] = useState<ContextMenuPosition | null>(null);
   const [edgeMenu, setEdgeMenu] = useState<{ x: number; y: number; edgeId: string } | null>(null);
   const [interactionMode, setInteractionMode] = useState<InteractionMode>('select');
+  const [mediaPanelOpen, setMediaPanelOpen] = useState(false);
   const nextIdRef = useRef(200);
   const { screenToFlowPosition, setViewport, fitView, zoomIn, zoomOut, getNodes } = useReactFlow();
 
@@ -219,6 +221,8 @@ function PipelinePageInner() {
             onTemplateOpen={() => setTemplateOpen(true)}
             phasesVisible={phasesVisible}
             onTogglePhases={() => setPhasesVisible(v => !v)}
+            onMediaPanelToggle={() => setMediaPanelOpen(v => !v)}
+            mediaPanelOpen={mediaPanelOpen}
           />
 
           {/* Body: JARVIS chat left | content center | node drawer right */}
@@ -357,6 +361,11 @@ function PipelinePageInner() {
                 onDelete={handleDeleteNode}
               />
             </AnimatePresence>
+
+            {/* Media/Files panel */}
+            {mediaPanelOpen && (
+              <MediaFilesPanel onClose={() => setMediaPanelOpen(false)} />
+            )}
           </div>
         </div>
       </div>

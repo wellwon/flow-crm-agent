@@ -1,4 +1,4 @@
-import { LayoutGrid, List, Columns3, GanttChart, Sun, Plus, Layers, BarChart3, ArrowLeft, FileText } from 'lucide-react';
+import { LayoutGrid, List, Columns3, GanttChart, Sun, Plus, Layers, BarChart3, ArrowLeft, FileText, UserPlus, Search, SquareStack } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import type { ViewMode } from '@/types/pipeline';
 
@@ -9,6 +9,8 @@ interface TopToolbarProps {
   onTemplateOpen?: () => void;
   phasesVisible?: boolean;
   onTogglePhases?: () => void;
+  onMediaPanelToggle?: () => void;
+  mediaPanelOpen?: boolean;
 }
 
 const views: { id: ViewMode; label: string; icon: React.ElementType }[] = [
@@ -20,7 +22,7 @@ const views: { id: ViewMode; label: string; icon: React.ElementType }[] = [
   { id: 'timeline', label: 'Timeline', icon: GanttChart },
 ];
 
-export function TopToolbar({ activeView = 'graph', onViewChange, onBriefingOpen, onTemplateOpen, phasesVisible = true, onTogglePhases }: TopToolbarProps) {
+export function TopToolbar({ activeView = 'graph', onViewChange, onBriefingOpen, onTemplateOpen, phasesVisible = true, onTogglePhases, onMediaPanelToggle, mediaPanelOpen }: TopToolbarProps) {
   const navigate = useNavigate();
 
   return (
@@ -92,6 +94,32 @@ export function TopToolbar({ activeView = 'graph', onViewChange, onBriefingOpen,
               <span>Брифинг</span>
             </button>
           )}
+
+          {/* Utility icons */}
+          <div className="w-px h-5 bg-border mx-1" />
+          <button
+            className="w-8 h-8 rounded-[10px] flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+            title="Добавить контакт"
+          >
+            <UserPlus className="w-4 h-4" />
+          </button>
+          <button
+            className="w-8 h-8 rounded-[10px] flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+            title="Поиск"
+          >
+            <Search className="w-4 h-4" />
+          </button>
+          <button
+            onClick={onMediaPanelToggle}
+            className={`w-8 h-8 rounded-[10px] flex items-center justify-center transition-colors ${
+              mediaPanelOpen
+                ? 'text-primary bg-primary/15'
+                : 'text-muted-foreground hover:text-primary hover:bg-primary/10'
+            }`}
+            title="Медиа и файлы"
+          >
+            <SquareStack className="w-4 h-4" />
+          </button>
         </div>
       </div>
     </header>
