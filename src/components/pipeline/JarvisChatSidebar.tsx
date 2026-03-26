@@ -152,7 +152,7 @@ function ChatContent({ messages, input, setInput, send, showQuickActions }: {
 /* ─── Collapsed strip ─── */
 function CollapsedStrip({ onExpand }: { onExpand: () => void }) {
   return (
-    <div className="h-full w-[44px] matte-glass rounded-tl-none flex flex-col items-center py-3 gap-3">
+    <div className="h-full w-[44px] matte-glass rounded-tl-none rounded-br-none flex flex-col items-center py-3 gap-3">
       <button onClick={onExpand}
         className="w-8 h-8 rounded-[8px] flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors">
         <PanelLeftOpen className="w-4 h-4" />
@@ -201,7 +201,7 @@ export function JarvisChatSidebar({ isOpen, onToggle }: { isOpen: boolean; onTog
       animate={{ x: 0, opacity: 1 }}
       exit={{ x: -300, opacity: 0 }}
       transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-      className="w-[340px] 2xl:w-[380px] shrink-0 matte-glass rounded-tl-none border-r border-border flex flex-col h-full"
+      className="w-[340px] 2xl:w-[380px] shrink-0 matte-glass rounded-tl-none rounded-br-none border-r border-border flex flex-col h-full"
     >
       {/* Header */}
       <div className="px-3 py-2.5 border-b border-border flex items-center gap-2">

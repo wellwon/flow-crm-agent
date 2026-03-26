@@ -51,7 +51,7 @@ export function MediaFilesPanel({ onClose }: { onClose: () => void }) {
         animate={{ x: 0, opacity: 1 }}
         exit={{ x: 300, opacity: 0 }}
         transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-        className="w-[340px] 2xl:w-[380px] shrink-0 matte-glass border-l border-border flex flex-col h-full rounded-tr-none"
+        className="w-[340px] 2xl:w-[380px] shrink-0 matte-glass border-l border-border flex flex-col h-full rounded-tr-none rounded-bl-none"
       >
         {/* Header */}
         <div className="px-4 py-3 border-b border-border flex items-center gap-2">
