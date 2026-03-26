@@ -111,7 +111,9 @@ function ChatContent({ messages, input, setInput, send, showQuickActions }: {
             <motion.div key={msg.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
               className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div className={`max-w-[85%] rounded-xl px-3 py-2 text-[11px] leading-relaxed ${
-                msg.role === 'user' ? 'bg-primary text-primary-foreground rounded-br-sm' : 'bg-muted text-foreground rounded-bl-sm'
+                msg.role === 'user'
+                  ? 'bg-primary text-primary-foreground rounded-br-sm'
+                  : 'bg-primary/10 border border-primary/20 text-foreground rounded-bl-sm'
               }`}>
                 <p className="whitespace-pre-line">{msg.text}</p>
                 <span className={`text-[9px] mt-1 block ${msg.role === 'user' ? 'text-primary-foreground/60' : 'text-muted-foreground'}`}>{msg.time}</span>
@@ -122,18 +124,18 @@ function ChatContent({ messages, input, setInput, send, showQuickActions }: {
       </div>
 
       {showQuickActions && (
-        <div className="px-3 py-2 flex flex-wrap gap-1.5 border-t border-border">
+        <div className="px-3 py-2 flex flex-wrap gap-1.5 border-t border-border/50">
           {quickActions.map(a => (
             <button key={a.label} onClick={() => send(a.label)}
-              className="flex items-center gap-1 px-2 py-1 rounded-lg bg-muted text-[10px] font-medium text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors">
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-primary/20 bg-primary/5 text-[10px] font-medium text-primary hover:bg-primary/10 hover:border-primary/30 transition-colors">
               <a.icon className="w-3 h-3" />{a.label}
             </button>
           ))}
         </div>
       )}
 
-      <div className="px-3 py-2.5 border-t border-border">
-        <form onSubmit={e => { e.preventDefault(); send(input); }} className="flex items-center gap-2 bg-muted rounded-xl px-3 py-2">
+      <div className="px-3 py-2.5 border-t border-border/50">
+        <form onSubmit={e => { e.preventDefault(); send(input); }} className="flex items-center gap-2 rounded-xl border border-border/50 bg-card px-3 py-2">
           <input value={input} onChange={e => setInput(e.target.value)}
             placeholder={showQuickActions ? 'Спросить JARVIS...' : 'Написать сообщение...'}
             className="flex-1 bg-transparent text-xs text-foreground placeholder:text-muted-foreground outline-none" />

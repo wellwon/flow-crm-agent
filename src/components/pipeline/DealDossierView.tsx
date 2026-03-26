@@ -39,7 +39,7 @@ export function DealDossierView() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -40 }}
             transition={{ duration: 0.3 }}
-            className="h-full pb-8 overflow-y-auto pr-1"
+            className="h-full pb-2 overflow-y-auto pr-1"
           >
             <DealScreen deal={selectedDeal} onBack={() => setSelectedDealId(null)} />
           </motion.div>
@@ -50,7 +50,7 @@ export function DealDossierView() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 40 }}
             transition={{ duration: 0.3 }}
-            className="h-full pb-8 overflow-y-auto pr-1"
+            className="h-full pb-2 overflow-y-auto pr-1"
           >
             <ProjectScreen data={d} onSelectDeal={setSelectedDealId} />
           </motion.div>
