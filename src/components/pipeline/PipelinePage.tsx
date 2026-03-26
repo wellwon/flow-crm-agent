@@ -221,6 +221,8 @@ function PipelinePageInner() {
             onTemplateOpen={() => setTemplateOpen(true)}
             phasesVisible={phasesVisible}
             onTogglePhases={() => setPhasesVisible(v => !v)}
+            onMediaPanelToggle={() => setMediaPanelOpen(v => !v)}
+            mediaPanelOpen={mediaPanelOpen}
           />
 
           {/* Body: JARVIS chat left | content center | node drawer right */}
