@@ -111,7 +111,9 @@ function ChatContent({ messages, input, setInput, send, showQuickActions }: {
             <motion.div key={msg.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
               className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div className={`max-w-[85%] rounded-xl px-3 py-2 text-[11px] leading-relaxed ${
-                msg.role === 'user' ? 'bg-primary text-primary-foreground rounded-br-sm' : 'bg-muted text-foreground rounded-bl-sm'
+                msg.role === 'user'
+                  ? 'bg-primary text-primary-foreground rounded-br-sm'
+                  : 'bg-primary/10 border border-primary/20 text-foreground rounded-bl-sm'
               }`}>
                 <p className="whitespace-pre-line">{msg.text}</p>
                 <span className={`text-[9px] mt-1 block ${msg.role === 'user' ? 'text-primary-foreground/60' : 'text-muted-foreground'}`}>{msg.time}</span>
