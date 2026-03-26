@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LayoutGrid, List, Kanban, CalendarDays, Plus, Search, X, MapPin, Tag, User, Flag, ChevronDown, Sun, Moon, Brain } from 'lucide-react';
+import { LayoutGrid, List, Kanban, CalendarDays, Plus, Search, X, MapPin, Tag, User, Flag, ChevronDown, Sun, Moon, Brain, CheckSquare } from 'lucide-react';
 import { mockDeals, dealStatusLabels, type DealStatus, type Deal } from '@/data/mockDeals';
 import { DealsTableView } from './DealsTableView';
 import { DealsKanbanView } from './DealsKanbanView';
@@ -181,6 +181,14 @@ export function WorkspacePage() {
                 <h1 className="text-xl font-semibold text-foreground tracking-tight">
                   WellWon
                 </h1>
+                <div className="w-px h-5 bg-border" />
+                <button
+                  onClick={() => navigate('/tasks')}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-[10px] text-[13px] font-medium text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all"
+                >
+                  <CheckSquare className="w-4 h-4" />
+                  <span className="hidden md:inline">Задачи</span>
+                </button>
                 <div className="w-px h-5 bg-border" />
                 <span className="text-muted-foreground text-[13px] hidden md:inline">
                   Управление сделками
